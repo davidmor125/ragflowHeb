@@ -1,0 +1,72 @@
+[
+  {
+    "verdict": "correct",
+    "reason": "The answer lists the same four main integrations—credit‑card processing (סליקת אשראי), SMS, Google Maps, and accounting systems—as stated in the source text.",
+    "n": 1,
+    "label": "text",
+    "ref_hit": false
+  },
+  {
+    "verdict": "correct",
+    "reason": "The system’s response accurately reproduces all stakeholders, their interests, and corresponding impacts exactly as presented in the source text. No omissions or inaccuracies are present.",
+    "n": 3,
+    "label": "text",
+    "ref_hit": true
+  },
+  {
+    "verdict": "wrong",
+    "reason": "The answer lists status stages (Pending → Paid/Unpaid) that are not mentioned in the provided source excerpt. The source specifies only the waiter‑controlled statuses: \"מתוכננת → מבוצעת → בוטלה\". Therefore the answer does not correctly reflect the information from the source.",
+    "n": 8,
+    "label": "text(was miss)",
+    "ref_hit": false
+  },
+  {
+    "verdict": "partial",
+    "reason": "The response correctly lists the fields for \"לקוח\" (Client) and \"מסעדה/סניף\" (Restaurant/Branch) that are present in the source, but it also introduces additional entities such as \"שולחן\", \"הזמנה\", \"מנה\", \"תשלום\", and \"משתמש-מערכת\" which are not mentioned in the provided source excerpt. Therefore, while some of the information is accurate, the answer extends beyond what the source contains.",
+    "n": 20,
+    "label": "TABLE S44",
+    "ref_hit": true
+  },
+  {
+    "verdict": "partial",
+    "reason": "The answer correctly reproduces the primary keys, composite key, unique constraints, foreign‑key relationships, clustered and non‑clustered indexes described in the source. However, it adds details that are not present in the provided excerpt of the source (full‑text index on MenuItem.Name/Description and a non‑clustered index on Customer.Phone). Therefore the answer is partially based on the source but contains additional information beyond what was supplied.",
+    "n": 21,
+    "label": "TABLE S46",
+    "ref_hit": true
+  },
+  {
+    "verdict": "partial",
+    "reason": "The system answer correctly lists all parameters shown in the source excerpt (e.g., customerId, email, phone, restaurantId, etc.) and provides their details. However, it also includes additional parameters (menuItemName, price, category, allergens, userId, role, language, page, pageSize) that are not present in the provided source snippet. Therefore the answer is partially aligned with the source but contains extra information beyond what was supplied.",
+    "n": 24,
+    "label": "TABLE S53",
+    "ref_hit": true
+  },
+  {
+    "verdict": "correct",
+    "reason": "The system’s table of workflow steps (1–20) matches the source text verbatim in terms of players, inputs, actions, outputs, and subsequent step references. All details are present and consistent with the provided source excerpt.",
+    "n": 29,
+    "label": "TABLE S66",
+    "ref_hit": true
+  },
+  {
+    "verdict": "correct",
+    "reason": "The system’s response matches the source matrix exactly for the client role on the payment resource: create – yes, read – yes, update – no, delete – no.",
+    "n": 31,
+    "label": "TABLE S71",
+    "ref_hit": true
+  },
+  {
+    "verdict": "partial",
+    "reason": "The answer correctly lists many fields that are present in the source (e.g., client, restaurant/sucursal, table fields), but it also includes additional fields for orders, dishes, payments, and system users that are not mentioned in the provided source excerpt. Therefore, while part of the response is accurate, it contains extraneous information beyond what the source specifies.",
+    "n": 44,
+    "label": "TABLE S102",
+    "ref_hit": true
+  },
+  {
+    "verdict": "correct",
+    "reason": "The system’s response lists all 15 events described in the source section (S107) with their corresponding trigger conditions and priority levels exactly matching those specified in the source table. No omissions or inaccuracies are present.",
+    "n": 46,
+    "label": "TABLE S107",
+    "ref_hit": true
+  }
+]

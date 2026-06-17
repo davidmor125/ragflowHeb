@@ -1,0 +1,62 @@
+[
+  {
+    "n": 4,
+    "verdict": "correct",
+    "reason": "The system’s response accurately lists all items described in the source snippet under Scope (orders, tables, menu, payments, reports, customer/branch"
+  },
+  {
+    "n": 10,
+    "verdict": "partial",
+    "reason": "The response correctly lists several user stories that are present in the source (e.g., customer booking a table, ordering food online, waiter viewing"
+  },
+  {
+    "n": 12,
+    "verdict": "correct",
+    "reason": "The answer accurately reproduces all six UI/UX design goals exactly as listed in the source, and it includes the three personas (יעל, דני, רוני) with "
+  },
+  {
+    "n": 13,
+    "verdict": "partial",
+    "reason": "The response correctly identifies the main flowchart nodes and their sequence for each role (לקוח, מלצר, מנהל סניף, מנהל רשת, אדמין) as shown in the s"
+  },
+  {
+    "n": 16,
+    "verdict": "partial",
+    "reason": "The answer correctly identifies the micro‑services architecture, API Gateway, and the list of services (Auth, Order, Table, Menu, Payment, Notificatio"
+  },
+  {
+    "n": 20,
+    "verdict": "partial",
+    "reason": "The answer correctly identifies that the data dictionary includes tables such as client, restaurant/branch, table, order, dish, payment and system use"
+  },
+  {
+    "n": 24,
+    "verdict": "correct",
+    "reason": "The system’s response accurately lists all parameters described in the source section, including their names, locations (path, body, query), types, wh"
+  },
+  {
+    "n": 29,
+    "verdict": "partial",
+    "reason": "The answer correctly lists several initial steps (e.g., selecting date/time, checking table availability, confirming reservation, sending SMS/email, c"
+  },
+  {
+    "n": 39,
+    "verdict": "partial",
+    "reason": "The answer correctly describes the structure of the QA test matrix (Test ID, requirement, status) and gives examples for T001–T004 and T007, matching "
+  },
+  {
+    "n": 44,
+    "verdict": "correct",
+    "reason": "The system’s response accurately summarizes the content of the source excerpt: it states that the document contains a table listing fields for various"
+  },
+  {
+    "n": 46,
+    "verdict": "correct",
+    "reason": "The system’s response lists all 15 trigger events, their activation conditions, and priority levels exactly as specified in the source excerpt. No inf"
+  },
+  {
+    "n": 47,
+    "verdict": "correct",
+    "reason": "The answer accurately summarizes the key points from the source: it states that the document provides micro‑copy templates for each event, specifies c"
+  }
+]

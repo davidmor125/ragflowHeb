@@ -1,0 +1,79 @@
+{
+  "code": 0,
+  "data": {
+    "avatar": null,
+    "chunk_count": 0,
+    "chunk_method": "naive",
+    "create_date": "2026-06-13T02:37:38",
+    "create_time": 1781289458535,
+    "created_by": "2507563a42bd11f1a6bba9e87ac7a32c",
+    "description": null,
+    "document_count": 0,
+    "embedding_model": "bge-m3@Ollama",
+    "graphrag_task_finish_at": null,
+    "graphrag_task_id": null,
+    "id": "c9aecda0668d11f1b9e5df329cd4ee1f",
+    "language": "English",
+    "mindmap_task_finish_at": null,
+    "mindmap_task_id": null,
+    "name": "client_offload_r1_1781289458",
+    "pagerank": 0,
+    "parser_config": {
+      "auto_keywords": 3,
+      "auto_questions": 2,
+      "children_delimiter": "",
+      "chunk_token_num": 1024,
+      "delimiter": "\\n!?;。;！？",
+      "ext": {},
+      "filename_embd_weight": 0.1,
+      "graphrag": {
+        "community": false,
+        "entity_types": [
+          "organization",
+          "person",
+          "geo",
+          "event",
+          "category"
+        ],
+        "method": "light",
+        "resolution": false,
+        "use_graphrag": false
+      },
+      "html4excel": false,
+      "image_context_size": 0,
+      "layout_recognize": "DeepDOC",
+      "llm_id": "gpt-oss:120b-cloud@Ollama",
+      "pages": null,
+      "parent_child": {
+        "children_delimiter": "\\n",
+        "use_parent_child": false
+      },
+      "raptor": {
+        "auto_disable_for_structured_data": true,
+        "ext": {},
+        "max_cluster": 64,
+        "max_token": 256,
+        "prompt": "Please summarize the following paragraphs. Be careful with the numbers, do not make things up. Paragraphs as following:\n      {cluster_content}\nThe above is the content you need to summarize.",
+        "random_seed": 0,
+        "threshold": 0.1,
+        "use_raptor": false
+      },
+      "table_context_size": 0,
+      "tag_kb_ids": [],
+      "task_page_size": null,
+      "topn_tags": 1
+    },
+    "permission": "me",
+    "pipeline_id": null,
+    "raptor_task_finish_at": null,
+    "raptor_task_id": null,
+    "similarity_threshold": 0.2,
+    "status": "1",
+    "tenant_embd_id": null,
+    "tenant_id": "2507563a42bd11f1a6bba9e87ac7a32c",
+    "token_num": 0,
+    "update_date": "2026-06-13T02:37:38",
+    "update_time": 1781289458536,
+    "vector_similarity_weight": 0.3
+  }
+}

@@ -1,0 +1,84 @@
+{
+  "code": 0,
+  "data": {
+    "answer": "המספר המופיע הוא **מסמך‑בדיקה‑12345** [ID:2]",
+    "audio_binary": null,
+    "created_at": 1781240603.9090214,
+    "id": "b2f66f48-30e9-4e8a-a01c-277de6dd6c2d",
+    "prompt": "You are an intelligent assistant. Please summarize the content of the dataset to answer the question. Please list the data in the dataset and answer in detail. When all dataset content is irrelevant to the question, your answer must include the sentence \"The answer you are looking for is not found in the dataset!\" Answers need to consider chat history.  \n      Here is the knowledge base:  \n        \n------  \n  \nID: 0  \n├── Title: testdoc.md  \n└── Content:  \n<table>  \n<thead>  \n<tr>  \n<th>רכיב</th>  \n<th>ערך</th>  \n<th>יחידה</th>  \n</tr>  \n</thead>  \n<tbody>  \n<tr>  \n<td>גודל מקטע מרבי</td>  \n<td>2048</td>  \n<td>אסימונים</td>  \n</tr>  \n<tr>  \n<td>מודל הטמעה</td>  \n<td>bge-m3</td>  \n<td>-</td>  \n</tr>  \n<tr>  \n<td>מספר דיירים נתמך</td>  \n<td>500</td>  \n<td>דיירים</td>  \n</tr>  \n<tr>  \n<td>זמן תגובה ממוצע</td>  \n<td>850</td>  \n<td>מילישניות</td>  \n</tr>  \n<tr>  \n<td>קוד-סודי-בטבלה</td>  \n<td>ZX9871</td>  \n<td>מזהה</td>  \n</tr>  \n</tbody>  \n</table>  \n  \n------  \n  \n  \nID: 1  \n├── Title: testdoc.md  \n└── Content:  \n```mermaid\r  \ngraph TD\r  \n  A[קובץ נכנס] --> B[חלוקה למקטעים]\r  \n  B --> C[חישוב הטמעה]\r  \n  C --> D[אחזור ודירוג]\r  \n  D --> E[ניסוח תשובה עם MERMAIDKEY42]\r  \n```\r  \n## תרשים מכירות רבעוני\r  \n  \n------  \n  \n  \nID: 2  \n├── Title: testdoc.md  \n└── Content:  \n# דוח בדיקה גנרי — מערכת RAGFLOW\r  \n[כותרת-ראשית: מסמך-בדיקה-12345]\r  \n## 1. רקע\r  \nהמערכת מספקת שירותי אחזור מידע מבוסס הקשר. היא תומכת בעברית מלאה.\r  \n## 2. ארכיטקטורה\r  \nהרכיב המרכזי מחלק מסמכים למקטעים, מחשב embedding, ומאחסן באינדקס וקטורי.\r  \n## 3. עיבוד מסמכים\r  \nתהליך העיבוד כולל זיהוי פריסה, חילוץ טבלאות, ותיאור תמונות.\r  \n## 4. הטמעות\r  \nמודל ההטמעה הוא bge-m3 והוא רב-לשוני.\r  \n## 5. אחזור\r  \nבעת שאילתה, המערכת מאחזרת את המקטעים הרלוונטיים ביותר לפי דמיון וקטורי.\r  \n## 6. דירוג-מחדש\r  \nשכבת דירוג-מחדש משפרת את הדיוק על ידי מיון מקטעים מועמדים.\r  \n      The above is the knowledge base.  \n  \n### Query:  \nמהו המזהה המופיע בשורת הכותרת הראשית של מסמך הבדיקה (בסוגריים מרובעים)?  \n  \n## Time elapsed:  \n  - Total: 66827.8ms  \n  - Check LLM: 7.5ms  \n  - Check Langfuse tracer: 3.2ms  \n  - Bind models: 14.7ms  \n  - Query refinement(LLM): 1.9ms  \n  - Retrieval: 63235.2ms  \n  - Generate answer: 3565.4ms  \n  \n## Token usage:  \n  - Generated tokens(approximately): 41  \n  - Token speed: 11/s",
+    "reference": {
+      "chunks": [
+        {
+          "content": "<table>\n<thead>\n<tr>\n<th>רכיב</th>\n<th>ערך</th>\n<th>יחידה</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>גודל מקטע מרבי</td>\n<td>2048</td>\n<td>אסימונים</td>\n</tr>\n<tr>\n<td>מודל הטמעה</td>\n<td>bge-m3</td>\n<td>-</td>\n</tr>\n<tr>\n<td>מספר דיירים נתמך</td>\n<td>500</td>\n<td>דיירים</td>\n</tr>\n<tr>\n<td>זמן תגובה ממוצע</td>\n<td>850</td>\n<td>מילישניות</td>\n</tr>\n<tr>\n<td>קוד-סודי-בטבלה</td>\n<td>ZX9871</td>\n<td>מזהה</td>\n</tr>\n</tbody>\n</table>",
+          "dataset_id": "2990101865ed11f19d1425719d627201",
+          "doc_type": "table",
+          "document_id": "2997e12665ed11f19d1425719d627201",
+          "document_name": "testdoc.md",
+          "id": "f5d32e2551fba939",
+          "image_id": "",
+          "positions": [],
+          "row_id": null,
+          "similarity": 0.17504385222618135,
+          "term_similarity": 0.039473685190010384,
+          "url": null,
+          "vector_similarity": 0.49137424197724694
+        },
+        {
+          "content": "```mermaid\r\ngraph TD\r\n  A[קובץ נכנס] --> B[חלוקה למקטעים]\r\n  B --> C[חישוב הטמעה]\r\n  C --> D[אחזור ודירוג]\r\n  D --> E[ניסוח תשובה עם MERMAIDKEY42]\r\n```\r\n## תרשים מכירות רבעוני\r",
+          "dataset_id": "2990101865ed11f19d1425719d627201",
+          "doc_type": "",
+          "document_id": "2997e12665ed11f19d1425719d627201",
+          "document_name": "testdoc.md",
+          "id": "d5390f05f1d4b604",
+          "image_id": "",
+          "positions": [
+            [
+              4,
+              3,
+              3,
+              3,
+              3
+            ]
+          ],
+          "row_id": null,
+          "similarity": 0.17327280310161364,
+          "term_similarity": 0.0526315799134349,
+          "url": null,
+          "vector_similarity": 0.45476899054069736
+        },
+        {
+          "content": "# דוח בדיקה גנרי — מערכת RAGFLOW\r\n[כותרת-ראשית: מסמך-בדיקה-12345]\r\n## 1. רקע\r\nהמערכת מספקת שירותי אחזור מידע מבוסס הקשר. היא תומכת בעברית מלאה.\r\n## 2. ארכיטקטורה\r\nהרכיב המרכזי מחלק מסמכים למקטעים, מחשב embedding, ומאחסן באינדקס וקטורי.\r\n## 3. עיבוד מסמכים\r\nתהליך העיבוד כולל זיהוי פריסה, חילוץ טבלאות, ותיאור תמונות.\r\n## 4. הטמעות\r\nמודל ההטמעה הוא bge-m3 והוא רב-לשוני.\r\n## 5. אחזור\r\nבעת שאילתה, המערכת מאחזרת את המקטעים הרלוונטיים ביותר לפי דמיון וקטורי.\r\n## 6. דירוג-מחדש\r\nשכבת דירוג-מחדש משפרת את הדיוק על ידי מיון מקטעים מועמדים.\r",
+          "dataset_id": "2990101865ed11f19d1425719d627201",
+          "doc_type": "",
+          "document_id": "2997e12665ed11f19d1425719d627201",
+          "document_name": "testdoc.md",
+          "id": "3bcddc9021cf6224",
+          "image_id": "",
+          "positions": [
+            [
+              1,
+              0,
+              0,
+              0,
+              0
+            ]
+          ],
+          "row_id": null,
+          "similarity": 0.15517122498739777,
+          "term_similarity": 0.0526315799134349,
+          "url": null,
+          "vector_similarity": 0.39443039682664444
+        }
+      ],
+      "doc_aggs": [
+        {
+          "count": 3,
+          "doc_id": "2997e12665ed11f19d1425719d627201",
+          "doc_name": "testdoc.md"
+        }
+      ],
+      "total": 3
+    },
+    "session_id": "e38af734661b11f1ae84bd00f07a0952"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "question": "באיזה רבעון נרשם שיא המכירות ומה הערך שלו?",
+  "dataset_ids": [
+    "2990101865ed11f19d1425719d627201"
+  ],
+  "top_k": 1024,
+  "page_size": 10,
+  "similarity_threshold": 0.0,
+  "vector_similarity_weight": 0.3,
+  "rerank_id": "BAAI/bge-reranker-v2-m3@HuggingFace"
+}

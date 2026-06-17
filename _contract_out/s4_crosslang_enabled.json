@@ -1,0 +1,45 @@
+{
+  "code": 0,
+  "data": {
+    "chunks": [
+      {
+        "content": "\nType: bar chart  \nTitle: QUARTERLY SALES CHART260  \nAxes and labels: Q1, Q2, Q3, Q4 (quarters)  \nLegend: none  \nData: Q1 = 120 units, Q2 = 200 units, Q3 = 90 units, Q4 = 260 units. Peak quarter: Q4 = 260 units.  \nNotes and source: none",
+        "content_ltks": "type bar chart titl quarter sale chart260 ax and label q1 q2 q3 q4 quarter legend none data q1 120 unit q2 200 unit q3 90 unit q4 260 unit peak quarter q4 260 unit note and sourc none",
+        "dataset_id": "2990101865ed11f19d1425719d627201",
+        "doc_type_kwd": "image",
+        "document_id": "48f25b0e662011f1ae84bd00f07a0952",
+        "document_keyword": "testdoc_vision.pdf",
+        "id": "dd20ecf698db32ed",
+        "image_id": "2990101865ed11f19d1425719d627201-dd20ecf698db32ed",
+        "important_keywords": [
+          "Quarterly sales",
+          " Q4 peak",
+          " 260 units"
+        ],
+        "mom_id": "",
+        "positions": [
+          [
+            1,
+            131,
+            541,
+            240,
+            475
+          ]
+        ],
+        "row_id": null,
+        "similarity": 0.3446431375092769,
+        "tag_kwd": [],
+        "term_similarity": 0.12643678251288146,
+        "vector_similarity": 0.8537912991675328
+      }
+    ],
+    "doc_aggs": [
+      {
+        "count": 1,
+        "doc_id": "48f25b0e662011f1ae84bd00f07a0952",
+        "doc_name": "testdoc_vision.pdf"
+      }
+    ],
+    "total": 1
+  }
+}

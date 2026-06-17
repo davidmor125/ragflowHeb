@@ -1,0 +1,26 @@
+{
+  "big_md_kb": 198,
+  "big_md_wall_s": 60,
+  "big_md_server_s": 55.991,
+  "big_md_chunks": 394,
+  "mixed_batch_wall_s": 15,
+  "mixed_files": [
+    {
+      "name": "testdoc.md",
+      "server_s": 10.8731,
+      "chunks": 5
+    },
+    {
+      "name": "testdoc_vision.pdf",
+      "server_s": 10.2092,
+      "chunks": 2
+    },
+    {
+      "name": "small.txt",
+      "server_s": 4.38198,
+      "chunks": 2
+    }
+  ],
+  "note": "enrichment OFF in this dataset; enrichment cost measured separately in s2 (keywords ~1.0s/chunk, questions ~1.8s/chunk with gpt-oss:120b-cloud)",
+  "pdf_with_image_and_enrichment_s": 20.4
+}

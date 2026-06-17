@@ -1,0 +1,62 @@
+[
+  {
+    "n": 4,
+    "verdict": "correct",
+    "reason": "The answer accurately lists all the scope items described in the source text (customer, branch, table, menu management, reservation, online payment, n"
+  },
+  {
+    "n": 10,
+    "verdict": "partial",
+    "reason": "The answer reproduces several user stories that are present in the source text, but it also adds many additional stories and details that are not foun"
+  },
+  {
+    "n": 12,
+    "verdict": "partial",
+    "reason": "The response accurately lists all six UI/UX design goals as presented in the source text. However, it includes five Personas (יעל, דני, רוני, תמר, אור"
+  },
+  {
+    "n": 13,
+    "verdict": "correct",
+    "reason": "The response accurately reflects the flowchart described in the source snippet, listing all roles (לקוח, מלצר, מנהל סניף, מנהל רשת, אדמין) and the cor"
+  },
+  {
+    "n": 16,
+    "verdict": "partial",
+    "reason": "The system’s answer reproduces the flowchart from the source up to the Cache (Redis) node, which is correct. However, it continues with additional nod"
+  },
+  {
+    "n": 20,
+    "verdict": "partial",
+    "reason": "The response correctly lists most of the entities and attributes described in the source, but it adds extra columns (e.g., latitude and longitude for "
+  },
+  {
+    "n": 24,
+    "verdict": "wrong",
+    "reason": "The answer includes many parameters that are not present in the provided source excerpt (e.g., menuItemName, price, category, allergens, userId, role,"
+  },
+  {
+    "n": 29,
+    "verdict": "correct",
+    "reason": "The table provided by the system exactly reproduces the workflow steps, actors, inputs, actions, outputs, and next steps as described in the source te"
+  },
+  {
+    "n": 39,
+    "verdict": "correct",
+    "reason": "The system’s response reproduces the traceability matrix exactly as presented in the source text, listing all Test IDs with their corresponding requir"
+  },
+  {
+    "n": 44,
+    "verdict": "correct",
+    "reason": "The answer presents a complete table of all fields for each document and template (client, restaurant/branch, table, order, dish, payment, system user"
+  },
+  {
+    "n": 46,
+    "verdict": "correct",
+    "reason": "The system’s table exactly matches the source text, listing all events, their trigger conditions, and urgency levels as specified in the reference pas"
+  },
+  {
+    "n": 47,
+    "verdict": "partial",
+    "reason": "The answer provides a comprehensive list of notification templates with channels, recipients, message content and dynamic variables, which aligns with"
+  }
+]

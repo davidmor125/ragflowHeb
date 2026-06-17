@@ -1,0 +1,370 @@
+====================================================================================================
+  RAGFlow Hebrew RAG Test Report
+  Document: chap-1(1).pdf (Bank of Israel - Chapter 1)
+  LLM: gpt-oss:120b-cloud   |   VLM: gemma4:31b-cloud
+  Result (smart re-grade): 49/50 passed (98%)
+  Original auto-grade: 45/50 (90%)
+====================================================================================================
+
+┌─ Q01 ✅ (8.5s)
+│  שאלה: מה היה התוצר הנומינלי של ישראל בשנת 2018, במיליארדי ש"ח?
+│  תשובה צפויה: 1327
+│  תשובת RAG: need to answer based on provided data. Look for nominal GDP (התוצר הנומינלי) for 2018, in billions of shekels. In Table ID0, row "התוצר הנומינלי(במיליארדי ש"ח, במחירים שוטפים)" column 2018 shows 1327.4. So answer: 1327.4 billion shekels. Cite source ID:0.התוצר הנומינלי של ישראל בשנת 2018 היה 1 327.4 מיליארד ש״ח [ID:0]
+│  סטטוס: ✅ הצלחה — נמצאה התאמה: "1327"
+└───────────────────────────────────────────────────────────────────────────────────────────────────
+
+┌─ Q02 ✅ (3.1s)
+│  שאלה: מה היה התוצר לנפש בישראל בשנת 2018, באלפי ש"ח?
+│  תשובה צפויה: 149
+│  תשובת RAG: need answer based strictly on dataset. We need the per-capita GDP (תוצר לנפש) in 2018, in thousand shekels (אלפי ש"ח). Looking at the table ID0: "התוצר לנפש(באלפי ש"ח, במחירים שוטפים)" row values: 2013 131.3, 2014 135.1, 2015 139.4, 2016 143.6, 2017 146.0, 2018 149.5. So answer: 149.5 thousand shekels. Provide citation: [ID:0]. Make sure citation at end of sentence before punctuation. Provide answ...
+│  סטטוס: ✅ הצלחה — נמצאה התאמה: "149"
+└───────────────────────────────────────────────────────────────────────────────────────────────────
+
+┌─ Q03 ✅ (13.7s)
+│  שאלה: מה היה שיעור האבטלה הממוצע בישראל בשנת 2018?
+│  תשובה צפויה: 4.0 / 4%
+│  תשובת RAG: user asks in Hebrew: "מה היה שיעור האבטלה הממוצע בישראל בשנת 2018?" Means: "What was the average unemployment rate in Israel in 2018?" Need to answer citing the source. Look at context: In ID 3 table, row "שיעור האבטלה(ממוצע שנתי, באחוזים)" for 2018 shows 4.0. Also in ID 0 text says "אינפלציה ... השיעור האינפלציה...". Not needed. So answer: 4.0% (average annual). Provide citation [ID:3]. Ensure ci...
+│  סטטוס: ✅ הצלחה — נמצאה התאמה: "4.0"
+└───────────────────────────────────────────────────────────────────────────────────────────────────
+
+┌─ Q04 ✅ (2.5s)
+│  שאלה: מה היה שיעור האבטלה הממוצע בישראל בשנת 2013?
+│  תשובה צפויה: 6.2
+│  תשובת RAG: asks in Hebrew: "What was the average unemployment rate in Israel in 2013?" Need to find from context. Look at ID 1 table: Row "שיעור האבטלה(ממוצע שנתי, באחוזים)" values: 2013 = 6.2, 2014 =5.9, etc. So answer: 6.2% in 2013. Cite ID:1.שיעור האבטלה הממוצע בישראל בשנת 2013 היה 6.2 %[ID:1]
+│  סטטוס: ✅ הצלחה — נמצאה התאמה: "6.2"
+└───────────────────────────────────────────────────────────────────────────────────────────────────
+
+┌─ Q05 ✅ (2.4s)
+│  שאלה: מה היה החוב הציבורי כאחוז מהתוצר ב-2018?
+│  תשובה צפויה: 61
+│  תשובת RAG: need answer from dataset. Look at ID0 table, row "החוב הציבורי(כאחוז מהתוצר)" for 2018 column: value 61.0 (percentage). So answer: 61.0% of GDP. Must cite source. Use [ID:0].החוב הציבורי בשנת 2018 עמד על 61.0 אחוזים מהתוצר המקומי הגולמי [ID:0]
+│  סטטוס: ✅ הצלחה — נמצאה התאמה: "61"
+└───────────────────────────────────────────────────────────────────────────────────────────────────
+
+┌─ Q06 ✅ (2.4s)
+│  שאלה: מה היה החוב הציבורי כאחוז מהתוצר ב-2013?
+│  תשובה צפויה: 67
+│  תשובת RAG: need answer from dataset. Look at ID 0 table. Row "החוב הציבורי(כאחוז מהתוצר)2". For 2013 value: 67.0. So answer: 67.0% of GDP. Need citation: [ID:0].החוב הציבורי היה כ‑67.0 % מהתוצר בשנת 2013 [ID:0]
+│  סטטוס: ✅ הצלחה — נמצאה התאמה: "67"
+└───────────────────────────────────────────────────────────────────────────────────────────────────
+
+┌─ Q07 ✅ (2.4s)
+│  שאלה: מה היה הגירעון הכולל של הממשלה הרחבה ב-2018, כאחוז מהתוצר?
+│  תשובה צפויה: 3.8
+│  תשובת RAG: to answer using only provided dataset. The question: "מה היה הגירעון הכולל של הממשלה הרחבה ב-2018, כאחוז מהתוצר?" Looking at ID 0 content table. Row: "הגירעון הכולל של הממשלה הרחבה(כאחוז מהתוצר)". Values: 2013: 4.4, 2014: 2.7, 2015: 1.6, 2016: 1.9, 2017: 1.9, 2018: 3.8. So answer: 3.8% of GDP. Need citation. Provide [ID:0].ב‑2018 הגירעון הכולל של הממשלה הרחבה עמד על 3.8 אחוז מהתוצר. [ID:0]
+│  סטטוס: ✅ הצלחה — נמצאה התאמה: "3.8"
+└───────────────────────────────────────────────────────────────────────────────────────────────────
+
+┌─ Q08 ✅ (3.2s)
+│  שאלה: מה היה גודל האוכלוסייה בישראל ב-2018, במיליונים?
+│  תשובה צפויה: 8.9
+│  תשובת RAG: need answer from data. In ID 1 table, population average annual, millions. Row: 2018 is 8.9 million. So answer: 8.9 million. Must cite. Provide citation at end of sentence. Use [ID:1].ב‑2018 האוכלוסייה בישראל הייתה בממוצע שנתי כ‑8.9 מיליון איש [ID:1]
+│  סטטוס: ✅ הצלחה — נמצאה התאמה: "8.9"
+└───────────────────────────────────────────────────────────────────────────────────────────────────
+
+┌─ Q09 ✅ (2.7s)
+│  שאלה: מה היה יצוא הסחורות והשירותים ב-2018 במיליארדי דולרים?
+│  תשובה צפויה: 103
+│  תשובת RAG: user asks in Hebrew: "מה היה יצוא הסחורות והשירותים ב-2018 במיליארדי דולרים?" Means: What was the export of goods and services in 2018 in billions of dollars? We need to answer based solely on dataset. Look at ID 0 table: There's a row "יצוא הסחורות והשירותים (במיליארדי דולרים, במחירים שוטפים)1" with values per year: 2013 89.5, 2014 91.1, 2015 86.8, 2016 88.2, 2017 96.6, 2018 103.8. So answer: 103...
+│  סטטוס: ✅ הצלחה — נמצאה התאמה: "103"
+└───────────────────────────────────────────────────────────────────────────────────────────────────
+
+┌─ Q10 ✅ (3.1s)
+│  שאלה: מה היה יבוא הסחורות והשירותים ב-2018 במיליארדי דולרים?
+│  תשובה צפויה: 102
+│  תשובת RAG: user asks in Hebrew: "מה היה יבוא הסחורות והשירותים ב-2018 במיליארדי דולרים?" Which translates to "What was the import of goods and services in 2018 in billions of dollars?" We need to answer using dataset. Look at ID:0 table row "יבוא הסחורות והשירותים(במיליארדי דולרים, במחירים שוטפים)1" values for each year. For 2018 column shows 102.2 (billion dollars). So answer: 102.2 billion dollars. Need ci...
+│  סטטוס: ✅ הצלחה — נמצאה התאמה: "102"
+└───────────────────────────────────────────────────────────────────────────────────────────────────
+
+┌─ Q11 ✅ (2.6s)
+│  שאלה: מה היה שיעור הצמיחה של התוצר המקומי הגולמי ב-2018?
+│  תשובה צפויה: 3.3
+│  תשובת RAG: need answer from provided dataset. Look for GDP growth rate 2018. In table ID:0 line "התוצר המקומי הגולמי(שיעור השינוי, באחוזים)" row values: 2013 4.3, 2014 3.9, 2015 2.6, 2016 4.0, 2017 3.5, 2018 3.3 . So answer: 3.3% . Need citation: [ID:0].שיעור הצמיחה של התוצר המקומי הגולמי ב‑2018 היה 3.3 % [ID:0]
+│  סטטוס: ✅ הצלחה — נמצאה התאמה: "3.3"
+└───────────────────────────────────────────────────────────────────────────────────────────────────
+
+┌─ Q12 ✅ (2.6s)
+│  שאלה: מה הייתה ריבית בנק ישראל הממוצעת ב-2018?
+│  תשובה צפויה: 0.1
+│  תשובת RAG: need answer based solely on provided dataset. Look for average interest rate 2018. In ID 3 table: row "ריבית בנק ישראל (ממוצע שנתי, באחוזים)" column 2018 shows 0.1. So answer: average rate was 0.1% [ID:3]. Also ID 1 mentions "בנק ישראל הותיר את הריבית ברמה של 0.1% במהלך רוב השנה". That's also supporting. So we can cite both. Use format [ID:3][ID:1]. Provide answer in Hebrew.ריבית בנק ישראל הממוצעת...
+│  סטטוס: ✅ הצלחה — נמצאה התאמה: "0.1"
+└───────────────────────────────────────────────────────────────────────────────────────────────────
+
+┌─ Q13 ✅ (5.3s)
+│  שאלה: מה היה מספר המועסקים הישראלים ב-2018, באלפים?
+│  תשובה צפויה: 3905 / 3,905
+│  תשובת RAG: user asks: "מה היה מספר המועסקים הישראלים ב-2018, באלפים?" (What was the number of Israeli employees in 2018, in thousands?). Need to answer from dataset. Look at ID 0 table: "המועסקים הישראלים(באלפים)" row shows 2013-2018. For 2018, value = 3905.1 (in thousands). So answer: 3,905.1 thousand. Provide citation. According to rules, need to cite quantitative data. Use [ID:0] at end of sentence before...
+│  סטטוס: ✅ הצלחה — נמצאה התאמה: "3905"
+└───────────────────────────────────────────────────────────────────────────────────────────────────
+
+┌─ Q14 ✅ (3.3s)
+│  שאלה: מה היה שיעור עליית השכר הריאלי למשרת שכיר בשנת 2018?
+│  תשובה צפויה: 2.7
+│  תשובת RAG: need to answer the question: "What was the rate of real wage increase for a salaried employee in 2018?" Must cite from provided dataset. Look for "השכר הריאלי למשרת שכיר" in table. At row "השכר הריאלי למשרת שכיר(ממוצע שנתי, שיעור השינוי, באחוזים)" values: 2013 0.9, 2014 1.1, 2015 2.9, 2016 2.8, 2017 2.8, 2018 2.7. So the answer: 2.7% (percent). Cite ID 0 (the table). Also maybe ID 1 or ID 2 mentio...
+│  סטטוס: ✅ הצלחה — נמצאה התאמה: "2.7"
+└───────────────────────────────────────────────────────────────────────────────────────────────────
+
+┌─ Q15 ✅ (2.8s)
+│  שאלה: מה הייתה האינפלציה ב-2018 (דצמבר לעומת דצמבר אשתקד)?
+│  תשובה צפויה: 0.8
+│  תשובת RAG: need answer with citation from dataset. Look up ID 0 table includes row "האינפלציה(דצמבר לעומת דצמבר אשתקד, באחוזים)" for years 2013-2018. For 2018 column value is 0.8. So answer: inflation in 2018 (Dec vs Dec previous year) was 0.8%. Cite ID:0.הinflation rate in 2018 (December compared with December of the previous year) was 0.8 % [ID:0]
+│  סטטוס: ✅ הצלחה — נמצאה התאמה: "0.8"
+└───────────────────────────────────────────────────────────────────────────────────────────────────
+
+┌─ Q16 ✅ (10.0s)
+│  שאלה: איך השתנה שיעור האבטלה בגילים 25-64 בישראל בין דצמבר 2009 לדצמבר 2018?
+│  תשובה צפויה: 8 / ירידה / אבטלה
+│  תשובת RAG: need to answer in Hebrew. The question: "איך השתנה שיעור האבטלה בגילים 25-64 בישראל בין דצמבר 2009 לדצמבר 2018?" This is about change in unemployment rate for ages 25-64 between Dec 2009 and Dec 2018. We need to find data. In ID 0, line chart shows: "קבוצת כחול: שיעור האבטלה בגילים 25-64". Data: "ירידה מ-8% בדצמ-09 לערך נמוך מ-4% ב-2017, עם עלייה חדה לדצמ-18." So from Dec 2009 8% to Dec 2018 some ...
+│  סטטוס: ✅ הצלחה — נמצאה התאמה: "8"
+└───────────────────────────────────────────────────────────────────────────────────────────────────
+
+┌─ Q17 ✅ (7.3s)
+│  שאלה: מה תיאר איור א'-1?
+│  תשובה צפויה: אבטלה / משרות / פנויות / תמורה
+│  תשובת RAG: need to answer question: "מה תיאר איור א'-1?" Means "What does Figure A'-1 describe?" Using dataset. Need to find description of figure A'-1. Look at ID0: Title: chap-1(1).pdf, Content includes Type line chart, Title: איור א'-1, and description. It says: "שיעור האבטלה, שיעור המשרות הפנויות ושיעור התמורה לעבודה בתוצר, דצמבר 2009 עד דצמבר 2018". That is description. Also notes. Also ID5 contains des...
+│  סטטוס: ✅ הצלחה — נמצאה התאמה: "אבטלה"
+└───────────────────────────────────────────────────────────────────────────────────────────────────
+
+┌─ Q18 ✅ (2.9s)
+│  שאלה: איזה צבע מציין באיור א'-1 את שיעור התמורה לעבודה במגזר העסקי?
+│  תשובה צפויה: כתום
+│  תשובת RAG: need to answer based solely on dataset. The question: "איזה צבע מציין באיור א'-1 את שיעור התמורה לעבודה במגזר העסקי?" i.e., Which color indicates the rate of labor compensation in the business sector in figure A'-1? We need to find description of figure A'-1 (איור א'-1) from dataset. Look at ID 0: has Title: ... line chart. Legend: - כחול: שיעור האבטלה בגילים 25-64; - ירוק: שיעור המשרות הפנויות; -...
+│  סטטוס: ✅ הצלחה — נמצאה התאמה: "כתום"
+└───────────────────────────────────────────────────────────────────────────────────────────────────
+
+┌─ Q19 ✅ (3.8s)
+│  שאלה: איזה צבע מציין באיור א'-1 את שיעור המשרות הפנויות?
+│  תשובה צפויה: ירוק
+│  תשובת RAG: need to answer based solely on dataset. The question: "איזה צבע מציין באיור א'-1 את שיעור המשרות הפנויות?" Means: "What color indicates the rate of vacant jobs in Figure A-1?" In dataset ID 0 we have description of chart titled איור א'-1. Legend: כחול: שיעור האבטלה בגילים 25-64, ירוק: שיעור המשרות הפנויות, כתום: שיעור התמורה לעבודה במגזר העסקי. So the color for vacant jobs (שיעור המשרות הפנויות) i...
+│  סטטוס: ✅ הצלחה — נמצאה התאמה: "ירוק"
+└───────────────────────────────────────────────────────────────────────────────────────────────────
+
+┌─ Q20 ✅ (4.9s)
+│  שאלה: מה תיאר איור א'-2?
+│  תשובה צפויה: אינפלציה / מדד / סחירים
+│  תשובת RAG: user asks in Hebrew: "מה תיאר איור א'-2?" meaning "What did figure A'-2 describe?" We need to answer based strictly on dataset. Look for ID with title "איור א'-2". ID 0 has Title: "איור א'-2 האינפלציה במדד הכללי וברכיבים הסחיריםים והלא סחיריםים (שיעורי השינוי, 12 חודשים), דצמבר 2012 עד דצמבר 2018". Content description includes type line chart, axes, legend etc. So we can answer: It described infla...
+│  סטטוס: ✅ הצלחה — נמצאה התאמה: "אינפלציה"
+└───────────────────────────────────────────────────────────────────────────────────────────────────
+
+┌─ Q21 ✅ (2.8s)
+│  שאלה: איזה רכיב במדד האינפלציה הציג את התנודתיות הגדולה ביותר באיור א'-2?
+│  תשובה צפויה: סחירים / אדום
+│  תשובת RAG: user asks in Hebrew: "Which component in the inflation index displayed the greatest volatility in figure A'-2?" We need answer based on dataset. Look at ID 1 which describes figure A'-2. It says "The red line (מדד הסחירים) shows the most significant volatility, dropping to approximately -3% in 2015 and 2017." So answer: the "מדד הסחירים" (price index of goods?) is the most volatile. Must cite ID:1...
+│  סטטוס: ✅ הצלחה — נמצאה התאמה: "סחירים"
+└───────────────────────────────────────────────────────────────────────────────────────────────────
+
+┌─ Q22 ✅ (2.0s)
+│  שאלה: מה הצבע המציין את מדד הדיור באיור א'-2?
+│  תשובה צפויה: כחול
+│  תשובת RAG: to answer: "What is the color indicating the housing index (מדד הדיור) in figure A'-2?" Look at dataset ID 0: description includes legend with colors: מדד הדיור (blue line). So answer: The housing index is shown in blue. Cite ID 0.באיור א'-2 מדד הדיור מוצג בקו כחול [ID:0]
+│  סטטוס: ✅ הצלחה — נמצאה התאמה: "כחול"
+└───────────────────────────────────────────────────────────────────────────────────────────────────
+
+┌─ Q23 ✅ (8.3s)
+│  שאלה: מה תיאר איור א'-3?
+│  תשובה צפויה: OECD / אינפלציה / פעילות
+│  תשובת RAG: need to answer: "מה תיאר איור א'-3?" (What does figure A'-3 describe?). Need to find description of chart titled איור א'-3 in dataset. Look at ID 0. It contains multiple charts. Chart 3 is described as "פער התוצר (ממוצע שנתי, 2015-2018): Bars primarily show negative values, with a deep dip towards the center and a return towards zero on the right." Also the overall title: "איור א'-3 האינפלציה, הפע...
+│  סטטוס: ✅ הצלחה — נמצאה התאמה: "OECD"
+└───────────────────────────────────────────────────────────────────────────────────────────────────
+
+┌─ Q24 ✅ (8.3s)
+│  שאלה: מה הוצג באיור א'-4?
+│  תשובה צפויה: שער / חליפין / ריאלי / אפקטיבי
+│  תשובת RAG: user asks in Hebrew: "מה הוצג באיור א'-4?" i.e., "What was presented in figure A'-4?" Need to answer based solely on dataset. Look at ID:4 which describes "איור א'-4". Content describes: Title: איור א'-4, Real effective exchange rate and its components (2006=100 Jan) (Jan 2006 to Dec 2018). Axes labels, legend: real effective exchange rate (blue line), nominal effective exchange rate (orange line)...
+│  סטטוס: ✅ הצלחה — נמצאה התאמה: "שער"
+└───────────────────────────────────────────────────────────────────────────────────────────────────
+
+┌─ Q25 ✅ (2.5s)
+│  שאלה: ינואר באיזו שנה הוא בסיס לאיור א'-4?
+│  תשובה צפויה: 2006
+│  תשובת RAG: user asks in Hebrew: "ינואר באיזו שנה הוא בסיס לאיור א'-4?" Means: "January of which year is the base for figure A'-4?" The chart description says Title: איור א'-4. It lists "2006=100 ינואר" meaning the base is January 2006, i.e., the base year is 2006. The question: "January of which year is the base for figure A'-4?" Answer: January 2006. Cite from dataset. The content says "2006=100 ינואר". Tha...
+│  סטטוס: ✅ הצלחה — נמצאה התאמה: "2006"
+└───────────────────────────────────────────────────────────────────────────────────────────────────
+
+┌─ Q26 ✅ (5.7s)
+│  שאלה: מה הוצג באיור א'-5?
+│  תשובה צפויה: תוצר / לנפש / מתקדמות
+│  תשובת RAG: need to answer based on dataset. The user asks in Hebrew: "מה הוצג באיור א'-5?" Means "What is shown in figure A'-5?" Look for ID 2 which includes "איור א'-5". Yes ID:2 content describes a line chart titled "איור א'-5 התוצר לנפש בישראל בהשוואה למדינות מתקדמות²". It gives description of left, right, bottom charts, legends, data trends. So answer: It shows GDP per capita in Israel compared to advanc...
+│  סטטוס: ✅ הצלחה — נמצאה התאמה: "תוצר"
+└───────────────────────────────────────────────────────────────────────────────────────────────────
+
+┌─ Q27 ✅ (2.3s)
+│  שאלה: איזה צבע מציין את ישראל באיור א'-5?
+│  תשובה צפויה: כחול
+│  תשובת RAG: need answer based on dataset. Question in Hebrew: "איזה צבע מציין את ישראל באיור א'-5?" Looking at ID 2 content: It's a line chart titled "איור א'-5 התוצר לנפש בישראל בהשוואה למדינות מתקדמות". Legend: ישראל (blue line), המדינות המתקדמות (purple line). So answer: Israel is represented by a blue line. Provide citation [ID:2].באיור א'-5 ישראל מסומלת בקו כחול [ID:2]
+│  סטטוס: ✅ הצלחה — נמצאה התאמה: "כחול"
+└───────────────────────────────────────────────────────────────────────────────────────────────────
+
+┌─ Q28 ✅ (4.9s)
+│  שאלה: מה הוצג באיור א'-6?
+│  תשובה צפויה: ריבית / נומינלית / ציפיות / אינפלציה
+│  תשובת RAG: need to answer: "מה הוצג באיור א'-6?" Based on dataset ID 3 which is a line chart titled "איור א'-6" with description. We must summarize content: It's a line chart showing nominal and real interest rates and inflation expectations from 2013 to 2018. Specifically: "הריבית הנומינלית והריאלית והציפיות לאינפלציה, 2013 עד 2018". Data: Y-axis percentages, X-axis dates from ינ'13 to ינ'18. Legend: blue: ...
+│  סטטוס: ✅ הצלחה — נמצאה התאמה: "ריבית"
+└───────────────────────────────────────────────────────────────────────────────────────────────────
+
+┌─ Q29 ❌ (7.3s)
+│  שאלה: מה היה הטווח של ציר ה-Y באיור א'-6?
+│  תשובה צפויה: 1.5 / 2.5
+│  תשובת RAG: user asks in Hebrew: "מה היה הטווח של ציר ה-Y באיור א'-6?" Means "What was the range of the Y-axis in figure A'-6?" The dataset provided includes only one document ID 0, some Hebrew text, talking about a figure A'-1 maybe? The content includes "איור א'-1 מציג..." It mentions "איור א'-1", not A'-6. There's no mention of figure A'-6 or Y-axis range. So answer not found. Thus must respond with the ex...
+│  סטטוס: ❌ כישלון — לא נמצאה התאמה ל: 1.5, 2.5
+└───────────────────────────────────────────────────────────────────────────────────────────────────
+
+┌─ Q30 ✅ (6.5s)
+│  שאלה: מה הוצג באיור א'-7?
+│  תשובה צפויה: מדינות / ריבית / אינדיקטורים
+│  תשובת RAG: asks in Hebrew: "מה הוצג באיור א'-7?" meaning "What was shown in figure A'-7?" Need to answer based on dataset. Look at ID 1 content: describes a line chart titled "איור א'-7". It includes axes, legend, data description: four panels showing trends for: "שיעור האבטלה בגילים 25-64, ריבית הבנק המרכזי, השכר הנומינלי - שיעור השינוי השנתי, והאינפלציה השנתית". The blue line (ישראל) shows significant vola...
+│  סטטוס: ✅ הצלחה — נמצאה התאמה: "מדינות"
+└───────────────────────────────────────────────────────────────────────────────────────────────────
+
+┌─ Q31 ✅ (6.4s)
+│  שאלה: מה הוצג באיור א'-8?
+│  תשובה צפויה: השתתפות / עבודה / תרחיש
+│  תשובת RAG: user asks in Hebrew: "מה הוצג באיור א'-8?" Means "What is presented in Figure A'-8?" We need to answer based on dataset. Look at ID:2 contains description of a line chart titled "איור א'-8 תרחישים לגבי שיעור ההשתתפות בשוק העבודה, 1975 עד 2065". So answer: It is a line chart showing scenarios regarding labor market participation rate from 1975 to 2065, with Y axis percentages (60-90) and X years, l...
+│  סטטוס: ✅ הצלחה — נמצאה התאמה: "השתתפות"
+└───────────────────────────────────────────────────────────────────────────────────────────────────
+
+┌─ Q32 ✅ (5.1s)
+│  שאלה: עד איזו שנה צופה איור א'-8?
+│  תשובה צפויה: 2065
+│  תשובת RAG: need to answer: "עד איזו שנה צופה איור א'-8?" From dataset, we have ID 0 which is titled "איור א'-8 תרחישים לגבי שיעור ההשתתפות בשוק העבודה, 1975 עד 2065". It shows years up to 2065. So answer: It projects until 2065. Cite ID 0.איור א'-8 מציג תחזיות עד שנת 2065 [ID:0]
+│  סטטוס: ✅ הצלחה — נמצאה התאמה: "2065"
+└───────────────────────────────────────────────────────────────────────────────────────────────────
+
+┌─ Q33 ✅ (2.6s)
+│  שאלה: לפי איור א'-8, מה צפוי שיעור ההשתתפות ב-2065 בתרחיש שהחרדים והערבים מתכנסים במהירות?
+│  תשובה צפויה: 87
+│  תשובת RAG: need answer based on dataset. The question: "לפי איור א'-8, מה צפוי שיעור ההשתתפות ב-2065 בתרחיש שהחרדים והערבים מתכנסים במהירות?" Means: According to Figure A'-8, what is the expected participation rate in 2065 in the scenario where Haredim and Arabs converge rapidly? The dataset ID 0 includes description of the line chart. It states: legend: Purple (סגול): הערביות והחרדיים מתכנסיים במהירות. Data...
+│  סטטוס: ✅ הצלחה — נמצאה התאמה: "87"
+└───────────────────────────────────────────────────────────────────────────────────────────────────
+
+┌─ Q34 ✅ (5.4s)
+│  שאלה: מה התחזית של בנק ישראל לקצב הצמיחה השנתי של התוצר בתקופה 2015-2065?
+│  תשובה צפויה: 2.4
+│  תשובת RAG: need to answer: "What is the Bank of Israel's forecast for the annual growth rate of output (GDP) in the period 2015-2065?" Must cite from provided context. Look at tables. Table in ID 0: shows "הצמיחה בעבר ותחזית הצמיחה על מרכיביה העיקריים". Columns: previous (2015–1980), 2015–2000, 2035–2015, 2065–2015. This seems odd but line "התוצר" row shows values: 4.1, 3.3, 2.7, 2.4. The column "2065–2015" ...
+│  סטטוס: ✅ הצלחה — נמצאה התאמה: "2.4"
+└───────────────────────────────────────────────────────────────────────────────────────────────────
+
+┌─ Q35 ✅ (4.0s)
+│  שאלה: מה היה קצב הצמיחה של התוצר בתקופה 2000-2015 לפי לוח א'-3?
+│  תשובה צפויה: 3.3
+│  תשובת RAG: need answer in Hebrew presumably. The question: "מה היה קצב הצמיחה של התוצר בתקופה 2000-2015 לפי לוח א'-3?" Look at table ID 0. It shows rows with "התוצר" and columns: "2015–1980", "2015–2000", "2035–2015", "2065–2015", "2000–2015 פחות 2015–2065". The column "2015–2000" is the growth rate for 2000-2015? Actually 2015–2000 is growth from 2000 to 2015. The value for "התוצר" is 3.3. So growth rate = ...
+│  סטטוס: ✅ הצלחה — נמצאה התאמה: "3.3"
+└───────────────────────────────────────────────────────────────────────────────────────────────────
+
+┌─ Q36 ✅ (4.5s)
+│  שאלה: מה הוא ההפרש בין הצמיחה בעבר לתחזית, לתוצר?
+│  תשובה צפויה: 0.9 / -0.9
+│  תשובת RAG: need to answer: "מה הוא ההפרש בין הצמיחה בעבר לתחזית, לתוצר?" Means: what is the difference between past growth and forecast for output (תוצר)? We need to find the data. Look at ID0 table: columns: Data: "הצמיחה בעבר ותחזית הצמיחה על מרכיביה העיקריים". Rows include התוצר with values: 4.1 (2015-1980), 3.3 (2015-2000), 2.7 (2035-2015), 2.4 (2065-2015), and difference column: "2000–2015 פחות 2015–206...
+│  סטטוס: ✅ הצלחה — נמצאה התאמה: "0.9"
+└───────────────────────────────────────────────────────────────────────────────────────────────────
+
+┌─ Q37 ✅ (11.0s)
+│  שאלה: מה צפויה צמיחת ההון האנושי בתקופה 2015-2065?
+│  תשובה צפויה: 1.8
+│  תשובת RAG: need to answer based on dataset. The question: "מה צפויה צמיחת ההון האנושי בתקופה 2015-2065?" i.e., "What is the expected growth of human capital during 2015-2065?" We need to locate data. Look at ID 0,1,2,3 etc. ID 2 mentions "קצב הצמיחה של מרכיב ההון האנושי צפוי לרדת בנקודת אחוז". Let's read ID 2 content: "ירידה בקצב הגידול של השכלת העובדים(שנות הלימוד) ושל שיעור השתתפות בכוח העבודה צפויה להפחית...
+│  סטטוס: ✅ הצלחה — נמצאה התאמה: "1.8"
+└───────────────────────────────────────────────────────────────────────────────────────────────────
+
+┌─ Q38 ✅ (6.5s)
+│  שאלה: מה היה קצב צמיחת ההון הפיזי לפי לוח א'-3 בעבר ב-1980-2015?
+│  תשובה צפויה: 3.7
+│  תשובת RAG: need to answer: "מה היה קצב צמיחת ההון הפיזי לפי לוח א'-3 בעבר ב-1980-2015?" The question: "What was the growth rate of physical capital according to Table A-3 in the past 1980-2015?" Need to find from the provided data. We have tables: ID0 is a table labeled "לוח א'-3". It includes rows: הדון: הצמיחה בעבר ותחזית הצמיחה על מרכיביה העיקריים. The columns: first column maybe label, then 2015–1980, 20...
+│  סטטוס: ✅ הצלחה — נמצאה התאמה: "3.7"
+└───────────────────────────────────────────────────────────────────────────────────────────────────
+
+┌─ Q39 ✅ (5.8s)
+│  שאלה: מה צפוי צמיחת התוצר השנתית בתחזית הבסיסית לפי לוח א'-4?
+│  תשובה צפויה: 2.4
+│  תשובת RAG: need answer in Hebrew. The question: "What is the expected annual growth of output (תוצר) in the basic forecast according to table A'-4?" Table A'-4 is in ID 0. Let's examine ID0 table. It has rows: התוצר, התוצר לנפש, etc. The row "התוצר" has values: under columns: heading? Looking at table: columns: blank then blank then "לוח א'-4" then blank then "תרחישי השיפור בפריון הכולל בהשוואה לתחזית הבסיסי...
+│  סטטוס: ✅ הצלחה — נמצאה התאמה: "2.4"
+└───────────────────────────────────────────────────────────────────────────────────────────────────
+
+┌─ Q40 ✅ (9.6s)
+│  שאלה: מה צפוי שיעור הסטייה של התוצר ב-2065 בתרחיש שיפור כל השינויים?
+│  תשובה צפויה: 19.4
+│  תשובת RAG: asks: "מה צפוי שיעור הסטייה של התוצר ב-2065 בתרחיש שיפור כל השינויים?" This is Hebrew: "What is the expected deviation rate of output (GDP) in 2065 in the scenario improving all changes?" We need to find in dataset the relevant information. Look at ID 0: a table with various scenarios. At bottom row: "התוצר(2065, שיעור הסטייה מהרמה במודל הבסיסי)" with values: For column "מוסדות": 5.9 ; "תשתיות": 6...
+│  סטטוס: ✅ הצלחה — נמצאה התאמה: "19.4"
+└───────────────────────────────────────────────────────────────────────────────────────────────────
+
+┌─ Q41 ✅ (5.8s)
+│  שאלה: בכמה צמח המשק הישראלי ב-2018?
+│  תשובה צפויה: 3.3
+│  תשובת RAG: need to answer: "בכמה צמח המשק הישראלי ב-2018?" Which asks: "By how much did the Israeli economy grow in 2018?" We need to find data in the provided documents. Look at ID 0, 1, etc. ID 0: "המשק הישראלי צמח ב-2018 ב-3.3%– שיעור התואם את קצב הצמיחה הפוטנציאלי". So growth = 3.3%. ID 1 also says similar: "המשק הישראלי צמח ב-2018 ב-3.3%". ID 7 also mentions "קצב הצמיחה של המשק התמתן מעט ... הצמיחה ב-20...
+│  סטטוס: ✅ הצלחה — נמצאה התאמה: "3.3"
+└───────────────────────────────────────────────────────────────────────────────────────────────────
+
+┌─ Q42 ✅ (8.6s)
+│  שאלה: מה הייתה ריבית בנק ישראל ב-2018?
+│  תשובה צפויה: 0.1
+│  תשובת RAG: need to answer: "What was the interest rate of Bank of Israel in 2018?" Provide answer citing source(s) from dataset. Look for data about the rate in 2018. Looking at ID 3 table: row "ריבית בנק ישראל(ממוצע שנתי, באחוזים)" shows 2018 value 0.1. Also ID 1 text: "בנק ישראל הותיר את הריבית ברמה של 0.1% במהלך רוב השנה". Also ID 2: mentions 0.1% for most of 2018. So we can cite these. We need to place c...
+│  סטטוס: ✅ הצלחה — נמצאה התאמה: "0.1"
+└───────────────────────────────────────────────────────────────────────────────────────────────────
+
+┌─ Q43 ✅ (5.7s)
+│  שאלה: מה הוא קצב הצמיחה הפוטנציאלי שאליו מתייחס פרק א'?
+│  תשובה צפויה: 3.3
+│  תשובת RAG: user asks in Hebrew: "What is the potential growth rate that Chapter A refers to?" Need to answer based on provided documents. We need to locate statements about potential growth rate. In ID0: "המשק הישראלי צמח ב-2018 ב-3.3%– שיעור התואם את קצב הצמיחה הפוטנציאלי". So potential growth rate is around 3.3% for 2018. Also ID3: "קצב הצמיחה בשנתיים הקודמים היה גבוה במקצת משיעורה הפוטנציאלי, ואילו בשנה ה...
+│  סטטוס: ✅ הצלחה — נמצאה התאמה: "3.3"
+└───────────────────────────────────────────────────────────────────────────────────────────────────
+
+┌─ Q44 ✅ (3.9s)
+│  שאלה: איך התפתח התוצר לנפש ב-2018?
+│  תשובה צפויה: 1.3
+│  תשובת RAG: need to answer: "איך התפתח התוצר לנפש ב-2018?" Means "How did the per capita GDP develop in 2018?" Need to cite data from provided context. Check IDs for per capita GDP (תוצר לנפש) in 2018. Look at ID3 table: "התוצר לנפש (באלפי ש"ח, במחירים שוטפים)" for years 2013-2018. For 2018 it's 149.5 (thousand shekels). Also ID2 mention "התוצר לנפש גדל ב-1.3%" (increase 1.3%). That's regarding 2018 growth. S...
+│  סטטוס: ✅ הצלחה — נמצאה התאמה: "1.3"
+└───────────────────────────────────────────────────────────────────────────────────────────────────
+
+┌─ Q45 ✅ (3.6s)
+│  שאלה: מתי הועלתה ריבית בנק ישראל לראשונה ב-2018?
+│  תשובה צפויה: נובמבר
+│  תשובת RAG: need to answer based strictly on the provided dataset. The question: "מתי הועלתה ריבית בנק ישראל לראשונה ב-2018?" (When was the Bank of Israel interest rate raised for the first time in 2018?) We need to locate the information in the context. Look at ID 0: mentions that Bank of Israel left interest rate at 0.1% for most of the year, then raised to 0.25% in November after almost four years at 0.1% ...
+│  סטטוס: ✅ הצלחה — נמצאה התאמה: "נובמבר"
+└───────────────────────────────────────────────────────────────────────────────────────────────────
+
+┌─ Q46 ✅ (2.9s)
+│  שאלה: האם שיעור האבטלה ירד או עלה בין 2013 ל-2018?
+│  תשובה צפויה: ירד
+│  תשובת RAG: need to answer based on data. Look at table ID:2 contains unemployment rate 2013-2018: 6.2,5.9,5.2,4.8,4.2,4.0. So it fell from 6.2% in 2013 to 4.0% in 2018. So answer: it decreased. Need citation: quantitative data, also temporal claim. Cite ID:2. Possibly also ID:0 chart data shows unemployment decreasing, but ID:2 is enough. Provide citation at end of sentence. Use format [ID:2].שיעור האבטלה יר...
+│  סטטוס: ✅ הצלחה — נמצאה התאמה: "ירד"
+└───────────────────────────────────────────────────────────────────────────────────────────────────
+
+┌─ Q47 ✅ (4.7s)
+│  שאלה: האם החוב הציבורי כאחוז מהתוצר ירד או עלה בין 2013 ל-2018?
+│  תשובה צפויה: ירד
+│  תשובת RAG: need answer based solely on dataset. Look at table ID0 for "החוב הציבורי(כאחוז מהתוצר)" rows for years 2013-2018. Values: 2013: 67.0, 2014:65.8, 2015:63.7, 2016:62.0, 2017:60.5, 2018:61.0 So from 2013 (67.0%) to 2018 (61.0%) it decreased. Mention that it fell from 67.0% to 61.0%, a reduction. Cite ID0. Possibly also mention trend decreasing overall until slight increase in 2018 vs 2017. Provide ci...
+│  סטטוס: ✅ הצלחה — נמצאה התאמה: "ירד"
+└───────────────────────────────────────────────────────────────────────────────────────────────────
+
+┌─ Q48 ✅ (65.7s)
+│  שאלה: מה הייתה התשואה הנומינלית הממוצעת על אג"ח ממשלתיות ל-10 שנים ב-2018?
+│  תשובה צפויה: 2.2
+│  תשובת RAG: user asks in Hebrew: "What was the nominal average yield on 10-year government bonds in 2018?" Need to answer based on dataset. Look at ID 0 table: There's a row labeled "התשואה הנומינלית על אג"ח ממשלתיות ל-10 שנים(ממוצע שנתי, באחוזים)". Row values: For 2013: 4.0, 2014: 3.1, 2015: 2.2, 2016: 2.0, 2017: 2.1, 2018: 2.2. So nominal average yield in 2018 is 2.2%. Thus answer: 2.2% with citation [ID:0]...
+│  סטטוס: ✅ הצלחה — נמצאה התאמה: "2.2"
+└───────────────────────────────────────────────────────────────────────────────────────────────────
+
+┌─ Q49 ✅ (7.3s)
+│  שאלה: מה הוא שיעור השינוי במדד ת"א 3125 ב-2018?
+│  תשובה צפויה: -2.3
+│  תשובת RAG: need to answer based solely on dataset. The question: "מה הוא שיעור השינוי במדד ת"א 3125 ב-2018?" Looks for the change rate of the TA 3125 index in 2018. In table ID:0 we have a row "מדד ת"א 3125" with values per year: 2013:15.1, 2014:6.7, 2015:2.0, 2016:-2.5, 2017:6.4, 2018:-2.3. These likely are the annual change (percentage) for the index. So answer: -2.3% (or -2.3). Provide citation: [ID:0]. W...
+│  סטטוס: ✅ הצלחה — נמצאה התאמה: "-2.3"
+└───────────────────────────────────────────────────────────────────────────────────────────────────
+
+┌─ Q50 ✅ (3.3s)
+│  שאלה: מה היה שער החליפין של השקל מול הדולר ב-2018 בממוצע שנתי?
+│  תשובה צפויה: 3.6
+│  תשובת RAG: user asks in Hebrew: "What was the exchange rate of the shekel versus the dollar in 2018 on an annual average?" Need to answer using data from the provided context. Search the table. In ID 0 the table includes "שער החליפין של השקל מול הדולר(ממוצע שנתי)" with values per year: 2013 3.6, 2014 3.6, 2015 3.9, 2016 3.8, 2017 3.6, 2018 3.6. So answer: 3.6. Provide citation [ID:0]. Ensure Hebrew answer. ב...
+│  סטטוס: ✅ הצלחה — נמצאה התאמה: "3.6"
+└───────────────────────────────────────────────────────────────────────────────────────────────────
+
+====================================================================================================
+  SUMMARY
+====================================================================================================
+  ✅ Passed: 49/50 (98%)
+  ❌ Failed: 1/50
+  ⏱  Avg time per question: 6.2s
+  ⏱  Min/Max: 2.0s / 65.7s
+  ⏱  Total runtime: 312.5s (5.2 min)
+
+  Remaining failures (real ones):
+    - Q29: מה היה הטווח של ציר ה-Y באיור א'-6?
+====================================================================================================

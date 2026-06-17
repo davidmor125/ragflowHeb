@@ -1,0 +1,66 @@
+{
+  "code": 0,
+  "data": [
+    {
+      "chunk_method": "naive",
+      "content_hash": "0501231b6a941390b3453a666f00baf0",
+      "created_by": "2507563a42bd11f1a6bba9e87ac7a32c",
+      "dataset_id": "2990101865ed11f19d1425719d627201",
+      "id": "7f276ce0662611f1ae84bd00f07a0952",
+      "location": "testdoc.md",
+      "name": "testdoc.md",
+      "parser_config": {
+        "auto_keywords": 3,
+        "auto_questions": 2,
+        "children_delimiter": "",
+        "chunk_token_num": 512,
+        "delimiter": "\\n",
+        "ext": {},
+        "filename_embd_weight": 0.1,
+        "graphrag": {
+          "community": false,
+          "entity_types": [
+            "organization",
+            "person",
+            "geo",
+            "event",
+            "category"
+          ],
+          "method": "light",
+          "resolution": false,
+          "use_graphrag": false
+        },
+        "html4excel": false,
+        "image_context_size": 0,
+        "layout_recognize": "DeepDOC",
+        "llm_id": "gpt-oss:120b-cloud@Ollama",
+        "pages": null,
+        "parent_child": {
+          "children_delimiter": "\\n",
+          "use_parent_child": false
+        },
+        "raptor": {
+          "auto_disable_for_structured_data": true,
+          "ext": {},
+          "max_cluster": 64,
+          "max_token": 256,
+          "prompt": "Please summarize the following paragraphs. Be careful with the numbers, do not make things up. Paragraphs as following:\n      {cluster_content}\nThe above is the content you need to summarize.",
+          "random_seed": 0,
+          "threshold": 0.1,
+          "use_raptor": false
+        },
+        "table_context_size": 0,
+        "tag_kb_ids": [],
+        "task_page_size": null,
+        "topn_tags": 1
+      },
+      "pipeline_id": null,
+      "run": "UNSTART",
+      "size": 3145,
+      "source_type": "local",
+      "suffix": "md",
+      "thumbnail": "",
+      "type": "doc"
+    }
+  ]
+}

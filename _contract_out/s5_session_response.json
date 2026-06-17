@@ -1,0 +1,21 @@
+{
+  "code": 0,
+  "data": {
+    "chat_id": "e382caaa661b11f1ae84bd00f07a0952",
+    "create_date": "2026-06-12T13:02:19",
+    "create_time": 1781240539291,
+    "id": "e38af734661b11f1ae84bd00f07a0952",
+    "messages": [
+      {
+        "content": "Hi! I'm your assistant. What can I do for you?",
+        "role": "assistant"
+      }
+    ],
+    "name": "contract_session_1781240539",
+    "reference": [],
+    "update_date": "2026-06-12T13:02:19",
+    "update_time": 1781240539291,
+    "user_id": "2507563a42bd11f1a6bba9e87ac7a32c"
+  },
+  "message": "success"
+}

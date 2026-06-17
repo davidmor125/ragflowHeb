@@ -1,0 +1,125 @@
+  m = re.search("cites=[\d+,]*", object["citedby_url"])
+ERROR:root:LiteLLMBase async completion
+Traceback (most recent call last):
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/llms/ollama/chat/transformation.py", line 489, in chunk_parser
+    tool_calls = chunk["message"].get("tool_calls")
+                 ~~~~~^^^^^^^^^^^
+KeyError: 'message'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/litellm_core_utils/streaming_handler.py", line 2017, in __anext__
+    async for chunk in self.completion_stream:  # type: ignore[union-attr]
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/llms/base_llm/base_model_iterator.py", line 189, in __anext__
+    chunk = self._handle_string_chunk(str_line=str_line)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/llms/base_llm/base_model_iterator.py", line 116, in _handle_string_chunk
+    return self.chunk_parser(chunk=stripped_json_chunk)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/llms/ollama/chat/transformation.py", line 572, in chunk_parser
+    raise OllamaError(
+litellm.llms.ollama.common_utils.OllamaError: KeyError: 'message', Got unexpected response from Ollama: {'error': 'Internal Server Error (ref: 58b74b4b-2ccc-4c45-afa0-c308a738e35f)'}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/ragflow/rag/llm/chat_model.py", line 1609, in async_chat_streamly_with_tools
+    async for resp in response:
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/litellm_core_utils/streaming_handler.py", line 2236, in __anext__
+    self._handle_stream_fallback_error(e)
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/litellm_core_utils/streaming_handler.py", line 2302, in _handle_stream_fallback_error
+    raise mapped_exception
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/litellm_core_utils/streaming_handler.py", line 2256, in _handle_stream_fallback_error
+    mapped_exception = exception_type(
+                       ^^^^^^^^^^^^^^^
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2456, in exception_type
+    raise e
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2425, in exception_type
+    raise APIConnectionError(
+litellm.exceptions.APIConnectionError: litellm.APIConnectionError: Ollama_chatException - KeyError: 'message', Got unexpected response from Ollama: {'error': 'Internal Server Error (ref: 58b74b4b-2ccc-4c45-afa0-c308a738e35f)'}
+ERROR:root:async_chat_streamly giving up: **ERROR**: AUTH_ERROR - litellm.APIConnectionError: Ollama_chatException - KeyError: 'message', Got unexpected response from Ollama: {'error': 'Internal Server Error (ref: 58b74b4b-2ccc-4c45-afa0-c308a738e35f)'}
+ERROR:root:LiteLLMBase async completion
+Traceback (most recent call last):
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/llms/ollama/chat/transformation.py", line 489, in chunk_parser
+    tool_calls = chunk["message"].get("tool_calls")
+                 ~~~~~^^^^^^^^^^^
+KeyError: 'message'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/litellm_core_utils/streaming_handler.py", line 2017, in __anext__
+    async for chunk in self.completion_stream:  # type: ignore[union-attr]
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/llms/base_llm/base_model_iterator.py", line 189, in __anext__
+    chunk = self._handle_string_chunk(str_line=str_line)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/llms/base_llm/base_model_iterator.py", line 116, in _handle_string_chunk
+    return self.chunk_parser(chunk=stripped_json_chunk)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/llms/ollama/chat/transformation.py", line 572, in chunk_parser
+    raise OllamaError(
+litellm.llms.ollama.common_utils.OllamaError: KeyError: 'message', Got unexpected response from Ollama: {'error': 'Internal Server Error (ref: 53710b11-c169-4b11-bce5-b11909e73d21)'}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/ragflow/rag/llm/chat_model.py", line 1609, in async_chat_streamly_with_tools
+    async for resp in response:
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/litellm_core_utils/streaming_handler.py", line 2236, in __anext__
+    self._handle_stream_fallback_error(e)
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/litellm_core_utils/streaming_handler.py", line 2302, in _handle_stream_fallback_error
+    raise mapped_exception
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/litellm_core_utils/streaming_handler.py", line 2256, in _handle_stream_fallback_error
+    mapped_exception = exception_type(
+                       ^^^^^^^^^^^^^^^
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2456, in exception_type
+    raise e
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2425, in exception_type
+    raise APIConnectionError(
+litellm.exceptions.APIConnectionError: litellm.APIConnectionError: Ollama_chatException - KeyError: 'message', Got unexpected response from Ollama: {'error': 'Internal Server Error (ref: 53710b11-c169-4b11-bce5-b11909e73d21)'}
+ERROR:root:async_chat_streamly giving up: **ERROR**: AUTH_ERROR - litellm.APIConnectionError: Ollama_chatException - KeyError: 'message', Got unexpected response from Ollama: {'error': 'Internal Server Error (ref: 53710b11-c169-4b11-bce5-b11909e73d21)'}
+Re-running 30 previously-failed questions through v1 (vec_weight=0.3)
+
+[ 1/30] ❌ 1/8kw   62s  proc=20071  flipped=0/1  ETA=30m
+[ 2/30] ✅ 7/8kw   20s  proc=20064  flipped=1/2 ★  ETA=19m
+[ 3/30] ✅ 4/8kw   24s  proc=78634  flipped=2/3 ★  ETA=16m
+[ 4/30] ❌ 0/8kw   77s  proc=90398  flipped=2/4  ETA=20m
+[ 5/30] ❌ 0/8kw   79s  proc=36967  flipped=2/5  ETA=22m
+[ 6/30] ✅ 4/8kw   23s  proc=34838  flipped=3/6 ★  ETA=19m
+[ 7/30] ✅ 3/8kw   70s  proc=37340  flipped=4/7 ★  ETA=19m
+[ 8/30] ✅ 8/8kw   73s  proc=78686  flipped=5/8 ★  ETA=20m
+[ 9/30] ✅ 7/8kw   71s  proc=78686  flipped=6/9 ★  ETA=19m
+[10/30] ✅ 4/8kw   46s  proc=83091  flipped=7/10 ★  ETA=18m
+[11/30] ❌ 1/8kw   84s  proc=21801  flipped=7/11  ETA=18m
+[12/30] ❌ 1/8kw   23s  proc=32904  flipped=7/12  ETA=16m
+[13/30] ❌ 1/8kw   32s  proc=32904  flipped=7/13  ETA=15m
+
+
+
+
+[14/30] ❌ 1/8kw    2s  proc= 7528  flipped=7/14  ETA=13m
+[15/30] ❌ 0/4kw   84s  proc=32716  flipped=7/15  ETA=13m
+
+
+
+
+[16/30] ❌ 0/8kw    2s  proc= 5088  flipped=7/16  ETA=11m
+[17/30] ❌ 1/8kw   35s  proc=12119  flipped=7/17  ETA=10m
+[18/30] ❌ 0/8kw    1s  proc=14940  flipped=7/18  ETA=9m
+[19/30] ❌ 0/8kw   78s  proc=91018  flipped=7/19  ETA=9m
+[20/30] ✅ 8/8kw   22s  proc=31097  flipped=8/20 ★  ETA=8m
+[21/30] ✅ 2/8kw   23s  proc=66577  flipped=9/21 ★  ETA=7m
+[22/30] ✅ 3/8kw   20s  proc=66577  flipped=10/22 ★  ETA=6m
+[23/30] ❌ 1/8kw   82s  proc=66577  flipped=10/23  ETA=5m
+[24/30] ❌ 0/8kw   81s  proc=66577  flipped=10/24  ETA=5m
+[25/30] ❌ 0/8kw   87s  proc=66577  flipped=10/25  ETA=4m
+[26/30] ✅ 1/1kw   45s  proc=17311  flipped=11/26 ★  ETA=3m
+[27/30] ✅ 6/8kw   85s  proc=23784  flipped=12/27 ★  ETA=2m
+[28/30] ✅ 3/8kw   36s  proc=83745  flipped=13/28 ★  ETA=2m
+[29/30] ✅ 2/8kw   40s  proc=83745  flipped=14/29 ★  ETA=1m
+[30/30] ✅ 2/8kw   18s  proc=92422  flipped=15/30 ★  ETA=0m
+
+============================================================
+FINAL: 15/30 now PASS (out of 30 previously failed)
+  Total elapsed: 23.7min

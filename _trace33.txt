@@ -1,0 +1,17 @@
+﻿docker : WARNING:root:SECURITY WARNING: Using auto-generated SECRET_KEY.
+At line:1 char:76
++ ... _n33_v2.py; docker exec docker-ragflow-cpu-1 python /ragflow/_trace_n ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (WARNING:root:SE...ted SECRET_KEY.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+WARNING:root:Load term.freq FAIL!
+WARNING:root:Realtime synonym is disabled, since no redis connection.
+WARNING:root:Load term.freq FAIL!
+WARNING:root:Realtime synonym is disabled, since no redis connection.
+/ragflow/.venv/lib/python3.12/site-packages/xgboost/compat.py:105: UserWarning: pkg_resources is deprecated as an API. 
+See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early 
+as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+/ragflow/.venv/lib/python3.12/site-packages/scholarly/_scholarly.py:312: SyntaxWarning: invalid escape sequence '\d'
+  m = re.search("cites=[\d+,]*", object["citedby_url"])

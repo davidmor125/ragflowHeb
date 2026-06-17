@@ -1,0 +1,49 @@
+{
+  "code": 0,
+  "data": {
+    "create_date": "2026-06-12T13:02:19",
+    "create_time": 1781240539237,
+    "dataset_ids": [
+      "2990101865ed11f19d1425719d627201"
+    ],
+    "description": "A helpful Assistant",
+    "do_refer": "1",
+    "icon": "",
+    "id": "e382caaa661b11f1ae84bd00f07a0952",
+    "kb_names": [
+      "contract_accept_1781220470"
+    ],
+    "language": "English",
+    "llm_id": "gpt-oss:120b-cloud@Ollama",
+    "llm_setting": {},
+    "meta_data_filter": {},
+    "name": "contract_chat_1781240539",
+    "prompt_config": {
+      "empty_response": "Sorry! No relevant content was found in the knowledge base!",
+      "parameters": [
+        {
+          "key": "knowledge",
+          "optional": false
+        }
+      ],
+      "prologue": "Hi! I'm your assistant. What can I do for you?",
+      "quote": true,
+      "refine_multiturn": true,
+      "system": "You are an intelligent assistant. Please summarize the content of the dataset to answer the question. Please list the data in the dataset and answer in detail. When all dataset content is irrelevant to the question, your answer must include the sentence \"The answer you are looking for is not found in the dataset!\" Answers need to consider chat history.\n      Here is the knowledge base:\n      {knowledge}\n      The above is the knowledge base.",
+      "tts": false
+    },
+    "prompt_type": "simple",
+    "rerank_id": "",
+    "similarity_threshold": 0.1,
+    "status": "1",
+    "tenant_id": "2507563a42bd11f1a6bba9e87ac7a32c",
+    "tenant_llm_id": 6,
+    "tenant_rerank_id": null,
+    "top_k": 1024,
+    "top_n": 6,
+    "update_date": "2026-06-12T13:02:19",
+    "update_time": 1781240539237,
+    "vector_similarity_weight": 0.3
+  },
+  "message": "success"
+}

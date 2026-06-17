@@ -1,0 +1,65 @@
+{
+  "chunk_count": 108,
+  "chunk_method": "naive",
+  "create_date": "2026-06-13T04:28:16",
+  "create_time": 1781296096337,
+  "created_by": "2507563a42bd11f1a6bba9e87ac7a32c",
+  "dataset_id": "3db1df6c669d11f1b9e5df329cd4ee1f",
+  "id": "3e1a2c70669d11f1b9e5df329cd4ee1f",
+  "location": "spec_1cbe8188-855f-46dd-8a17-593d3ee36d17.docx",
+  "meta_fields": {},
+  "name": "spec_1cbe8188-855f-46dd-8a17-593d3ee36d17.docx",
+  "nickname": "dav",
+  "parser_config": {
+    "auto_keywords": 0,
+    "auto_questions": 0,
+    "children_delimiter": "",
+    "chunk_token_num": 512,
+    "delimiter": "\n",
+    "graphrag": {
+      "entity_types": [
+        "organization",
+        "person",
+        "geo",
+        "event",
+        "category"
+      ],
+      "method": "light",
+      "use_graphrag": true
+    },
+    "html4excel": false,
+    "image_context_size": 0,
+    "layout_recognize": "DeepDOC",
+    "llm_id": "gpt-oss:120b-cloud@Ollama",
+    "parent_child": {
+      "children_delimiter": "\n",
+      "use_parent_child": false
+    },
+    "raptor": {
+      "max_cluster": 64,
+      "max_token": 256,
+      "prompt": "Please summarize the following paragraphs. Be careful with the numbers, do not make things up. Paragraphs as following:\n      {cluster_content}\nThe above is the content you need to summarize.",
+      "random_seed": 0,
+      "threshold": 0.1,
+      "use_raptor": true
+    },
+    "table_context_size": 0,
+    "topn_tags": 3
+  },
+  "pipeline_id": null,
+  "pipeline_name": null,
+  "process_begin_at": "2026-06-13T14:22:13",
+  "process_duration": 64.4661,
+  "progress": 1.0,
+  "progress_msg": "\n14:22:14 Task has been received.\n14:22:16 Page(1~100000001): Start to parse.\n14:22:17 Page(1~100000001): Visual model detected. Attempting to enhance figure extraction...\n14:22:17 Page(1~100000001): Finish parsing.\n14:22:19 Page(1~100000001): Generate 108 chunks\n14:23:16 Page(1~100000001): Embedding chunks (57.16s)\n14:23:17 Page(1~100000001): Indexing done (1.12s).\n14:23:17 Page(1~100000001): Task done (63.45s)",
+  "run": "DONE",
+  "size": 115437,
+  "source_type": "local",
+  "status": "1",
+  "suffix": "docx",
+  "thumbnail": "",
+  "token_count": 13952,
+  "type": "doc",
+  "update_date": "2026-06-13T14:23:17",
+  "update_time": 1781331797466
+}

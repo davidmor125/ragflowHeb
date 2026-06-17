@@ -1,0 +1,72 @@
+[
+  {
+    "verdict": "correct",
+    "reason": "The answer lists the same four main integrations—credit‑card processing (סליקת אשראי), SMS, Google Maps, and accounting systems—as stated in the source text.",
+    "n": 1,
+    "label": "text",
+    "ref_hit": true
+  },
+  {
+    "verdict": "correct",
+    "reason": "The system’s response accurately reproduces all stakeholders, their interests, and corresponding impacts exactly as presented in the source text. No omissions or inaccuracies are present.",
+    "n": 3,
+    "label": "text",
+    "ref_hit": true
+  },
+  {
+    "verdict": "partial",
+    "reason": "The answer correctly lists \"מתוכננת\", \"בוטלה\" and a status that corresponds to the source’s \"מבוצעת\" (listed as \"ביצוע\" or \"בתהליך\"). However, it also adds additional statuses such as \"ביצעה\" and \"בוטלה\" that are not explicitly mentioned in the provided source excerpt. Therefore the answer is partially correct but contains extra information beyond what the source supports.",
+    "n": 8,
+    "label": "text(was miss)",
+    "ref_hit": false
+  },
+  {
+    "verdict": "partial",
+    "reason": "The system answer correctly reproduces the entries for \"לקוח\" (client) and \"מסעדה/סניף\" (restaurant/branch) that appear in the source text, but it also adds many additional tables and fields (e.g., שולחן, הזמנה, מנה, תשלום, משתמש-מערכת) that are not present in the provided source excerpt. Therefore the answer is only partially based on the source information.",
+    "n": 20,
+    "label": "TABLE S44",
+    "ref_hit": true
+  },
+  {
+    "verdict": "correct",
+    "reason": "The system’s response accurately reproduces all the key points listed in the source text regarding primary keys, composite keys, unique constraints, foreign keys, and various indexes (clustered, non‑clustered, and specific column combinations). It also includes additional useful index suggestions that are consistent with typical database design practices but do not contradict or omit any information from the source. Therefore, the answer is correct and fully based on the provided reference.",
+    "n": 21,
+    "label": "TABLE S46",
+    "ref_hit": true
+  },
+  {
+    "verdict": "partial",
+    "reason": "The answer correctly lists most of the parameters described in the source (customerId, email, phone, restaurantId, tableNumber, capacity, orderId, orderDate, orderTime, numberOfGuests, status, totalAmount, paymentMethod, paymentStatus, menuItemId). However, it also includes additional parameters (menuItemName, price, category, allergens, userId, role, language, page, pageSize) that are not present in the provided source excerpt. Therefore the answer is partially correct but contains information beyond what the source specifies.",
+    "n": 24,
+    "label": "TABLE S53",
+    "ref_hit": true
+  },
+  {
+    "verdict": "correct",
+    "reason": "The system’s table of workflow steps (1–20) matches the source text verbatim in terms of players, inputs, actions, outputs, and subsequent step references. All details are present and consistent with the provided source excerpt.",
+    "n": 29,
+    "label": "TABLE S66",
+    "ref_hit": true
+  },
+  {
+    "verdict": "correct",
+    "reason": "The system’s response matches the information in the source text exactly: for a customer on the 'payment' resource, create and read are allowed, while update and delete are not.",
+    "n": 31,
+    "label": "TABLE S71",
+    "ref_hit": true
+  },
+  {
+    "verdict": "partial",
+    "reason": "The answer correctly lists all the fields shown in the source excerpt for client, restaurant/branch and table entities, but it also adds several additional fields (e.g., capacity, area, status for tables; order, menu, payment, system user) that are not present in the provided source snippet. Therefore the response is partially correct but contains unsupported information.",
+    "n": 44,
+    "label": "TABLE S102",
+    "ref_hit": true
+  },
+  {
+    "verdict": "correct",
+    "reason": "The system’s table lists all the events, trigger conditions, and urgency levels exactly as described in the source text (section idx=107). No omissions or inaccuracies are present.",
+    "n": 46,
+    "label": "TABLE S107",
+    "ref_hit": true
+  }
+]

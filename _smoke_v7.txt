@@ -1,0 +1,175 @@
+[INFO] root: Using default dictionary: /ragflow/.venv/lib/python3.12/site-packages/infinity/huqie.txt
+[WARNING] root: SECURITY WARNING: Using auto-generated SECRET_KEY.
+[INFO] ragflow.es_conn: Use Elasticsearch http://es01:9200 as the doc engine.
+[INFO] ragflow.es_conn: Elasticsearch http://es01:9200 is healthy.
+[INFO] ragflow.es_conn: Use Elasticsearch http://es01:9200 as the doc engine.
+[INFO] ragflow.es_conn: Elasticsearch http://es01:9200 is healthy.
+[WARNING] root: Load term.freq FAIL!
+[WARNING] root: Realtime synonym is disabled, since no redis connection.
+[WARNING] root: Load term.freq FAIL!
+[WARNING] root: Realtime synonym is disabled, since no redis connection.
+[INFO] root: init database on cluster mode successfully
+  m = re.search("cites=[\d+,]*", object["citedby_url"])
+[INFO] root: [ToolLoop] round=0 model=ollama_chat/gemma4:31b-cloud tools=['search_my_dateset_0']
+[92m16:27:13 - LiteLLM:INFO[0m: utils.py:3995 - 
+LiteLLM completion() model= gemma4:31b-cloud; provider = ollama_chat
+[INFO] LiteLLM: 
+LiteLLM completion() model= gemma4:31b-cloud; provider = ollama_chat
+[INFO] root: [ToolLoop] round=0 executing 1 tool(s): ['search_my_dateset_0']
+[INFO] root: [ToolCall] invoke name=search_my_dateset_0 arguments={'query': 'עיון במידע השמור במאגרי הבנק בקשת לקוח'}
+[INFO] root: [ToolCall] done name=search_my_dateset_0 elapsed=14.54s result=
+ID: 98
+├── Title: טסט/32328.html
+└── Content:
+
+8.7.7. במקרה שלאחר בחינת בקשת הפונה לרבות כמפורט בסעיפים 8.7.4 ו - 8.7.5 לעיל , נמצא כי לא ניתן למסור את המידע המבוקש ( המידע לא קיים במאגרי הבנק / המיד
+[INFO] root: [ToolLoop] round=1 model=ollama_chat/gemma4:31b-cloud tools=['search_my_dateset_0']
+[92m16:27:29 - LiteLLM:INFO[0m: utils.py:3995 - 
+LiteLLM completion() model= gemma4:31b-cloud; provider = ollama_chat
+[INFO] LiteLLM: 
+LiteLLM completion() model= gemma4:31b-cloud; provider = ollama_chat
+[INFO] root: [ToolLoop] round=1 executing 1 tool(s): ['search_my_dateset_0']
+[INFO] root: [ToolCall] invoke name=search_my_dateset_0 arguments={'query': 'עיון במידע השמור במאגרי הבנק אודות חשבון לקוח בקשה'}
+[INFO] root: [ToolCall] done name=search_my_dateset_0 elapsed=13.93s result=
+ID: 98
+├── Title: טסט/32328.html
+└── Content:
+
+8.7.7. במקרה שלאחר בחינת בקשת הפונה לרבות כמפורט בסעיפים 8.7.4 ו - 8.7.5 לעיל , נמצא כי לא ניתן למסור את המידע המבוקש ( המידע לא קיים במאגרי הבנק / המיד
+[INFO] root: [ToolLoop] round=2 model=ollama_chat/gemma4:31b-cloud tools=['search_my_dateset_0']
+[92m16:27:42 - LiteLLM:INFO[0m: utils.py:3995 - 
+LiteLLM completion() model= gemma4:31b-cloud; provider = ollama_chat
+[INFO] LiteLLM: 
+LiteLLM completion() model= gemma4:31b-cloud; provider = ollama_chat
+[INFO] root: [ToolLoop] round=2 executing 1 tool(s): ['search_my_dateset_0']
+[INFO] root: [ToolCall] invoke name=search_my_dateset_0 arguments={'query': 'עיון במידע השמור במאגרי הבנק בקשת לקוח'}
+[INFO] root: [ToolCall] done name=search_my_dateset_0 elapsed=14.06s result=
+ID: 98
+├── Title: טסט/32328.html
+└── Content:
+
+8.7.7. במקרה שלאחר בחינת בקשת הפונה לרבות כמפורט בסעיפים 8.7.4 ו - 8.7.5 לעיל , נמצא כי לא ניתן למסור את המידע המבוקש ( המידע לא קיים במאגרי הבנק / המיד
+[WARNING] root: Exceed max rounds: 2
+[92m16:27:58 - LiteLLM:INFO[0m: utils.py:3995 - 
+LiteLLM completion() model= gemma4:31b-cloud; provider = ollama_chat
+[INFO] LiteLLM: 
+LiteLLM completion() model= gemma4:31b-cloud; provider = ollama_chat
+Running agent: banking_agentic_rag
+Canvas instantiated. components: 3
+
+Question: כיצד יכול לקוח לבקש לעיין במידע השמור במאגרי הבנק אודות חשבונו?
+
+  ev #1  event=workflow_started  data: {"inputs": null}
+  ev #2  event=node_started  data: {"inputs": null, "created_at": 1778056032, "component_id": "begin", "component_name": "Begin", "component_type": "Begin", "thoughts": ""}
+  ev #3  event=node_finished  data: {"inputs": {}, "outputs": {"_created_time": 59667.995637126, "_elapsed_time": 0.00017151499923784286}, "component_id": "begin", "component_name": "Begin", "component_type": "Begin", "error": null, "elapsed_time": 0.0003051960011362098, "created_at": 59667.995637126}
+  ev #4  event=node_started  data: {"inputs": null, "created_at": 1778056032, "component_id": "Agent:54e4585648a011", "component_name": "BankingRAG_Agent", "component_type": "Agent", "thoughts": "⌛Give me a moment—starting from: \n\nכיצד יכול לקוח לבקש לעיין במידע השמור במאגרי הבנק אודות חשבונו?\n\nI’ll figure out our best next move.
+  ev #5  event=node_started  data: {"inputs": null, "created_at": 1778056032, "component_id": "Message:54e45a1848a011", "component_name": "Reply", "component_type": "Message", "thoughts": ""}
+  ev #6  event=message  data: {"content": "נ"}
+  ev #7  event=message  data: {"content": "ראה"}
+  ev #8  event=message  data: {"content": " שה"}
+  ev #9  event=message  data: {"content": "תה"}
+  ev #10  event=message  data: {"content": "ליך"}
+  ev #11  event=message  data: {"content": " ה"}
+  ev #12  event=message  data: {"content": "ופ"}
+  ev #13  event=message  data: {"content": "סק", "audio_binary": null}
+  ev #14  event=message  data: {"content": " לפני"}
+  ev #15  event=message  data: {"content": " שה"}
+  ev #16  event=message  data: {"content": "ס"}
+  ev #17  event=message  data: {"content": "פק"}
+  ev #18  event=message  data: {"content": "תי"}
+  ev #19  event=message  data: {"content": " לה"}
+  ev #20  event=message  data: {"content": "שי", "audio_binary": null}
+  ev #21  event=message  data: {"content": "ב"}
+  ev #22  event=message  data: {"content": "."}
+  ev #23  event=message  data: {"content": " כדי"}
+  ev #24  event=message  data: {"content": " שא"}
+  ev #25  event=message  data: {"content": "ו"}
+  ev #26  event=message  data: {"content": "כל"}
+  ev #27  event=message  data: {"content": " לע"}
+  ev #28  event=message  data: {"content": "נות", "audio_binary": null}
+  ev #29  event=message  data: {"content": " על"}
+  ev #30  event=message  data: {"content": " ש"}
+  ev #31  event=message  data: {"content": "אל"}
+  ev #32  event=message  data: {"content": "ת"}
+  ev #33  event=message  data: {"content": "ך"}
+  ev #34  event=message  data: {"content": " לג"}
+  ev #35  event=message  data: {"content": "בי"}
+  ev #36  event=message  data: {"content": " א"}
+  ev #37  event=message  data: {"content": "ופן", "audio_binary": null}
+  ev #38  event=message  data: {"content": " בק"}
+  ev #39  event=message  data: {"content": "שת"}
+  ev #40  event=message  data: {"content": " ה"}
+  ev #41  event=message  data: {"content": "לק"}
+  ev #42  event=message  data: {"content": "וח"}
+  ev #43  event=message  data: {"content": " לע"}
+  ev #44  event=message  data: {"content": "יין", "audio_binary": null}
+  ev #45  event=message  data: {"content": " ב"}
+  ev #46  event=message  data: {"content": "מי"}
+  ev #47  event=message  data: {"content": "דע"}
+  ev #48  event=message  data: {"content": " הש"}
+  ev #49  event=message  data: {"content": "מור"}
+  ev #50  event=message  data: {"content": " במ"}
+  ev #51  event=message  data: {"content": "א"}
+  ev #52  event=message  data: {"content": "ג", "audio_binary": null}
+  ev #53  event=message  data: {"content": "רי"}
+  ev #54  event=message  data: {"content": " הב"}
+  ev #55  event=message  data: {"content": "נק"}
+  ev #56  event=message  data: {"content": ","}
+  ev #57  event=message  data: {"content": " אני"}
+  ev #58  event=message  data: {"content": " ז"}
+  ev #59  event=message  data: {"content": "ק"}
+  ev #60  event=message  data: {"content": "וק", "audio_binary": null}
+  ev #61  event=message  data: {"content": " לה"}
+  ev #62  event=message  data: {"content": "פע"}
+  ev #63  event=message  data: {"content": "יל"}
+  ev #64  event=message  data: {"content": " את"}
+  ev #65  event=message  data: {"content": " כ"}
+  ev #66  event=message  data: {"content": "לי"}
+  ev #67  event=message  data: {"content": " הח", "audio_binary": null}
+  ev #68  event=message  data: {"content": "י"}
+  ev #69  event=message  data: {"content": "פ"}
+  ev #70  event=message  data: {"content": "וש"}
+  ev #71  event=message  data: {"content": " ב"}
+  ev #72  event=message  data: {"content": "נה"}
+  ev #73  event=message  data: {"content": "לים"}
+  ev #74  event=message  data: {"content": "."}
+  ev #75  event=message  data: {"content": "\n\n"}
+  ev #76  event=message  data: {"content": "אנ"}
+  ev #77  event=message  data: {"content": "א", "audio_binary": null}
+  ev #78  event=message  data: {"content": " ש"}
+  ev #79  event=message  data: {"content": "אל"}
+  ev #80  event=message  data: {"content": " את"}
+  ev #81  event=message  data: {"content": " הש"}
+  ev #82  event=message  data: {"content": "א"}
+  ev #83  event=message  data: {"content": "לה"}
+  ev #84  event=message  data: {"content": " ש"}
+  ev #85  event=message  data: {"content": "וב", "audio_binary": null}
+  ev #86  event=message  data: {"content": ","}
+  ev #87  event=message  data: {"content": " וא"}
+  ev #88  event=message  data: {"content": "ע"}
+  ev #89  event=message  data: {"content": "נה"}
+  ev #90  event=message  data: {"content": " ע"}
+  ev #91  event=message  data: {"content": "ליה"}
+  ev #92  event=message  data: {"content": " על"}
+  ev #93  event=message  data: {"content": " ב", "audio_binary": null}
+  ev #94  event=message  data: {"content": "סי"}
+  ev #95  event=message  data: {"content": "ס"}
+  ev #96  event=message  data: {"content": " מס"}
+  ev #97  event=message  data: {"content": "ד"}
+  ev #98  event=message  data: {"content": " ה"}
+  ev #99  event=message  data: {"content": "נה"}
+  ev #100  event=message  data: {"content": "לים"}
+  ev #101  event=message  data: {"content": "."}
+  ev #102  event=message  data: {"content": "", "audio_binary": null}
+  ev #103  event=message_end  data: {"reference": {"chunks": {"98": {"id": "2912c0e8262c75f1", "content": "\n8.7.7. במקרה שלאחר בחינת בקשת הפונה לרבות כמפורט בסעיפים 8.7.4 ו - 8.7.5 לעיל , נמצא כי לא ניתן למסור את המידע המבוקש ( המידע לא קיים במאגרי הבנק / המידע נמחק / לא ניתן לאתר את המידע / המידע כולל מידע חסוי לגבי לקוח או חשבון אח
+  ev #104  event=node_finished  data: {"inputs": {"sys.query": "כיצד יכול לקוח לבקש לעיין במידע השמור במאגרי הבנק אודות חשבונו?"}, "outputs": {"content": "נראה שהתהליך הופסק לפני שהספקתי להשיב. כדי שאוכל לענות על שאלתך לגבי אופן בקשת הלקוח לעיין במידע השמור במאגרי הבנק, אני זקוק להפעיל את כלי החיפוש בנהלים.\n\nאנא שאל את השאלה שוב, ואענ
+  ev #105  event=node_finished  data: {"inputs": {"Agent:54e4585648a011@content": "נראה שהתהליך הופסק לפני שהספקתי להשיב. כדי שאוכל לענות על שאלתך לגבי אופן בקשת הלקוח לעיין במידע השמור במאגרי הבנק, אני זקוק להפעיל את כלי החיפוש בנהלים.\n\nאנא שאל את השאלה שוב, ואענה עליה על בסיס מסד הנהלים."}, "outputs": {"content": "נראה שהתהליך הופסק
+  ev #106  event=workflow_finished  data: {"inputs": null, "outputs": {"content": "נראה שהתהליך הופסק לפני שהספקתי להשיב. כדי שאוכל לענות על שאלתך לגבי אופן בקשת הלקוח לעיין במידע השמור במאגרי הבנק, אני זקוק להפעיל את כלי החיפוש בנהלים.\n\nאנא שאל את השאלה שוב, ואענה עליה על בסיס מסד הנהלים.", "downloads": [], "_created_time": 59667.9974425
+
+Total events: 106
+Total chunks captured: 0
+
+=== ANSWER ===
+נראה שהתהליך הופסק לפני שהספקתי להשיב. כדי שאוכל לענות על שאלתך לגבי אופן בקשת הלקוח לעיין במידע השמור במאגרי הבנק, אני זקוק להפעיל את כלי החיפוש בנהלים.
+
+אנא שאל את השאלה שוב, ואענה עליה על בסיס מסד הנהלים.

@@ -1,0 +1,26 @@
+{
+  "name": "contract_chat_1781240539",
+  "dataset_ids": [
+    "2990101865ed11f19d1425719d627201"
+  ],
+  "llm": {
+    "model_name": "gpt-oss:20b@Ollama",
+    "temperature": 0.1,
+    "top_p": 0.3,
+    "presence_penalty": 0.4,
+    "frequency_penalty": 0.7
+  },
+  "prompt": {
+    "similarity_threshold": 0.2,
+    "keywords_similarity_weight": 0.7,
+    "top_n": 8,
+    "show_quote": true,
+    "variables": [
+      {
+        "key": "knowledge",
+        "optional": false
+      }
+    ],
+    "prompt": "אתה עוזר ידע מדויק. ענה בעברית בלבד, אך ורק על סמך המידע במאגר הידע שלהלן:\n{knowledge}\nאם התשובה אינה נמצאת במאגר — אמור במפורש שאינך יודע. אל תמציא מידע."
+  }
+}

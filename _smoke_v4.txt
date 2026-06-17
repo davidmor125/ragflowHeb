@@ -1,0 +1,91 @@
+[INFO] root: Using default dictionary: /ragflow/.venv/lib/python3.12/site-packages/infinity/huqie.txt
+[WARNING] root: SECURITY WARNING: Using auto-generated SECRET_KEY.
+[INFO] ragflow.es_conn: Use Elasticsearch http://es01:9200 as the doc engine.
+[INFO] ragflow.es_conn: Elasticsearch http://es01:9200 is healthy.
+[INFO] ragflow.es_conn: Use Elasticsearch http://es01:9200 as the doc engine.
+[INFO] ragflow.es_conn: Elasticsearch http://es01:9200 is healthy.
+[WARNING] root: Load term.freq FAIL!
+[WARNING] root: Realtime synonym is disabled, since no redis connection.
+[WARNING] root: Load term.freq FAIL!
+[WARNING] root: Realtime synonym is disabled, since no redis connection.
+[INFO] root: init database on cluster mode successfully
+  m = re.search("cites=[\d+,]*", object["citedby_url"])
+[INFO] root: [ToolLoop] round=0 model=ollama_chat/gemma4:31b-cloud tools=['search_my_dateset_0']
+[92m15:01:08 - LiteLLM:INFO[0m: utils.py:3995 - 
+LiteLLM completion() model= gemma4:31b-cloud; provider = ollama_chat
+[INFO] LiteLLM: 
+LiteLLM completion() model= gemma4:31b-cloud; provider = ollama_chat
+[INFO] root: [ToolLoop] round=0 executing 1 tool(s): ['search_my_dateset_0']
+[INFO] root: [ToolCall] invoke name=search_my_dateset_0 arguments={'query': 'עיון במידע השמור במאגרי הבנק אודות חשבון לקוח'}
+[INFO] root: [ToolCall] done name=search_my_dateset_0 elapsed=11.07s result=
+ID: 394
+├── Title: טסט/32328.html
+└── Content:
+
+א . איפוס סיסמה - הקצאת סיסמה ראשונית חדשה למשתמש חדש או למשתמש קיים אשר אינו זוכר את הסיסמה . מיד לאחר השלמת הקמת בקשה לאיפוס סיסמה במערכת בקשות שירות
+[INFO] root: [ToolLoop] round=1 model=ollama_chat/gemma4:31b-cloud tools=['search_my_dateset_0']
+[92m15:01:20 - LiteLLM:INFO[0m: utils.py:3995 - 
+LiteLLM completion() model= gemma4:31b-cloud; provider = ollama_chat
+[INFO] LiteLLM: 
+LiteLLM completion() model= gemma4:31b-cloud; provider = ollama_chat
+[INFO] root: [ToolLoop] round=1 executing 1 tool(s): ['search_my_dateset_0']
+[INFO] root: [ToolCall] invoke name=search_my_dateset_0 arguments={'query': 'עיון במידע שמור במאגרי הבנק חשבון לקוח זכות עיון'}
+[INFO] root: [ToolCall] done name=search_my_dateset_0 elapsed=11.54s result=
+ID: 98
+├── Title: טסט/32328.html
+└── Content:
+
+8.7.7. במקרה שלאחר בחינת בקשת הפונה לרבות כמפורט בסעיפים 8.7.4 ו - 8.7.5 לעיל , נמצא כי לא ניתן למסור את המידע המבוקש ( המידע לא קיים במאגרי הבנק / המיד
+[INFO] root: [ToolLoop] round=2 model=ollama_chat/gemma4:31b-cloud tools=['search_my_dateset_0']
+[92m15:01:34 - LiteLLM:INFO[0m: utils.py:3995 - 
+LiteLLM completion() model= gemma4:31b-cloud; provider = ollama_chat
+[INFO] LiteLLM: 
+LiteLLM completion() model= gemma4:31b-cloud; provider = ollama_chat
+[INFO] root: [ToolLoop] round=2 executing 1 tool(s): ['search_my_dateset_0']
+[INFO] root: [ToolCall] invoke name=search_my_dateset_0 arguments={'query': 'עיון במידע השמור במאגרי הבנק בקשת לקוח'}
+[INFO] root: [ToolCall] done name=search_my_dateset_0 elapsed=11.68s result=
+ID: 98
+├── Title: טסט/32328.html
+└── Content:
+
+8.7.7. במקרה שלאחר בחינת בקשת הפונה לרבות כמפורט בסעיפים 8.7.4 ו - 8.7.5 לעיל , נמצא כי לא ניתן למסור את המידע המבוקש ( המידע לא קיים במאגרי הבנק / המיד
+[WARNING] root: Exceed max rounds: 2
+[92m15:01:45 - LiteLLM:INFO[0m: utils.py:3995 - 
+LiteLLM completion() model= gemma4:31b-cloud; provider = ollama_chat
+[INFO] LiteLLM: 
+LiteLLM completion() model= gemma4:31b-cloud; provider = ollama_chat
+Running agent: banking_agentic_rag
+Canvas instantiated. components: 3
+
+Question: כיצד יכול לקוח לבקש לעיין במידע השמור במאגרי הבנק אודות חשבונו?
+
+  ev #1  event=workflow_started  data: {"inputs": null}
+  ev #2  event=node_started  data: {"inputs": null, "created_at": 1778050868, "component_id": "begin", "component_name": "Begin", "component_type": "Begin", "thoughts": ""}
+  ev #3  event=node_finished  data: {"inputs": {}, "outputs": {"_created_time": 54379.092082816, "_elapsed_time": 0.00013822799519402906}, "component_id": "begin", "component_name": "Begin", "component_type": "Begin", "error": null, "elapsed_time": 0.00027970999508397654, "created_at": 54379.092082816}
+  ev #4  event=node_started  data: {"inputs": null, "created_at": 1778050868, "component_id": "Agent:54e4585648a011", "component_name": "BankingRAG_Agent", "component_type": "Agent", "thoughts": "⌛Give me a moment—starting from: \n\nכיצד יכול לקוח לבקש לעיין במידע השמור במאגרי הבנק אודות חשבונו?\n\nI’ll figure out our best next move.
+  ev #5  event=node_started  data: {"inputs": null, "created_at": 1778050868, "component_id": "Message:54e45a1848a011", "component_name": "Reply", "component_type": "Message", "thoughts": ""}
+  ev #6  event=message  data: {"content": "ה"}
+  ev #7  event=message  data: {"content": "מי"}
+  ev #8  event=message  data: {"content": "דע"}
+  ev #9  event=message  data: {"content": " אי"}
+  ev #10  event=message  data: {"content": "נו"}
+  ev #11  event=message  data: {"content": " קי"}
+  ev #12  event=message  data: {"content": "ים"}
+  ev #13  event=message  data: {"content": " ב", "audio_binary": null}
+  ev #14  event=message  data: {"content": "נה"}
+  ev #15  event=message  data: {"content": "לים"}
+  ev #16  event=message  data: {"content": " ש"}
+  ev #17  event=message  data: {"content": "צור"}
+  ev #18  event=message  data: {"content": "פו"}
+  ev #19  event=message  data: {"content": "."}
+  ev #20  event=message  data: {"content": "", "audio_binary": null}
+  ev #21  event=message_end  data: {"reference": {"chunks": {"394": {"id": "f42c88b784b38109", "content": "\nא . איפוס סיסמה - הקצאת סיסמה ראשונית חדשה למשתמש חדש או למשתמש קיים אשר אינו זוכר את הסיסמה . מיד לאחר השלמת הקמת בקשה לאיפוס סיסמה במערכת בקשות שירות , ישלח מייל ע \" י המערכת למנהל ( שנבחר בעת הקמת הבקשה ) עם קישור לבקשה המ
+  ev #22  event=node_finished  data: {"inputs": {"sys.query": "כיצד יכול לקוח לבקש לעיין במידע השמור במאגרי הבנק אודות חשבונו?"}, "outputs": {"content": "המידע אינו קיים בנהלים שצורפו.", "_created_time": 54379.093644288, "_elapsed_time": 0.00022743000590708107}, "component_id": "Agent:54e4585648a011", "component_name": "BankingRAG_Agen
+  ev #23  event=node_finished  data: {"inputs": {"Agent:54e4585648a011@content": "המידע אינו קיים בנהלים שצורפו."}, "outputs": {"content": "המידע אינו קיים בנהלים שצורפו.", "downloads": [], "_created_time": 54379.094179368, "_elapsed_time": 0.00043865599582204595}, "component_id": "Message:54e45a1848a011", "component_name": "Reply", "c
+  ev #24  event=workflow_finished  data: {"inputs": null, "outputs": {"content": "המידע אינו קיים בנהלים שצורפו.", "downloads": [], "_created_time": 54379.094179368, "_elapsed_time": 0.00043865599582204595}, "elapsed_time": 42.07427010600077, "created_at": 54379.091154539}
+
+Total events: 24
+Total chunks captured: 0
+
+=== ANSWER ===
+המידע אינו קיים בנהלים שצורפו.

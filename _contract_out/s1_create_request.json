@@ -1,0 +1,34 @@
+{
+  "name": "contract_full_pipeline_1781204647",
+  "embedding_model": "bge-m3@Ollama",
+  "chunk_method": "naive",
+  "parser_config": {
+    "chunk_token_num": 512,
+    "delimiter": "\\n!?;。;！？",
+    "layout_recognize": "DeepDOC",
+    "auto_keywords": 3,
+    "auto_questions": 2,
+    "raptor": {
+      "use_raptor": true
+    },
+    "graphrag": {
+      "use_graphrag": false
+    },
+    "html4excel": false
+  },
+  "auto_metadata_config": {
+    "enabled": true,
+    "fields": [
+      {
+        "name": "topic",
+        "type": "string",
+        "description": "נושא המסמך"
+      },
+      {
+        "name": "doc_date",
+        "type": "time",
+        "description": "תאריך המסמך"
+      }
+    ]
+  }
+}

@@ -1,0 +1,151 @@
+{
+  "code": 0,
+  "data": {
+    "answer": "הקוד הסודי המופיע בטבלת המפרט הטכני הוא ZX9871 [ID:2][ID:4].",
+    "audio_binary": null,
+    "created_at": 1781247917.6517656,
+    "id": "e03b7203-9f22-47d0-8391-ca6a78cf9417",
+    "prompt": "אתה עוזר ידע מדויק. ענה בעברית בלבד, אך ורק על סמך המידע במאגר הידע שלהלן:  \n  \n------  \n  \nID: 0  \n├── Title: testdoc_vision.pdf  \n└── Content:  \n  \nדוח בדיקה גנרי— מערכת RAGFLOW(גרסת PDF)  \n[כותרת-ראשית: מסמך-בדיקה-PDF-12345]  \nרקע: המערכת מספקת שירותי אחזור מידע מבוסס הקשר ותומכת בעברית מלאה. עיבוד מסמכים: התהליך כולל זיהוי פריסה, חילוץ טבלאות ותיאור תמונות. מודל ההטמעה הוא bge-m3 והוא רב-לשוני. מסמך זה כולל תרשים מכירות רבעוני כתמונה. הקוד הסודי בקובץ זה הוא PDFKEY77.  \nהתמונה לעיל מציגה נתוני מכירות לפי רבעונים Q1 עד Q4. סיכום: RAGFLOW הוא שירות RAG גנרי המתאים למגוון סוגי קבצים.  \n  \n------  \n  \n  \nID: 1  \n├── Title: testdoc.md  \n└── Content:  \n```mermaid\r  \ngraph TD\r  \n  A[קובץ נכנס] --> B[חלוקה למקטעים]\r  \n  B --> C[חישוב הטמעה]\r  \n  C --> D[אחזור ודירוג]\r  \n  D --> E[ניסוח תשובה עם MERMAIDKEY42]\r  \n```\r  \n## תרשים מכירות רבעוני\r  \nתרשים המכירות הרבעוני מופיע בקובץ ה-PDF הנלווה (testdoc_vision.pdf).\r  \n  \n  \n------  \n  \n  \nID: 2  \n├── Title: testdoc.md  \n└── Content:  \nכל דייר מבודד עם אינדקס ומודלים משלו.\r  \n## 16. תאימות\r  \nהשירות נגיש דרך HTTP API סטנדרטי בפורמט JSON.\r  \n## 17. שפות\r  \nהמערכת תומכת בעברית, אנגלית, וערבית.\r  \n## 18. מגבלות\r  \nגודל מקטע מרבי הוא 2048 אסימונים.\r  \n## 19. תחזוקה\r  \nיש לנטר את תור המשימות של מעבדי הרקע.\r  \n## 20. סיכום\r  \nRAGFLOW הוא שירות RAG גנרי המתאים למגוון פרויקטים.\r  \n## טבלת מפרט טכני\r  \n| רכיב | ערך | יחידה |\r  \n|---|---|---|\r  \n| גודל מקטע מרבי | 2048 | אסימונים |\r  \n| מודל הטמעה | bge-m3 | - |\r  \n| מספר דיירים נתמך | 500 | דיירים |\r  \n| זמן תגובה ממוצע | 850 | מילישניות |\r  \n| קוד-סודי-בטבלה | ZX9871 | מזהה |\r  \n## תרשים זרימה\r  \n  \n------  \n  \n  \nID: 3  \n├── Title: testdoc_vision.pdf  \n└── Content:  \n  \nType: bar chart    \nTitle: QUARTERLY SALES CHART260    \nAxes and labels: Q1, Q2, Q3, Q4 (quarters)    \nLegend: none    \nData: Q1 = 120 units, Q2 = 200 units, Q3 = 90 units, Q4 = 260 units. Peak quarter: Q4 = 260 units.    \nNotes and source: none  \n  \n------  \n  \n  \nID: 4  \n├── Title: testdoc.md  \n└── Content:  \n<table>  \n<thead>  \n<tr>  \n<th>רכיב</th>  \n<th>ערך</th>  \n<th>יחידה</th>  \n</tr>  \n</thead>  \n<tbody>  \n<tr>  \n<td>גודל מקטע מרבי</td>  \n<td>2048</td>  \n<td>אסימונים</td>  \n</tr>  \n<tr>  \n<td>מודל הטמעה</td>  \n<td>bge-m3</td>  \n<td>-</td>  \n</tr>  \n<tr>  \n<td>מספר דיירים נתמך</td>  \n<td>500</td>  \n<td>דיירים</td>  \n</tr>  \n<tr>  \n<td>זמן תגובה ממוצע</td>  \n<td>850</td>  \n<td>מילישניות</td>  \n</tr>  \n<tr>  \n<td>קוד-סודי-בטבלה</td>  \n<td>ZX9871</td>  \n<td>מזהה</td>  \n</tr>  \n</tbody>  \n</table>  \nאם התשובה אינה נמצאת במאגר — אמור במפורש שאינך יודע. אל תמציא מידע.  \n  \n### Query:  \nמהו הקוד הסודי המופיע בטבלת המפרט הטכני?###What is the secret code displayed in the technical specification table?,הקוד הסודי, טבלת המפרט הטכני, מופיע  \n  \n## Time elapsed:  \n  - Total: 10010.8ms  \n  - Check LLM: 3.6ms  \n  - Check Langfuse tracer: 0.5ms  \n  - Bind models: 10.5ms  \n  - Query refinement(LLM): 7301.4ms  \n  - Retrieval: 169.2ms  \n  - Generate answer: 2525.7ms  \n  \n## Token usage:  \n  - Generated tokens(approximately): 53  \n  - Token speed: 20/s",
+    "reference": {
+      "chunks": [
+        {
+          "content": "\nדוח בדיקה גנרי— מערכת RAGFLOW(גרסת PDF)\n[כותרת-ראשית: מסמך-בדיקה-PDF-12345]\nרקע: המערכת מספקת שירותי אחזור מידע מבוסס הקשר ותומכת בעברית מלאה. עיבוד מסמכים: התהליך כולל זיהוי פריסה, חילוץ טבלאות ותיאור תמונות. מודל ההטמעה הוא bge-m3 והוא רב-לשוני. מסמך זה כולל תרשים מכירות רבעוני כתמונה. הקוד הסודי בקובץ זה הוא PDFKEY77.\nהתמונה לעיל מציגה נתוני מכירות לפי רבעונים Q1 עד Q4. סיכום: RAGFLOW הוא שירות RAG גנרי המתאים למגוון סוגי קבצים.",
+          "dataset_id": "2990101865ed11f19d1425719d627201",
+          "doc_type": "",
+          "document_id": "48f25b0e662011f1ae84bd00f07a0952",
+          "document_name": "testdoc_vision.pdf",
+          "id": "abae7922996fb39e",
+          "image_id": "2990101865ed11f19d1425719d627201-abae7922996fb39e",
+          "positions": [
+            [
+              1,
+              211,
+              546,
+              46,
+              61
+            ],
+            [
+              1,
+              338,
+              546,
+              74,
+              89
+            ],
+            [
+              1,
+              143,
+              546,
+              112,
+              180
+            ],
+            [
+              1,
+              220,
+              546,
+              484,
+              517
+            ]
+          ],
+          "row_id": null,
+          "similarity": 0.18954096167096168,
+          "term_similarity": 0.11572070944200023,
+          "url": null,
+          "vector_similarity": 0.36178821687187174
+        },
+        {
+          "content": "```mermaid\r\ngraph TD\r\n  A[קובץ נכנס] --> B[חלוקה למקטעים]\r\n  B --> C[חישוב הטמעה]\r\n  C --> D[אחזור ודירוג]\r\n  D --> E[ניסוח תשובה עם MERMAIDKEY42]\r\n```\r\n## תרשים מכירות רבעוני\r\nתרשים המכירות הרבעוני מופיע בקובץ ה-PDF הנלווה (testdoc_vision.pdf).\r\n",
+          "dataset_id": "2990101865ed11f19d1425719d627201",
+          "doc_type": "",
+          "document_id": "7f276ce0662611f1ae84bd00f07a0952",
+          "document_name": "testdoc.md",
+          "id": "d307a1328cf0c53b",
+          "image_id": "",
+          "positions": [
+            [
+              4,
+              3,
+              3,
+              3,
+              3
+            ]
+          ],
+          "row_id": null,
+          "similarity": 0.16837270377603167,
+          "term_similarity": 0.04959459033987633,
+          "url": null,
+          "vector_similarity": 0.4455216351270608
+        },
+        {
+          "content": "כל דייר מבודד עם אינדקס ומודלים משלו.\r\n## 16. תאימות\r\nהשירות נגיש דרך HTTP API סטנדרטי בפורמט JSON.\r\n## 17. שפות\r\nהמערכת תומכת בעברית, אנגלית, וערבית.\r\n## 18. מגבלות\r\nגודל מקטע מרבי הוא 2048 אסימונים.\r\n## 19. תחזוקה\r\nיש לנטר את תור המשימות של מעבדי הרקע.\r\n## 20. סיכום\r\nRAGFLOW הוא שירות RAG גנרי המתאים למגוון פרויקטים.\r\n## טבלת מפרט טכני\r\n| רכיב | ערך | יחידה |\r\n|---|---|---|\r\n| גודל מקטע מרבי | 2048 | אסימונים |\r\n| מודל הטמעה | bge-m3 | - |\r\n| מספר דיירים נתמך | 500 | דיירים |\r\n| זמן תגובה ממוצע | 850 | מילישניות |\r\n| קוד-סודי-בטבלה | ZX9871 | מזהה |\r\n## תרשים זרימה\r",
+          "dataset_id": "2990101865ed11f19d1425719d627201",
+          "doc_type": "",
+          "document_id": "7f276ce0662611f1ae84bd00f07a0952",
+          "document_name": "testdoc.md",
+          "id": "7e9a1db03b34b940",
+          "image_id": "",
+          "positions": [
+            [
+              3,
+              2,
+              2,
+              2,
+              2
+            ]
+          ],
+          "row_id": null,
+          "similarity": 0.12777372826505184,
+          "term_similarity": 0.016531530788814378,
+          "url": null,
+          "vector_similarity": 0.3873388557096059
+        },
+        {
+          "content": "\nType: bar chart  \nTitle: QUARTERLY SALES CHART260  \nAxes and labels: Q1, Q2, Q3, Q4 (quarters)  \nLegend: none  \nData: Q1 = 120 units, Q2 = 200 units, Q3 = 90 units, Q4 = 260 units. Peak quarter: Q4 = 260 units.  \nNotes and source: none",
+          "dataset_id": "2990101865ed11f19d1425719d627201",
+          "doc_type": "image",
+          "document_id": "48f25b0e662011f1ae84bd00f07a0952",
+          "document_name": "testdoc_vision.pdf",
+          "id": "dd20ecf698db32ed",
+          "image_id": "2990101865ed11f19d1425719d627201-dd20ecf698db32ed",
+          "positions": [
+            [
+              1,
+              131,
+              541,
+              240,
+              475
+            ]
+          ],
+          "row_id": null,
+          "similarity": 0.11089977363285246,
+          "term_similarity": 0.012693565842809867,
+          "url": null,
+          "vector_similarity": 0.3400475918096185
+        },
+        {
+          "content": "<table>\n<thead>\n<tr>\n<th>רכיב</th>\n<th>ערך</th>\n<th>יחידה</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>גודל מקטע מרבי</td>\n<td>2048</td>\n<td>אסימונים</td>\n</tr>\n<tr>\n<td>מודל הטמעה</td>\n<td>bge-m3</td>\n<td>-</td>\n</tr>\n<tr>\n<td>מספר דיירים נתמך</td>\n<td>500</td>\n<td>דיירים</td>\n</tr>\n<tr>\n<td>זמן תגובה ממוצע</td>\n<td>850</td>\n<td>מילישניות</td>\n</tr>\n<tr>\n<td>קוד-סודי-בטבלה</td>\n<td>ZX9871</td>\n<td>מזהה</td>\n</tr>\n</tbody>\n</table>",
+          "dataset_id": "2990101865ed11f19d1425719d627201",
+          "doc_type": "table",
+          "document_id": "7f276ce0662611f1ae84bd00f07a0952",
+          "document_name": "testdoc.md",
+          "id": "a5accc5acd3aa28e",
+          "image_id": "",
+          "positions": [],
+          "row_id": null,
+          "similarity": 0.11029781312390677,
+          "term_similarity": 0.016531530788814378,
+          "url": null,
+          "vector_similarity": 0.32908580523912234
+        }
+      ],
+      "doc_aggs": [
+        {
+          "count": 3,
+          "doc_id": "7f276ce0662611f1ae84bd00f07a0952",
+          "doc_name": "testdoc.md"
+        }
+      ],
+      "total": 5
+    },
+    "session_id": "fbe945b8662c11f1ae84bd00f07a0952"
+  }
+}

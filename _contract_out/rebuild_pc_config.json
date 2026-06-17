@@ -1,0 +1,37 @@
+{
+  "auto_keywords": 0,
+  "auto_questions": 0,
+  "children_delimiter": "\n",
+  "chunk_token_num": 256,
+  "delimiter": "\n",
+  "enable_children": true,
+  "graphrag": {
+    "entity_types": [
+      "organization",
+      "person",
+      "geo",
+      "event",
+      "category"
+    ],
+    "method": "light",
+    "use_graphrag": false
+  },
+  "html4excel": false,
+  "image_context_size": 0,
+  "layout_recognize": "DeepDOC",
+  "llm_id": "gpt-oss:120b-cloud@Ollama",
+  "parent_child": {
+    "children_delimiter": "\n",
+    "use_parent_child": true
+  },
+  "raptor": {
+    "max_cluster": 64,
+    "max_token": 256,
+    "prompt": "Please summarize the following paragraphs. Be careful with the numbers, do not make things up. Paragraphs as following:\n      {cluster_content}\nThe above is the content you need to summarize.",
+    "random_seed": 0,
+    "threshold": 0.1,
+    "use_raptor": false
+  },
+  "table_context_size": 0,
+  "topn_tags": 3
+}

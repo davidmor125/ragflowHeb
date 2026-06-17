@@ -1,0 +1,9 @@
+{
+  "chunks": 147,
+  "max_tokens": 1014,
+  "over_cap_count": 0,
+  "anchors_total": 138,
+  "anchors_found": 138,
+  "doc_chunk_count": 147,
+  "note": "re-verification minutes after DONE (first verify raced ES refresh)"
+}

@@ -1,0 +1,471 @@
+﻿━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+n=  6  proc=20071  prev_kw=False  prev_llm=FAIL  elapsed=28.0s  raw_len=5354
+Q: לקוח שלי מבקש להעביר כסף לרוסיה בגין רכישת דירה. האם עלי לדווח על פעולה בלתי רגילה
+GOLD: בשל השחיתות השלטונית הנרחבת בכל דרגי הממשל הרוסי, רוסיה מהווה מקור לחשש להלבנת הון שמקורו בעבירות כגון שוחד לעובדי ציבור, ניצול לרעה של משאבים תקציביים, גניבת רכוש ממשלתי, שחיתות בתהליכי רכש, סחיטה ושימוש בלתי הולם בעמדות  ציבוריות לצורך השגת רווח אישי...עסקאות רכישת נדל"ן יוקרתי, מטוסים פרטיים, יצירות אומנות ועוד.
+
+PIPELINE ANSWER (final 2000c):
+רה).
+    *   ID 227: No.
+    *   ID 222: No.
+    *   ID 41: No.
+
+    *   Final decision: The information is not in the provided procedures.
+
+    *   "המידע אינו קיים בנהלים שצורפו"
+    *   File name: (Since I didn't find the answer, I can't cite a specific file for the *answer*, but the rule says "ציין את שם קובץ הנוהל שממנו לקחת את המידע". If I didn't take information because it's not there, I should technically state that. However, usually, in these prompts, if the answer is "not found", I just provide the phrase. But the instruction says "ציין את שם קובת הנוהל שממנו לקחת את המידע". If I didn't take info, I can't cite a file. But I'll check if any file *could* have had it. None of them do.)
+
+    *   Let's re-read: "אם המידע באמת לא נמצא בנהלים שצורפו — כתוב בדיוק: 'המידע אינו קיים בנהלים שצורפו'".
+
+    *   Is there any mention of "reporting" (דיווח)?
+    *   ID 227, 9.1.2.א: "מחלקת משכנתאות, תדווח את ההרשאה במערכת 'משכנתאית'". This is reporting an *authorization* (הרשאה), not an unusual transaction.
+
+    *   Conclusion remains: המידע אינו קיים בנהלים שצורפו.
+
+    *   Wait, I'll check if there's any mention of "Russia" or "Transfer" in the text.
+    *   Searching... No "רוסיה", no "Russia".
+    *   Searching... No "העברה" (except in the context of "העברה של הכסף" in ID 41 regarding repayment).
+
+    *   Final Answer: המידע אינו קיים בנהלים שצורפו.
+
+    *   (Self-correction: The prompt asks me to cite the file name at the end. If I say the info is not there, I don't have a fil
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+n= 11  proc=34320  prev_kw=True  prev_llm=PASS  elapsed=23.0s  raw_len=2752
+Q: האם ניתן לבחור הטבות של מבצע אחר בחשבון צעיר?
+GOLD: לא ניתן לבחור הטבות של מבצע אחר בחשבון צעיר
+
+PIPELINE ANSWER (final 270c):
+לא, בחשבון צעיר (14-20) אין אפשרות לבחור הטבות אחרות (קבוצת אוכלוסייה אחרת / מבצע אחר) ואין כפל הטבות (סעיפים 4.1 ו-4.2).
+
+    34320.htmlלא, בחשבון צעיר (14-20) אין אפשרות לבחור הטבות אחרות (קבוצת אוכלוסייה אחרת / מבצע אחר) ואין כפל הטבות (סעיפים 4.1 ו-4.2).
+
+34320.html
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+n= 18  proc=90398  prev_kw=True  prev_llm=PASS  elapsed=36.4s  raw_len=5477
+Q: באילו פעולות שניתן לאשר באמצעות מכשיר הנייד בנוכחות הלקוח בסניף?
+GOLD: 3.1.1 מסירת כרטיס ללקוח - בפעולת מסירת כרטיס אשראי הכרטיס יימסר פיזית רק לאחר ביצוע תהליך אישור הטופס ע"י הלקוח.
+
+במקרים בהם במעמד מסירת הכרטיס טופסי ההזמנה טרם נחתמו יידרש הלקוח לאשר באותו קישור גם את טפסי ההזמנה.
+
+מסירת כרטיס למיופה כח בחשבון/מורשה לכרטיס, תתאפשר רק אם טפסי הזמנת כרטיס נחתמו בעת הזמנת הכרטיס
+
+3.1.2 משיכה מלאה מפיקדון
+
+3.1.3 משיכת כספים מחיסכון
+
+3.1.4 הקמת הרשאה לחיוב חשבון
+
+3.1.
+
+PIPELINE ANSWER (final 560c):
+3.1.1 מסירת כרטיס ללקוח (במקרים בהם טופסי ההזמנה טרם נחתמו, הלקוח יאשר גם אותם).
+    3.1.2 משיכה מלאה מפיקדון.
+    3.1.3 משיכת כספים מחיסכון.
+    3.1.4 הקמת הרשאה לחיוב חשבון.
+    3.1.5 פירעון מלא של הלוואה.
+    3.1.6 העברות מט"ח.
+    3.2 קבלת הסכמת לקוח לפנייה למאגר אשראי.
+
+    טסט/90398.html3.1.1 מסירת כרטיס ללקוח (במקרים בהם טופסי ההזמנה טרם נחתמו, הלקוח יאשר גם אותם).
+3.1.2 משיכה מלאה מפיקדון.
+3.1.3 משיכת כספים מחיסכון.
+3.1.4 הקמת הרשאה לחיוב חשבון.
+3.1.5 פירעון מלא של הלוואה.
+3.1.6 העברות מט"ח.
+3.2 קבלת הסכמת לקוח לפנייה למאגר אשראי.
+
+טסט/90398.html
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+n= 22  proc=36967  prev_kw=False  prev_llm=FAIL  elapsed=47.0s  raw_len=8043
+Q: מתי צריך להקים בקשות אשראי במערכת בקשות אשראי ללקוח פרטי?
+GOLD: על פי המידע שנמסר, נראה כי מדובר בנוהלים והנחיות פנימיים של בנק לגבי טיפול בבקשות אשראי ללקוחות פרטיים ועסקיים.
+באשר לשאלתך, הנוהלים מתארים את התהליך הבנקאי הפנימי לטיפול בבקשות אשראי, כולל סוגי הלקוחות, סוגי הריבית, והשיקולים בקבלת החלטות אשראי. לא צוין במפורש מתי יש להקים בקשות אשראי במערכת בקשות אשראי ללקוח פרטי, אך ניתן להסיק כי זה תלוי בסוג הלקוח ובסוג הבקשה.
+לקוחות פרטיים:
+עבור לקוחות פרטיים
+
+PIPELINE ANSWER (final 999c):
+יש להקים בקשת אשראי במערכת "בקשות אשראי" (ס.פ. 161 בתפריט אשראי) במקרים הבאים:
+    * עבור לקוחות המשויכים לאוכלוסיית מערכת "בקשות אשראי", בעת הזמנת כרטיס MAX ראשון בחשבון (סעיף 1, טסט/32898.html).
+    * כאשר הסניף מאשר הלוואה אך מוקד מש"י מקים אותה (סעיף 8.2.3, טסט/71630.html).
+    * כאשר הסניף מאשר ומקים את ההלוואה (סעיף 8.3.4, טסט/71630.html).
+
+    הערה: "הלוואה באישור מהיר" אינה מחייבת הגשת בקשת אשראי במערכת "בקשות אשראי" (טסט/67240.html).
+
+    קבצי נוהל: טסט/32898.html, טסט/71630.html, טסט/67240.html.יש להקים בקשת אשראי במערכת "בקשות אשראי" (ס.פ. 161 בתפריט אשראי) במקרים הבאים:
+* עבור לקוחות המשויכים לאוכלוסיית מערכת "בקשות אשראי", בעת הזמנת כרטיס MAX ראשון בחשבון (סעיף 1, טסט/32898.html).
+* כאשר הסניף מאשר הלוואה אך מוקד מש"י מקים אותה (סעיף 8.2.3, טסט/71630.html).
+* כאשר הסניף מאשר ומקים את ההלוואה (סעיף 8.3.4, טסט/71630.html).
+
+הערה: "הלוואה באישור מהיר" אינה מחייבת הגשת בקשת אשראי במערכת "בקשות אשראי" (טסט/67240.html).
+
+קבצי נוהל: טסט/32898.html, טסט/71630.html, טסט/67240.html
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+n= 33  proc=11396  prev_kw=True  prev_llm=FAIL  elapsed=16.4s  raw_len=1712
+Q: באיזה מקרים משתמשים בפעולת דיווח ערבות ללא טופל ממוכן?
+GOLD: בכל המקרים בהם לא ניתן לדווח את הערבות באמצעות טופל ממוכן, יש לבצע את הדיווח באופן ידני. זה כולל מקרים בהם:
+
+- קיים צורך להוסיף או לשנות פרטים בטופס הדיווח.
+- קיימים מספר ערבים עם אותו מספר זיהוי.
+- קיימים ערבים עם אותו שם.
+- קיימים ערבים עם אותו מספר ח.י.ב.
+- קיים צורך להזין את פרטי הערבות במערכת ידנית.
+- יש צורך להוסיף מידע נוסף בטופס הדיווח.
+
+PIPELINE ANSWER (final 1712c):
+*   Role: Bank Assistant.
+    *   Constraint: Answer *only* based on the provided procedures.
+    *   Language: Hebrew only (no English).
+    *   No meta-talk (no "thinking", "Step 1", etc.).
+    *   No tool calls/searching.
+    *   Direct and short answers. No introductions.
+    *   Quote section numbers, amounts, dates, and form names exactly.
+    *   If information is missing: Write "המידע אינו קיים בנהלים שצורפו".
+    *   End with the filename of the source procedure.
+    *   Input Question: "באיזה מקרים משתמשים בפעולת דיווח ערבות ללא טופל ממוכן?" (In which cases is the operation "reporting guarantee without a prepared form" used?)
+    *   Input Procedures: None provided in the prompt text.
+
+    *   The user provided the question but did *not* provide any "Relevant Procedures" (נהלים רלוונטיים) text.
+
+    *   Since the information is not in the provided procedures (because no procedures were provided), I must follow rule #6.
+    *   Rule 6: "אם המידע באמת לא נמצא בנהלים שצורפו — כתוב בדיוק: 'המידע אינו קיים בנהלים שצורפו'."
+
+    *   "המידע אינו קיים בנהלים שצורפו"
+
+    *   Hebrew only? Yes.
+    *   No "thinking"? Yes.
+    *   No intro? Yes.
+    *   Direct answer? Yes.
+    *   No invented info? Yes.
+    *   Filename? Since no file was provided, I can't name one, but the rule says "ציין את שם קובץ הנוהל שממנו לקחת את המידע". Since I didn't take info from any file, I'll just provide the required error message.
+
+    *Self-Correction:* The prompt says "ענה ישירות ובקצרה". If I
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+n= 54  proc=91712  prev_kw=True  prev_llm=FAIL  elapsed=18.9s  raw_len=1814
+Q: מה תנאי הריבית להלוואה של הסוכנות היהודית?
+GOLD: שיעור הריבית בהלוואה
+
+פריים + 1.0%.
+
+*"בקרן חרום לעסקים באשקלון- מלחמת חרבות ברזל"- שיעור הריבית: פריים מינוס 0.5%.
+
+4.5.  שיעור הריבית בהלוואת הסדר חוב
+
+פריים +2.0%.
+
+4.6.  עמלות
+
+4.6.1.  עמלת דמי טיפול באשראי וביטחונות בבנק – 50% הנחה.
+
+4.6.2.  יתר העמלות – בהתאם לתעריפון הבנק.
+
+PIPELINE ANSWER (final 1814c):
+*   Question: "מה תנאי הריבית להלוואה של הסוכנות היהודית?" (What are the interest rate conditions for the Jewish Agency loan?)
+    *   Constraints:
+        *   Answer only based on provided procedures.
+        *   Language: Hebrew only.
+        *   No "thinking", "Step 1", etc.
+        *   No calling tools or searching.
+        *   Direct and short answer. No introductions.
+        *   Quote section numbers, amounts, dates, and form names exactly.
+        *   If info is missing, write: "המידע אינו קיים בנהלים שצורפו".
+        *   End with the file name of the procedure used.
+
+    *   *ID 265 (טסט/40830.html):* Discusses loan amounts (250k, 340k), guarantors, process for requesting loans, checking business/shareholders, business plan preparation. No specific interest rate mentioned.
+    *   *ID 403 (טסט/40830.html):*
+        *   Section 3.4.1 (b): Mentions that the execution order includes "שיעור הריבית" (interest rate), but doesn't state the specific rate.
+        *   Section 4.4: "שיעור הריבית פריים + 1.5% ." (Interest rate is Prime + 1.5%).
+    *   *ID 160 (טסט/92703.html):* Discusses "חרבות ברזל" (Iron Swords) loans, repayment, reporting, etc. Mentions "שיעור הריבית המקורית בלבד" (original interest rate only) but doesn't state the specific rate for the Jewish Agency loan.
+
+    *   The interest rate is Prime + 1.5%.
+    *   Source: ID 403 (Title: טסט/40830.html), Section 4.4.
+
+    *   Answer: שיעור הריבית הוא פריים + 1.5% (סעיף 4.4).
+    *   File name: טסט/40830.html.
+
+    
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+n= 64  proc=32904  prev_kw=False  prev_llm=FAIL  elapsed=56.0s  raw_len=13560
+Q: איך ניתן לבטל כרטיס אשראי בהתכתבות עם בנקאי?
+GOLD:     בפעולות נוספות בכרטיס בדיגיטל קיים לינק בשם "ביטול כרטיס" אשר מפנה לפתיחת פנייה לביטול הכרטיס בהתכתבות עם בנקאי.
+
+    כאמור נדרש לטפל בפניות אלו באותו היום שהפניה התקבלה בסניף.
+
+    על הבנקאי לנסות להשיג את הלקוח טלפונית בכדי לנסות לשמר את הכרטיס או במקרה אובדן / גניבה, להציע לו כרטיס חליפי.
+לצורך השימור, ניתן להיעזר במגוון המועדונים המוצעים בנוהל "מועדונים בכרטיסי אשראי", מס' 32919.
+
+    
+
+PIPELINE ANSWER (final 406c):
+במקרה של ביטול כרטיס אשראי ביוזמת הבנק מסיבה אשראית, יש לשלוח הודעת sms באמצעות פתיחת פניה יזומה במערכת התכתבות עם בנקאי וצירוף המכתב הידני (לאחר סריקתו לתיקיית רשת) (סעיף 3.1.2, טסט/32904.html).במקרה של ביטול כרטיס אשראי ביוזמת הבנק מסיבה אשראית, יש לשלוח הודעת sms באמצעות פתיחת פניה יזומה במערכת התכתבות עם בנקאי וצירוף המכתב הידני (לאחר סריקתו לתיקיית רשת) (סעיף 3.1.2, טסט/32904.html).
+
+טסט/32904.html
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+n= 70  proc=32928  prev_kw=True  prev_llm=PASS  elapsed=39.7s  raw_len=6850
+Q: איך ניתן לשפעל כרטיס סניפומט?
+GOLD: ניתן לשפעל כרטיס סניפומט בדיגיטל או באמצעות שיחה טלפונית בכל שעות היממה בטלפון 03-6364432.
+
+PIPELINE ANSWER (final 1149c):
+ניתן לשפעל כרטיס סניפומט בדרכים הבאות:
+    1. באופן דיגיטלי או באמצעות שיחה טלפונית בכל שעות היממה בטלפון 03-6364432 (סעיף 3.2 בנהלים ID 438).
+    2. באמצעות מכשירי ATM (של כל הבנקים) ועמדות לקוח, בביצוע פעולה באמצעות כרטיס אשראי המחייב הזנת קוד סודי (סעיף 211).
+    3. במקרה של כרטיס שהגיע לסניף בעקבות דואר חוזר: שפעול אוטומטי יתבצע יום לאחר הדיווח על מסירת הכרטיס, או שהלקוח יכול לשפעל את הכרטיס מיד לאחר המסירה ע"י יצירת קשר עם מוקד ישראכרט (סעיף 4.2.6 בנהלים ID 211).
+
+    כרטיסי סניפומט חדשים שלא יופעלו תוך 90 ימים יבוטלו (סעיף 438 וסעיף 211).
+
+    שם קובץ: טסט/32898.htmlניתן לשפעל כרטיס סניפומט בדרכים הבאות:
+* באופן דיגיטלי או באמצעות שיחה טלפונית בכל שעות היממה בטלפון 03-6364432 (סעיף 3.2 בנהלים ID 438).
+* באמצעות מכשירי ATM (של כל הבנקים) ועמדות לקוח, בביצוע פעולה באמצעות כרטיס אשראי המחייב הזנת קוד סודי (סעיף 211).
+* במקרה של כרטיס שהגיע לסניף בעקבות דואר חוזר: שפעול אוטומטי יתבצע יום לאחר הדיווח על מסירת הכרטיס, או שהלקוח יכול לשפעל את הכרטיס מיד לאחר המסירה ע"י יצירת קשר עם מוקד ישראכרט (סעיף 4.2.6 בנהלים ID 211).
+
+חשוב לציין כי כרטיסי סניפומט חדשים שלא יופעלו תוך 90 ימים יבוטלו (סעיף 438 וסעיף 211).
+
+שם קובץ: טסט/32898.html
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+n= 73  proc=17513  prev_kw=True  prev_llm=PASS  elapsed=24.0s  raw_len=3320
+Q: האם ניתן לקבל הוראת לקוח בטלפון להקמת הוראת קבע להעברה
+GOLD: נוהל 17513 הוראות קבע להעברה – הקמה וביצוע שינויים, סעיף 1 קבלת הוראת מלקוח:
+הוראה להקמת/עדכון/ביטול הוראת קבע תתקבל בדלפק הסניף או בהתכתבות עם בנקאי או באמצעות המוקד הטלפוני.
+
+הוראה בהתכתבות עם בנקאי תתקבל בנוסף בהתאם להנחיות בנוהל "התכתבות בנקאי-לקוח" מס' 76002.
+
+הוראה באמצעות המוקד הטלפוני תתקבל בנוסף בהתאם להנחיות בנוהל "המוקד הטלפוני" מספר 18426.
+אין לקבל בסניף הוראה טלפונית או באמצעות פקס לה
+
+PIPELINE ANSWER (final 422c):
+הוראה להקמת / עדכון / ביטול הוראת קבע תתקבל בדלפק הסניף או בהתכתבות עם בנקאי או באמצעות המוקד הטלפוני (סעיף 1.2). עם זאת, אין לקבל בסניף הוראה טלפונית או באמצעות פקס להקמת הוראת קבע (סעיף 1.2).
+
+    טסט/17513.htmlהוראה להקמת / עדכון / ביטול הוראת קבע תתקבל בדלפק הסניף או בהתכתבות עם בנקאי או באמצעות המוקד הטלפוני (סעיף 1.2). עם זאת, אין לקבל בסניף הוראה טלפונית או באמצעות פקס להקמת הוראת קבע (סעיף 1.2).
+
+טסט/17513.html
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+n= 76  proc=32716  prev_kw=True  prev_llm=FAIL  elapsed=23.0s  raw_len=2719
+Q: האם קיים סיווג שחוסם הקמת הרשאה לחיוב חשבון ?
+GOLD: לא קיים סיווג חוסם. 
+קיימת חסימה מיכונית שאינה מאפשרת הקמת/העברת הרשאות לחשבונות בעלי ההתראות הבאות: מנוהל, קשה גביה, צל, רדום, הלבנת הון, חדל פירעון, ללא פעילות שוטפת, חשבון בתהליך סגירה.
+
+PIPELINE ANSWER (final 2000c):
+nsent), changes when turning 18, parent guarantees, and blocking accounts for those under 16 who haven't been verified (classification 060). It doesn't explicitly list "classifications that block the establishment of an authorization" in a general sense, though it mentions blocking accounts for specific reasons.
+    *   *ID 167 (טסט/68357.html):* Discusses loans, repayment via authorization, and forms (H-18). Doesn't mention blocking classifications for establishing authorizations.
+    *   *ID 285 (טסט/32716.html):* Section 1.2 states: "קיימת חסימה מיכונית שאינה מאפשרת הקמת / העברת הרשאות לחשבונות בעלי ההתראות הבאות : מנוהל , קשה גביה , צל , רדום , הלבנת הון , חדל פירעון, ללא פעילות שוטפת , חשבון בתהליך סגירה ." (There is an automatic block that does not allow the establishment/transfer of authorizations for accounts with the following alerts: managed, difficult to collect, shadow, dormant, money laundering, insolvent, no active activity, account in the process of closing.)
+
+    *   The answer is found in ID 285, section 1.2.
+    *   The classifications/alerts are: מנוהל, קשה גביה, צל, רדום, הלבנת הון, חדל פירעון, ללא פעילות שוטפת, חשבון בתהליך סגירה.
+
+    *   Direct answer: Yes, there is an automatic block for accounts with specific alerts.
+    *   List the alerts: מנוהל, קשה גביה, צל, רדום, הלבנת הון, חדל פירעון, ללא פעילות שוטפת, חשבון בתהליך סגירה.
+    *   Cite section: 1.2.
+    *   File name: טסט/32716.html.
+
+    *   Hebrew only? Yes.
+    *   No "thinking" etc.? Yes.
+   
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+n= 77  proc=32716  prev_kw=False  prev_llm=FAIL  elapsed=22.4s  raw_len=2691
+Q: איך מקימים קוד מוסד חדש?
+GOLD: יש לפעול לפי פרק ח' בנוהל 32716
+
+PIPELINE ANSWER (final 2000c):
+ 30 Ministry of Education) in section 7.4.4, but this is about *reporting* a code for a specific loan type, not *establishing* a new institution code.
+    *   *ID 285 (טסט/32716.html):* Discusses authorization for account debiting. Mentions "קוד המוסד המוטב" (Beneficiary institution code) in section 1.3, but doesn't explain how to *establish* a new code.
+    *   *ID 257 (טעם/37596.html):* Discusses opening accounts for financial institutions (FFI), FATCA/CRS classification, and reporting details in the system. It mentions reporting entity details (name, country, address) in section 2.6.2, but it does *not* describe the process of establishing a new institution code itself.
+
+    *   The user is asking how to *establish* (setup/create) a new institution code.
+    *   The provided documents mention *using* or *reporting* institution codes (e.g., code 30 for Ministry of Education, or beneficiary institution codes), but none of the documents provide instructions on the procedure for *establishing/creating* a new institution code in the bank's system.
+
+    *   Since the information is not in the provided procedures, I must use the mandatory phrase.
+
+    *   "המידע אינו קיים בנהלים שצורפו"
+
+    *   Wait, let me double-check if there's any hint.
+    *   ID 201: "קוד מוסד – 30 משרד החינוך" - This is a specific code for a specific process.
+    *   ID 285: "קוד המוסד המוטב" - This is about checking details.
+    *   ID 257: "דיווח... פרטי הישות... בשדה 'תת סיווג FATCA'" - This is about r
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+n= 79  proc=36542  prev_kw=True  prev_llm=PASS  elapsed=29.2s  raw_len=4833
+Q: אם אני יכולה להחזיר שיק שסכומו מתחת ל-10,000 ש:ח מסיבת חוק המזומן – חסר שם נסב
+GOLD: לא
+
+PIPELINE ANSWER (final 60c):
+המידע אינו קיים בנהלים שצורפו.המידע אינו קיים בנהלים שצורפו.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+n= 80  proc=18049  prev_kw=False  prev_llm=FAIL  elapsed=16.4s  raw_len=1704
+Q: כיצד עלי לטפל שיש טעות בהדפסה
+GOLD: להלן פירוט מקרים לדוגמה בהם יכולה לחול טעות בהדפסה ואופן הטיפול בכל אחד מהמקרים:
+
+       כשיוצאים מהפעולה ללא סיומה או שמספר החשבון לא זהה למספר החשבון שע"ג ההמחאה - יש לבטל את הפעולה הכספית ולהזרימה מחדש ולהשתמש בטופס המחאה חדש.
+(גם לאחר ביטול הפעולה הכספית, ניתן יהיה להשתמש בטופס ההמחאה הישן רק למחרת). לא תהיה אפשרות לעדכן את הפעולה הכספית.
+       כשטופס ההמחאה נקרע תוך כדי הדפסה או יצא מרוח ו
+
+PIPELINE ANSWER (final 1704c):
+*   Role: Bank Assistant.
+    *   Constraint: Answer *only* based on the provided procedures.
+    *   Language: Hebrew only (no English).
+    *   No meta-talk (no "thinking", "Step 1", etc.).
+    *   No searching/calling tools.
+    *   Direct and short answers. No introductions.
+    *   Quote section numbers, amounts, deadlines, and form names exactly.
+    *   If information is missing: Write "המידע אינו קיים בנהלים שצורפו".
+    *   End with the filename of the procedure used.
+    *   Input Question: "כיצד עלי לטפל שיש טעות בהדפסה" (How should I handle a printing error?)
+    *   Input Procedures: [Empty/None provided in the prompt].
+
+    *   The user provided the question: "כיצד עלי לטפל שיש טעות בהדפסה".
+    *   The user provided the section "נהלים רלוונטיים:" but left it empty.
+
+    *   Since no procedures were provided in the prompt, I cannot answer the question based on the provided procedures.
+    *   According to Rule 6: "אם המידע באמת לא נמצא בנהלים שצורפו — כתוב בדיוק: 'המידע אינו קיים בנהלים שצורפו'".
+
+    *   Answer: המידע אינו קיים בנהלים שצורפו.
+
+    *   Hebrew only? Yes.
+    *   No "thinking"? Yes.
+    *   No "Step 1"? Yes.
+    *   Direct/Short? Yes.
+    *   No intro? Yes.
+    *   Exact phrase for missing info? Yes.
+    *   Filename included? Since no file was provided, I can't include a filename. However, the rule says "ציין את שם קובץ הנוהל שממנו לקחת את המידע". Since there is no info, there is no file.
+
+    *Self-Correction:* If I say "המידע אינו קיים בנהלים ש
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+n= 85  proc= 5088  prev_kw=False  prev_llm=FAIL  elapsed=17.5s  raw_len=1874
+Q: על איזה טופס הלקוח צריך לחתום בהעברת מט"ח הונית;?
+GOLD: נוהל 5088, סעיף 1.5.2 תשלומים בגין השקעות הוניות, השקעות בנכסים, ומתן הלוואות:
+על הלקוח להציג טופס "הצהרה בדבר תשלום לתושב חוץ הפטור מניכוי ממס במקור" מס' 2513/2 מלא וחתום על ידו בהתאם להוראות, או להציג אישור לפטור מפקיד שומה.
+
+PIPELINE ANSWER (final 1874c):
+*   Role: Bank Assistant.
+    *   Constraint 1: Answer *only* based on the provided procedures.
+    *   Constraint 2: Answer in Hebrew *only*. No English.
+    *   Constraint 3: No "thinking", "Step 1", etc.
+    *   Constraint 4: No calling tools or searching.
+    *   Constraint 5: Direct and short answer. No introductions.
+    *   Constraint 6: Quote section numbers, amounts, dates, and form names exactly as they appear.
+    *   Constraint 7: If information is missing, write: "המידע אינו קיים בנהלים שצורפו".
+    *   Constraint 8: End with the name of the source file.
+    *   Input Question: "על איזה טופס הלקוח צריך לחתום בהעברת מט"ח הונית;?" (On which form must the client sign for a capital FX transfer?)
+    *   Input Procedures: [Empty/None provided in the prompt].
+
+    *   The user provided the question but did *not* provide any "Relevant Procedures" (נהלים רלוונטיים) text.
+
+    *   Since the information is not in the provided procedures (because there are no procedures provided), I must follow Rule 6.
+    *   Rule 6: "אם המידע באמת לא נמצא בנהלים שצורפו — כתוב בדיוק: 'המידע אינו קיים בנהלים שצורפו'."
+
+    *   Answer: המידע אינו קיים בנהלים שצורפו.
+
+    *   Hebrew only? Yes.
+    *   No "thinking"? Yes.
+    *   No English? Yes.
+    *   Direct/Short? Yes.
+    *   No intro? Yes.
+    *   Exact phrase for missing info? Yes.
+
+    *Self-Correction:* Wait, the prompt says "ענה ישירות ובקצרה... ציין את שם קובץ הנוהל". Since there is no file name provided because no procedures were p
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+n= 86  proc=36792  prev_kw=True  prev_llm=PASS  elapsed=22.1s  raw_len=2915
+Q: תוכל לומר לי מהו דוח צובר?
+GOLD: דוח צובר הוא דוח שבכל פעם שהוא מופק, מציג תמונה עדכנית וכולל מופעים קודמים שלא טופלו (לעומת דוח שמציג התראה חד פעמית לטיפול שלא תעלה שוב בדוח הבא). בדוח מסוג זה, אם לא הושלם טיפול ביום האתמול, לא רלוונטי להמשיך טיפול משום שהמידע יוצג בדוח של היום.
+
+PIPELINE ANSWER (final 539c):
+דוח שבכל פה שהוא מופק, מציג תמונה עדכנית וכולל מופעים קודמים שלא טופלו (לעומת דוח שמציג התראה חד פעמית לטיפול שלא תעלה שוב בדוח הבא). בדוח מסוג זה, אם לא הושלם טיפול ביום האתמול, לא רלוונטי להמשיך טיפול משום שהמידע יוצג בדוח של היום (8.12.1).
+
+    שם קובץ: טסט/36792.htmlדוח שבכל פעם שהוא מופק, מציג תמונה עדכנית וכולל מופעים קודמים שלא טופלו (לעומת דוח שמציג התראה חד פעמית לטיפול שלא תעלה שוב בדוח הבא). בדוח מסוג זה, אם לא הושלם טיפול ביום האתמול, לא רלוונטי להמשיך טיפול משום שהמידע יוצג בדוח של היום (8.12.1).
+
+שם קובץ: טסט/36792.html
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+n= 89  proc=12119  prev_kw=True  prev_llm=PASS  elapsed=46.9s  raw_len=8125
+Q: באיזה מקרים ידרוש הבנק דוח שמאות מורחבת ?
+GOLD: ככלל, במקרים בהם שווי הנכס המשועבד בהלוואה הינו 3 מיליון ש"ח ומעלה, ידרוש הבנק דוח שמאות מורחבת.
+לתשומת לבכם, במקרה בו, שווי הנכס המשועבד בהלוואה הינו 3 מיליון ש"ח ומעלה, אך שיעור המימון על הנכס הינו עד 25% ולא יותר מ 1,200,000 ש"ח (הנמוך מביניהם) - מחלקת משכנתאות תסתפק בשמאות רגילה.
+בנכסים ששווים בין 3 מיליון ל 4 מיליון ₪ וכאשר עסקינן בדירת מגורים בבית משותף שאינו בית פרטי, בסמכות קציני האשראי במ
+
+PIPELINE ANSWER (final 1222c):
+ככלל, במקרים בהם שווי הנכס המשועבד בהלוואה הינו 3 מיליון ש"ח ומעלה, ידרוש הבנק דוח שמאות מורחבת. במקרים חריגים, הבנק רשאי לדרוש שמאות מורחבת גם כאשר שווי הנכס המשועבד נמוך מ-3 מיליון ש"ח, ובתנאי שדרישה זו תופיע בצורה מפורשת באישור ההלוואה.
+
+    עם זאת, מחלקת משכנתאות תסתפק בשמאות רגילה במקרה בו שווי הנכס המשועבד בהלוואה הינו 3 מיליון ש"ח ומעלה, אך שיעור המימון על הנכס הינו עד 25% ולא יותר מ 1,200,000 ש"ח (הנמוך מביניהם). כמו כן, בנכסים ששווים בין 3 מיליון ל 4 מיליון ₪ וכאשר עסקינן בדירת מגורים בבית משותף שאינו בית פרטי, נמצא בסמכות קציני האשראי במחלקת משכנתאות לאשר קבלת שמאות רגילה.
+
+    קובץ: טסט/12119.htmlככלל, במקרים בהם שווי הנכס המשועבד בהלוואה הינו 3 מיליון ש"ח ומעלה, ידרוש הבנק דוח שמאות מורחבת. במקרים חריגים, הבנק רשאי לדרוש שמאות מורחבת גם כאשר שווי הנכס המשועבד נמוך מ-3 מיליון ש"ח, ובתנאי שדרישה זו תופיע בצורה מפורשת באישור ההלוואה.
+
+עם זאת, מחלקת משכנתאות תסתפק בשמאות רגילה במקרה בו שווי הנכס המשועבד בהלוואה הינו 3 מיליון ש"ח ומעלה, אך שיעור המימון על הנכס הינו עד 25% ולא יותר מ 1,200,000 ש"ח (הנמוך מביניהם). כמו כן, בנכסים ששווים בין 3 מיליון ל 4 מיליון ₪ וכאשר עסקינן בדירת מגורים בבית משותף שאינו בית פרטי, נמצא בסמכות קציני האשראי במחלקת משכנתאות לאשר קבלת שמאות רגילה.
+
+קובץ: טסט/12119.html
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+n= 91  proc=12119  prev_kw=True  prev_llm=FAIL  elapsed=17.6s  raw_len=2027
+Q: מי צריך לשלם את העמלה בגין השמאות ?
+GOLD: תשלום העמלה לשמאי בגין השמאות, יבוצע ישירות ע"י הלווה.
+סעיף 7.1 מנוהל שמאות
+
+PIPELINE ANSWER (final 95c):
+המידע אינו קיים בנהלים שצורפו.
+    טסט/14293.htmlהמידע אינו קיים בנהלים שצורפו.
+
+טסט/14293.html
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+n= 99  proc=91018  prev_kw=False  prev_llm=FAIL  elapsed=881.8s  raw_len=149853
+Q: איזה תמהיל יוצג בבקשה למחזור פנימי  ?
+GOLD: על יועץ המשכנתאות לסמן בחירה בתמהיל מבוקש.
+
+התמהיל הנבחר יועתק ללשונית תמהיל הבקשה כלהלן:
+
+        במחזור פנימי מלא- יוצג תמהיל נבחר ממודל תמהילים.
+
+        במחזור חלקי - החלקים שאינם ממוחזרים יוצגו בכיתוב בולט שאינו ניתן לעריכה והחלקים הממוחזרים ניתנים לעריכה (כפי המופיע בתמונה מטה).
+ סעיף 3.2 לנוהל 91018
+
+PIPELINE ANSWER (final 2000c):
+רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיונות... רעיו
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+n=126  proc=24057  prev_kw=True  prev_llm=PASS  elapsed=34.1s  raw_len=3054
+Q: התראות על חשבונות אשר מתנהלים במקביל בשני סוגי חשבון עו"ש מט"י יוצגו באזור החריגים בדולב בתדירות שבועית, איזה סוגי חשבונות אלה?
+GOLD: 105 (עו"ש פרטי) , 106 (עו"ש משכנתאות) , 142 (עו"ש תאגידים זרים), 146 (בנקים זרים), 178 (עו"ש חסכונות),  409 (חח"ד עסקי) ו- 191 (חסכונות נוער).
+
+PIPELINE ANSWER (final 2000c):
+שבונות אשר מתנהלים במקביל בשני סוג י חשבון העו " ש הבאים – 105 ( עו " ש פרטי ) , 106 ( עו " ש משכנתאות ) , 142 ( עו " ש תאגידים זרים ), 146 ( בנקים זרים ), 178 ( עו " ש חסכונות ) ו - 409 ( חח " ד עסקי )."
+    *   ID 233 (Title: טסט/12813.html):
+        *   Discusses closing inactive accounts. Mentions types 105, 409, 191, 178, 142, 111, 112, 113, 118, 120. Not specifically about the "Dolav weekly alerts for parallel FX accounts" question.
+    *   ID 16 (Title: טסט/21484.html):
+        *   Discusses errors in account numbers, credit card charges, etc. Not relevant to the specific question.
+
+    *   The question asks for the types of accounts that appear in the weekly Dolav exceptions area when managed in parallel in two FX current account types.
+    *   From ID 434: The report includes accounts managed in parallel in the following two types of current accounts: 105 (עו"ש פרטי), 106 (עו"ש משכנתאות), 142 (עו"ש תאגידים זרים), 146 (בנקים זרים), 178 (עו"ש חסכונות) and 409 (חח"ד עסקי).
+
+    *   Answer: סוגי החשבונות הם: 105 (עו"ש פרטי), 106 (עו"ש משכנתאות), 142 (עו"ש תאגידים זרים), 146 (בנקים זרים), 178 (עו"ש חסכונות) ו-409 (חח"ד עסקי).
+    *   Source: טסט/24057.html.
+
+    *   Hebrew only? Yes.
+    *   No "thinking/Step 1"? Yes.
+    *   Direct and short? Yes.
+    *   No intro? Yes.
+    *   Quote exactly? Yes.
+    *   File name at the end? Yes.
+
+    *Self-Correction during drafting:* The text says "הדוח כולל חשבונות אשר מתנהלים במקביל בשני סוג י חשבון העו " ש הבאים – 105 ( עו " ש פרט
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+n=132  proc=32448  prev_kw=True  prev_llm=PASS  elapsed=26.6s  raw_len=2442
+Q: האם כל הזמנה טלפונית של פנקסי המחאות מחייבת קבלת אישור מהלקוח?
+GOLD: כן
+
+PIPELINE ANSWER (final 466c):
+כן, כל הזמנה של פנקסי המחאות מחייבת קבלת אישור מהלקוח (בכתב או אישור טלפוני). במידה וההזמנה בוצעה באמצעות הטלפון יש ליידע את הלקוח כי פנקסים אשר לא ידרשו במשך 60 יום יושמדו וכי במקרים אלו לא יהיה החזר עמלה.
+
+    שם קובץ: טסט/32448.htmlכן, כל הזמנה של פנקסי המחאות מחייבת קבלת אישור מהלקוח (בכתב או אישור טלפוני). במידה וההזמנה בוצעה באמצעות הטלפון יש ליידע את הלקוח כי פנקסים אשר לא ידרשו במשך 60 יום יושמדו וכי במקרים אלו לא יהיה החזר עמלה.
+
+שם קובץ: טסט/32448.html
+

@@ -1,0 +1,316 @@
+  m = re.search("cites=[\d+,]*", object["citedby_url"])
+ERROR:root:LiteLLMBase async completion
+Traceback (most recent call last):
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/llms/ollama/chat/transformation.py", line 489, in chunk_parser
+    tool_calls = chunk["message"].get("tool_calls")
+                 ~~~~~^^^^^^^^^^^
+KeyError: 'message'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/litellm_core_utils/streaming_handler.py", line 2017, in __anext__
+    async for chunk in self.completion_stream:  # type: ignore[union-attr]
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/llms/base_llm/base_model_iterator.py", line 189, in __anext__
+    chunk = self._handle_string_chunk(str_line=str_line)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/llms/base_llm/base_model_iterator.py", line 116, in _handle_string_chunk
+    return self.chunk_parser(chunk=stripped_json_chunk)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/llms/ollama/chat/transformation.py", line 572, in chunk_parser
+    raise OllamaError(
+litellm.llms.ollama.common_utils.OllamaError: KeyError: 'message', Got unexpected response from Ollama: {'error': 'Internal Server Error (ref: b6facbd5-9daf-44fe-91fc-5288d5399dd9)'}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/ragflow/rag/llm/chat_model.py", line 1609, in async_chat_streamly_with_tools
+    async for resp in response:
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/litellm_core_utils/streaming_handler.py", line 2236, in __anext__
+    self._handle_stream_fallback_error(e)
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/litellm_core_utils/streaming_handler.py", line 2302, in _handle_stream_fallback_error
+    raise mapped_exception
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/litellm_core_utils/streaming_handler.py", line 2256, in _handle_stream_fallback_error
+    mapped_exception = exception_type(
+                       ^^^^^^^^^^^^^^^
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2456, in exception_type
+    raise e
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2425, in exception_type
+    raise APIConnectionError(
+litellm.exceptions.APIConnectionError: litellm.APIConnectionError: Ollama_chatException - KeyError: 'message', Got unexpected response from Ollama: {'error': 'Internal Server Error (ref: b6facbd5-9daf-44fe-91fc-5288d5399dd9)'}
+ERROR:root:async_chat_streamly giving up: **ERROR**: AUTH_ERROR - litellm.APIConnectionError: Ollama_chatException - KeyError: 'message', Got unexpected response from Ollama: {'error': 'Internal Server Error (ref: b6facbd5-9daf-44fe-91fc-5288d5399dd9)'}
+ERROR:root:LiteLLMBase async completion
+Traceback (most recent call last):
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/llms/ollama/chat/transformation.py", line 489, in chunk_parser
+    tool_calls = chunk["message"].get("tool_calls")
+                 ~~~~~^^^^^^^^^^^
+KeyError: 'message'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/litellm_core_utils/streaming_handler.py", line 2017, in __anext__
+    async for chunk in self.completion_stream:  # type: ignore[union-attr]
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/llms/base_llm/base_model_iterator.py", line 189, in __anext__
+    chunk = self._handle_string_chunk(str_line=str_line)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/llms/base_llm/base_model_iterator.py", line 116, in _handle_string_chunk
+    return self.chunk_parser(chunk=stripped_json_chunk)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/llms/ollama/chat/transformation.py", line 572, in chunk_parser
+    raise OllamaError(
+litellm.llms.ollama.common_utils.OllamaError: KeyError: 'message', Got unexpected response from Ollama: {'error': 'Internal Server Error (ref: d4d5b0e0-286e-451d-bae6-171021bf520f)'}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/ragflow/rag/llm/chat_model.py", line 1609, in async_chat_streamly_with_tools
+    async for resp in response:
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/litellm_core_utils/streaming_handler.py", line 2236, in __anext__
+    self._handle_stream_fallback_error(e)
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/litellm_core_utils/streaming_handler.py", line 2302, in _handle_stream_fallback_error
+    raise mapped_exception
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/litellm_core_utils/streaming_handler.py", line 2256, in _handle_stream_fallback_error
+    mapped_exception = exception_type(
+                       ^^^^^^^^^^^^^^^
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2456, in exception_type
+    raise e
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2425, in exception_type
+    raise APIConnectionError(
+litellm.exceptions.APIConnectionError: litellm.APIConnectionError: Ollama_chatException - KeyError: 'message', Got unexpected response from Ollama: {'error': 'Internal Server Error (ref: d4d5b0e0-286e-451d-bae6-171021bf520f)'}
+ERROR:root:async_chat_streamly giving up: **ERROR**: AUTH_ERROR - litellm.APIConnectionError: Ollama_chatException - KeyError: 'message', Got unexpected response from Ollama: {'error': 'Internal Server Error (ref: d4d5b0e0-286e-451d-bae6-171021bf520f)'}
+ERROR:root:LiteLLMBase async completion
+Traceback (most recent call last):
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/llms/ollama/chat/transformation.py", line 489, in chunk_parser
+    tool_calls = chunk["message"].get("tool_calls")
+                 ~~~~~^^^^^^^^^^^
+KeyError: 'message'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/litellm_core_utils/streaming_handler.py", line 2017, in __anext__
+    async for chunk in self.completion_stream:  # type: ignore[union-attr]
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/llms/base_llm/base_model_iterator.py", line 189, in __anext__
+    chunk = self._handle_string_chunk(str_line=str_line)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/llms/base_llm/base_model_iterator.py", line 116, in _handle_string_chunk
+    return self.chunk_parser(chunk=stripped_json_chunk)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/llms/ollama/chat/transformation.py", line 572, in chunk_parser
+    raise OllamaError(
+litellm.llms.ollama.common_utils.OllamaError: KeyError: 'message', Got unexpected response from Ollama: {'error': 'Internal Server Error (ref: 8bb5fb0c-12f5-4d8f-8d25-ea2c26c2ef06)'}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/ragflow/rag/llm/chat_model.py", line 1609, in async_chat_streamly_with_tools
+    async for resp in response:
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/litellm_core_utils/streaming_handler.py", line 2236, in __anext__
+    self._handle_stream_fallback_error(e)
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/litellm_core_utils/streaming_handler.py", line 2302, in _handle_stream_fallback_error
+    raise mapped_exception
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/litellm_core_utils/streaming_handler.py", line 2256, in _handle_stream_fallback_error
+    mapped_exception = exception_type(
+                       ^^^^^^^^^^^^^^^
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2456, in exception_type
+    raise e
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2425, in exception_type
+    raise APIConnectionError(
+litellm.exceptions.APIConnectionError: litellm.APIConnectionError: Ollama_chatException - KeyError: 'message', Got unexpected response from Ollama: {'error': 'Internal Server Error (ref: 8bb5fb0c-12f5-4d8f-8d25-ea2c26c2ef06)'}
+ERROR:root:async_chat_streamly giving up: **ERROR**: AUTH_ERROR - litellm.APIConnectionError: Ollama_chatException - KeyError: 'message', Got unexpected response from Ollama: {'error': 'Internal Server Error (ref: 8bb5fb0c-12f5-4d8f-8d25-ea2c26c2ef06)'}
+ERROR:root:LiteLLMBase async completion
+Traceback (most recent call last):
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/llms/ollama/chat/transformation.py", line 489, in chunk_parser
+    tool_calls = chunk["message"].get("tool_calls")
+                 ~~~~~^^^^^^^^^^^
+KeyError: 'message'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/litellm_core_utils/streaming_handler.py", line 2017, in __anext__
+    async for chunk in self.completion_stream:  # type: ignore[union-attr]
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/llms/base_llm/base_model_iterator.py", line 189, in __anext__
+    chunk = self._handle_string_chunk(str_line=str_line)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/llms/base_llm/base_model_iterator.py", line 116, in _handle_string_chunk
+    return self.chunk_parser(chunk=stripped_json_chunk)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/llms/ollama/chat/transformation.py", line 572, in chunk_parser
+    raise OllamaError(
+litellm.llms.ollama.common_utils.OllamaError: KeyError: 'message', Got unexpected response from Ollama: {'error': 'Internal Server Error (ref: fea6eb4f-1664-4214-b27f-3536311531f1)'}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/ragflow/rag/llm/chat_model.py", line 1609, in async_chat_streamly_with_tools
+    async for resp in response:
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/litellm_core_utils/streaming_handler.py", line 2236, in __anext__
+    self._handle_stream_fallback_error(e)
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/litellm_core_utils/streaming_handler.py", line 2302, in _handle_stream_fallback_error
+    raise mapped_exception
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/litellm_core_utils/streaming_handler.py", line 2256, in _handle_stream_fallback_error
+    mapped_exception = exception_type(
+                       ^^^^^^^^^^^^^^^
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2456, in exception_type
+    raise e
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2425, in exception_type
+    raise APIConnectionError(
+litellm.exceptions.APIConnectionError: litellm.APIConnectionError: Ollama_chatException - KeyError: 'message', Got unexpected response from Ollama: {'error': 'Internal Server Error (ref: fea6eb4f-1664-4214-b27f-3536311531f1)'}
+ERROR:root:async_chat_streamly giving up: **ERROR**: AUTH_ERROR - litellm.APIConnectionError: Ollama_chatException - KeyError: 'message', Got unexpected response from Ollama: {'error': 'Internal Server Error (ref: fea6eb4f-1664-4214-b27f-3536311531f1)'}
+Total: 132 questions, agent pointed at hozrim (646 docs)
+
+[  1/132] ✅ 5/8kw   32s  proc=32328  pass=1/1 (100%)  ETA=71m
+[  2/132] ✅ 5/8kw   25s  proc=32328  pass=2/2 (100%)  ETA=62m
+[  3/132] ✅ 8/8kw   21s  proc=20071  pass=3/3 (100%)  ETA=56m
+[  4/132] ✅ 8/8kw   21s  proc=20071  pass=4/4 (100%)  ETA=53m
+[  5/132] ✅ 6/8kw   20s  proc=20071  pass=5/5 (100%)  ETA=50m
+[  6/132] ❌ 1/8kw   40s  proc=20071  pass=5/6 (83%)  ETA=56m
+[  7/132] ✅ 6/8kw   52s  proc=20064  pass=6/7 (85%)  ETA=63m
+[  8/132] ✅ 7/8kw   22s  proc=20064  pass=7/8 (87%)  ETA=60m
+[  9/132] ✅ 1/3kw   21s  proc=12917  pass=8/9 (88%)  ETA=58m
+[ 10/132] ✅ 5/6kw   16s  proc=34320  pass=9/10 (90%)  ETA=55m
+[ 11/132] ✅ 5/5kw   16s  proc=34320  pass=10/11 (90%)  ETA=52m
+[ 12/132] ✅ 6/8kw   29s  proc=78634  pass=11/12 (91%)  ETA=52m
+[ 13/132] ✅ 6/8kw   20s  proc=36258  pass=12/13 (92%)  ETA=51m
+[ 14/132] ✅ 6/8kw   23s  proc=36258  pass=13/14 (92%)  ETA=50m
+[ 15/132] ✅ 8/8kw   22s  proc=78634  pass=14/15 (93%)  ETA=49m
+[ 16/132] ✅ 5/8kw   23s  proc=78634  pass=15/16 (93%)  ETA=49m
+[ 17/132] ✅ 6/8kw  183s  proc=78634  pass=16/17 (94%)  ETA=66m
+[ 18/132] ✅ 6/8kw   22s  proc=90398  pass=17/18 (94%)  ETA=64m
+[ 19/132] ✅ 8/8kw   31s  proc=90398  pass=18/19 (94%)  ETA=63m
+[ 20/132] ✅ 3/8kw   57s  proc=90398  pass=19/20 (95%)  ETA=65m
+[ 21/132] ✅ 4/8kw   27s  proc=36967  pass=20/21 (95%)  ETA=63m
+[ 22/132] ❌ 0/8kw   68s  proc=36967  pass=20/22 (90%)  ETA=66m
+[ 23/132] ✅ 2/8kw   86s  proc=31604  pass=21/23 (91%)  ETA=69m
+[ 24/132] ✅ 7/8kw   26s  proc=31604  pass=22/24 (91%)  ETA=67m
+[ 25/132] ✅ 6/8kw   27s  proc=91129  pass=23/25 (92%)  ETA=66m
+[ 26/132] ✅ 3/8kw   20s  proc=91129  pass=24/26 (92%)  ETA=64m
+[ 27/132] ✅ 6/8kw   32s  proc=36411  pass=25/27 (92%)  ETA=63m
+[ 28/132] ✅ 5/8kw   33s  proc=34838  pass=26/28 (92%)  ETA=63m
+[ 29/132] ✅ 3/8kw   30s  proc=37340  pass=27/29 (93%)  ETA=62m
+[ 30/132] ✅ 4/8kw  102s  proc=17802  pass=28/30 (93%)  ETA=65m
+[ 31/132] ✅ 2/8kw   41s  proc=17802  pass=29/31 (93%)  ETA=64m
+[ 32/132] ✅ 2/8kw   23s  proc=17802  pass=30/32 (93%)  ETA=63m
+[ 33/132] ✅ 7/8kw   25s  proc=11396  pass=31/33 (93%)  ETA=62m
+[ 34/132] ✅ 4/8kw   25s  proc=11396  pass=32/34 (94%)  ETA=60m
+[ 35/132] ✅ 4/8kw   36s  proc=75545  pass=33/35 (94%)  ETA=60m
+[ 36/132] ✅ 3/8kw   22s  proc=75545  pass=34/36 (94%)  ETA=58m
+[ 37/132] ✅ 8/8kw   20s  proc=78686  pass=35/37 (94%)  ETA=57m
+[ 38/132] ✅ 3/8kw   24s  proc=78686  pass=36/38 (94%)  ETA=56m
+[ 39/132] ✅ 2/8kw   85s  proc=83091  pass=37/39 (94%)  ETA=57m
+[ 40/132] ✅ 4/8kw   58s  proc=83091  pass=38/40 (95%)  ETA=58m
+[ 41/132] ✅ 5/8kw   22s  proc=90227  pass=39/41 (95%)  ETA=56m
+[ 42/132] ✅ 8/8kw   19s  proc=94897  pass=40/42 (95%)  ETA=55m
+[ 43/132] ✅ 5/8kw   24s  proc=18426  pass=41/43 (95%)  ETA=54m
+[ 44/132] ✅ 8/8kw   26s  proc=18426  pass=42/44 (95%)  ETA=53m
+[ 45/132] ✅ 6/8kw   22s  proc=18426  pass=43/45 (95%)  ETA=52m
+[ 46/132] ✅ 8/8kw   79s  proc=88516  pass=44/46 (95%)  ETA=53m
+[ 47/132] ✅ 8/8kw   23s  proc=88516  pass=45/47 (95%)  ETA=52m
+[ 48/132] ✅ 3/8kw   66s  proc=21801  pass=46/48 (95%)  ETA=52m
+[ 49/132] ✅ 6/6kw   14s  proc=21801  pass=47/49 (95%)  ETA=51m
+[ 50/132] ✅ 4/8kw   42s  proc=21801  pass=48/50 (96%)  ETA=50m
+[ 51/132] ✅ 5/8kw   20s  proc=21801  pass=49/51 (96%)  ETA=49m
+[ 52/132] ❌ 1/8kw  107s  proc=21801  pass=49/52 (94%)  ETA=50m
+[ 53/132] ❌ 1/8kw   16s  proc=79541  pass=49/53 (92%)  ETA=49m
+[ 54/132] ✅ 3/8kw   20s  proc=91712  pass=50/54 (92%)  ETA=48m
+[ 55/132] ✅ 4/8kw   23s  proc=91712  pass=51/55 (92%)  ETA=47m
+[ 56/132] ✅ 8/8kw   27s  proc=91712  pass=52/56 (92%)  ETA=46m
+[ 57/132] ✅ 5/8kw   28s  proc=91712  pass=53/57 (92%)  ETA=46m
+[ 58/132] ✅ 6/8kw   23s  proc=91712  pass=54/58 (93%)  ETA=45m
+[ 59/132] ✅ 0/0kw   21s  proc=68112  pass=55/59 (93%)  ETA=44m
+[ 60/132] ✅ 6/8kw   22s  proc=33606  pass=56/60 (93%)  ETA=43m
+[ 61/132] ✅ 2/8kw    4s  proc=32672  pass=57/61 (93%)  ETA=42m
+[ 62/132] ✅ 1/1kw   19s  proc=32672  pass=58/62 (93%)  ETA=41m
+[ 63/132] ✅ 7/8kw   23s  proc=32928  pass=59/63 (93%)  ETA=40m
+[ 64/132] ❌ 1/8kw   24s  proc=32904  pass=59/64 (92%)  ETA=39m
+[ 65/132] ❌ 1/8kw   30s  proc=32904  pass=59/65 (90%)  ETA=39m
+[ 66/132] ❌ 1/8kw   19s  proc=32904  pass=59/66 (89%)  ETA=38m
+[ 67/132] ❌ 1/8kw   22s  proc=32904  pass=59/67 (88%)  ETA=37m
+[ 68/132] ❌ 0/8kw   33s  proc=32904  pass=59/68 (86%)  ETA=36m
+[ 69/132] ✅ 6/8kw   20s  proc=32928  pass=60/69 (86%)  ETA=36m
+[ 70/132] ✅ 4/8kw   20s  proc=32928  pass=61/70 (87%)  ETA=35m
+
+
+
+
+[ 71/132] ❌ 1/8kw    2s  proc= 7528  pass=61/71 (85%)  ETA=34m
+
+
+
+
+[ 72/132] ✅ 2/8kw    3s  proc= 7528  pass=62/72 (86%)  ETA=33m
+[ 73/132] ✅ 5/8kw   28s  proc=17513  pass=63/73 (86%)  ETA=32m
+
+
+
+
+[ 74/132] ❌ 0/8kw    2s  proc= 7528  pass=63/74 (85%)  ETA=31m
+[ 75/132] ✅ 8/8kw   17s  proc=17513  pass=64/75 (85%)  ETA=31m
+[ 76/132] ✅ 3/8kw   18s  proc=32716  pass=65/76 (85%)  ETA=30m
+[ 77/132] ❌ 0/4kw   80s  proc=32716  pass=65/77 (84%)  ETA=30m
+[ 78/132] ✅ 2/8kw   23s  proc=36542  pass=66/78 (84%)  ETA=29m
+[ 79/132] ✅ 0/0kw   25s  proc=36542  pass=67/79 (84%)  ETA=29m
+[ 80/132] ❌ 1/8kw   31s  proc=18049  pass=67/80 (83%)  ETA=28m
+[ 81/132] ✅ 7/8kw   32s  proc=18049  pass=68/81 (83%)  ETA=27m
+[ 82/132] ✅ 3/8kw   17s  proc=18049  pass=69/82 (84%)  ETA=27m
+[ 83/132] ✅ 7/8kw   18s  proc=18049  pass=70/83 (84%)  ETA=26m
+[ 84/132] ✅ 5/8kw   31s  proc=18049  pass=71/84 (84%)  ETA=26m
+
+
+
+
+[ 85/132] ❌ 0/8kw    2s  proc= 5088  pass=71/85 (83%)  ETA=25m
+[ 86/132] ✅ 5/8kw   16s  proc=36792  pass=72/86 (83%)  ETA=24m
+[ 87/132] ❌ 0/8kw   80s  proc=36792  pass=72/87 (82%)  ETA=24m
+[ 88/132] ✅ 4/8kw   32s  proc=12119  pass=73/88 (82%)  ETA=23m
+[ 89/132] ✅ 4/8kw   20s  proc=12119  pass=74/89 (83%)  ETA=23m
+[ 90/132] ✅ 4/8kw   18s  proc=12119  pass=75/90 (83%)  ETA=22m
+[ 91/132] ✅ 3/8kw   74s  proc=12119  pass=76/91 (83%)  ETA=22m
+[ 92/132] ✅ 8/8kw   32s  proc=14940  pass=77/92 (83%)  ETA=21m
+[ 93/132] ❌ 0/8kw    1s  proc=14940  pass=77/93 (82%)  ETA=21m
+[ 94/132] ✅ 6/8kw   52s  proc=14595  pass=78/94 (82%)  ETA=20m
+[ 95/132] ✅ 8/8kw   30s  proc=14595  pass=79/95 (83%)  ETA=20m
+[ 96/132] ✅ 5/8kw   21s  proc=14595  pass=80/96 (83%)  ETA=19m
+[ 97/132] ✅ 3/8kw   18s  proc=14594  pass=81/97 (83%)  ETA=19m
+[ 98/132] ✅ 4/8kw   22s  proc=14594  pass=82/98 (83%)  ETA=18m
+[ 99/132] ❌ 1/8kw   18s  proc=91018  pass=82/99 (82%)  ETA=17m
+[100/132] ✅ 2/8kw   19s  proc=91018  pass=83/100 (83%)  ETA=17m
+[101/132] ✅ 5/8kw   20s  proc=31097  pass=84/101 (83%)  ETA=16m
+[102/132] ✅ 6/8kw   47s  proc=31097  pass=85/102 (83%)  ETA=16m
+[103/132] ✅ 4/8kw   38s  proc=66577  pass=86/103 (83%)  ETA=15m
+[104/132] ✅ 4/8kw   50s  proc=66577  pass=87/104 (83%)  ETA=15m
+[105/132] ✅ 5/8kw   34s  proc=66577  pass=88/105 (83%)  ETA=14m
+[106/132] ✅ 4/8kw   29s  proc=66577  pass=89/106 (83%)  ETA=14m
+[107/132] ✅ 5/8kw   21s  proc=66577  pass=90/107 (84%)  ETA=13m
+[108/132] ✅ 1/1kw   20s  proc=17311  pass=91/108 (84%)  ETA=13m
+[109/132] ✅ 1/1kw   17s  proc=17311  pass=92/109 (84%)  ETA=12m
+[110/132] ✅ 1/1kw   15s  proc=17311  pass=93/110 (84%)  ETA=11m
+[111/132] ✅ 6/8kw   22s  proc=23784  pass=94/111 (84%)  ETA=11mWARNING:root:Exceed max rounds: 5
+
+[112/132] ✅ 6/8kw   89s  proc=23784  pass=95/112 (84%)  ETA=11m
+[113/132] ❌ 1/8kw   21s  proc=83745  pass=95/113 (84%)  ETA=10m
+[114/132] ✅ 3/8kw   33s  proc=83745  pass=96/114 (84%)  ETA=9m
+[115/132] ✅ 3/8kw   82s  proc=83745  pass=97/115 (84%)  ETA=9m
+[116/132] ✅ 5/8kw   24s  proc=83745  pass=98/116 (84%)  ETA=9m
+[117/132] ❌ 1/8kw    2s  proc=83745  pass=98/117 (83%)  ETA=8m
+[118/132] ✅ 3/8kw   60s  proc=92422  pass=99/118 (83%)  ETA=7m
+[119/132] ✅ 8/8kw   19s  proc=92422  pass=100/119 (84%)  ETA=7m
+[120/132] ✅ 6/8kw   50s  proc=36728  pass=101/120 (84%)  ETA=6m
+[121/132] ✅ 8/8kw   72s  proc=87492  pass=102/121 (84%)  ETA=6m
+[122/132] ✅ 8/8kw   27s  proc=87492  pass=103/122 (84%)  ETA=5m
+[123/132] ✅ 0/0kw   33s  proc=34057  pass=104/123 (84%)  ETA=5m
+[124/132] ✅ 2/8kw   27s  proc=82078  pass=105/124 (84%)  ETA=4m
+[125/132] ✅ 6/8kw   35s  proc=82078  pass=106/125 (84%)  ETA=4m
+[126/132] ✅ 8/8kw   18s  proc=24057  pass=107/126 (84%)  ETA=3m
+[127/132] ✅ 4/4kw   22s  proc=26424  pass=108/127 (85%)  ETA=3m
+[128/132] ✅ 8/8kw   39s  proc=26424  pass=109/128 (85%)  ETA=2m
+[129/132] ❌ 0/2kw   82s  proc=26424  pass=109/129 (84%)  ETA=2m
+[130/132] ✅ 0/0kw   20s  proc=32448  pass=110/130 (84%)  ETA=1m
+[131/132] ✅ 1/1kw   20s  proc=32448  pass=111/131 (84%)  ETA=1m
+[132/132] ✅ 0/0kw   19s  proc=32448  pass=112/132 (84%)  ETA=0m
+
+============================================================
+FINAL (132 questions, total 70.8m)
+  Agent: 112/132 (84%)

@@ -1,0 +1,77 @@
+{
+  "request": {
+    "prompt_config": {
+      "system": "אתה עוזר ידע מדויק. ענה בעברית בלבד, אך ורק על סמך המידע במאגר הידע שלהלן:\n{knowledge}\nאם התשובה אינה נמצאת במאגר — אמור במפורש שאינך יודע. אל תמציא מידע.",
+      "parameters": [
+        {
+          "key": "knowledge",
+          "optional": false
+        }
+      ],
+      "empty_response": "",
+      "prologue": "שלום!",
+      "quote": true,
+      "refine_multiturn": false,
+      "tts": false,
+      "cross_languages": [
+        "Hebrew",
+        "English"
+      ]
+    }
+  },
+  "response": {
+    "code": 0,
+    "data": {
+      "create_date": "2026-06-12T13:02:19",
+      "create_time": 1781240539237,
+      "dataset_ids": [
+        "2990101865ed11f19d1425719d627201"
+      ],
+      "description": "A helpful Assistant",
+      "do_refer": "1",
+      "icon": "",
+      "id": "e382caaa661b11f1ae84bd00f07a0952",
+      "kb_names": [
+        "contract_accept_1781220470"
+      ],
+      "language": "English",
+      "llm_id": "gpt-oss:20b@Ollama",
+      "llm_setting": {
+        "temperature": 0.1
+      },
+      "meta_data_filter": {},
+      "name": "contract_chat_1781240539",
+      "prompt_config": {
+        "cross_languages": [
+          "Hebrew",
+          "English"
+        ],
+        "empty_response": "",
+        "parameters": [
+          {
+            "key": "knowledge",
+            "optional": false
+          }
+        ],
+        "prologue": "שלום!",
+        "quote": true,
+        "refine_multiturn": false,
+        "system": "אתה עוזר ידע מדויק. ענה בעברית בלבד, אך ורק על סמך המידע במאגר הידע שלהלן:\n{knowledge}\nאם התשובה אינה נמצאת במאגר — אמור במפורש שאינך יודע. אל תמציא מידע.",
+        "tts": false
+      },
+      "prompt_type": "simple",
+      "rerank_id": "",
+      "similarity_threshold": 0.2,
+      "status": "1",
+      "tenant_id": "2507563a42bd11f1a6bba9e87ac7a32c",
+      "tenant_llm_id": 1,
+      "tenant_rerank_id": null,
+      "top_k": 1024,
+      "top_n": 8,
+      "update_date": "2026-06-12T14:40:46",
+      "update_time": 1781246446843,
+      "vector_similarity_weight": 0.3
+    },
+    "message": "success"
+  }
+}

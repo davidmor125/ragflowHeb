@@ -1,0 +1,62 @@
+[
+  {
+    "n": 4,
+    "verdict": "partial",
+    "reason": "The answer accurately reproduces the core Scope items listed in the source snippet (e.g., management of customers, branches, tables, menu, online paym"
+  },
+  {
+    "n": 10,
+    "verdict": "partial",
+    "reason": "The answer correctly lists several user stories that appear in the source (e.g., ordering a table, ordering food online, waiter’s pending orders), but"
+  },
+  {
+    "n": 12,
+    "verdict": "correct",
+    "reason": "The response accurately lists all six design goals and the five personas exactly as presented in the source text, matching both content and details."
+  },
+  {
+    "n": 13,
+    "verdict": "partial",
+    "reason": "The answer correctly captures the main branches of the User Flows diagram (customer, waiter, branch manager, network manager, admin) and accurately de"
+  },
+  {
+    "n": 16,
+    "verdict": "partial",
+    "reason": "The answer correctly identifies the core architecture diagram elements (website/mobile, API Gateway, Auth Service, Order Service, Table Service, Menu "
+  },
+  {
+    "n": 20,
+    "verdict": "partial",
+    "reason": "The answer correctly reproduces several of the fields listed in the source for the \"לקוח\" and \"מסעדה/סניף\" entities, but it also adds many additional "
+  },
+  {
+    "n": 24,
+    "verdict": "partial",
+    "reason": "The answer correctly lists all the parameters described in the source (customerId, email, phone, restaurantId, tableNumber, capacity, orderId, orderDa"
+  },
+  {
+    "n": 29,
+    "verdict": "partial",
+    "reason": "The answer correctly reproduces the table of workflow steps as described in the source for steps 1 through 11, matching the players, inputs, actions, "
+  },
+  {
+    "n": 39,
+    "verdict": "correct",
+    "reason": "The answer reproduces the traceability matrix exactly as presented in the source excerpt, listing all Test IDs, requirements, and statuses in the same"
+  },
+  {
+    "n": 44,
+    "verdict": "correct",
+    "reason": "The answer reproduces the table of fields exactly as presented in the source section (fields, source, type, required). It includes all entries shown –"
+  },
+  {
+    "n": 46,
+    "verdict": "correct",
+    "reason": "The answer reproduces all events, activation conditions, and urgency levels exactly as presented in the source text (aside from a minor typographical "
+  },
+  {
+    "n": 47,
+    "verdict": "correct",
+    "reason": "The answer accurately summarizes the content of the \"אפיון התראות — תבניות תוכן (Microcopy)\" section, including its purpose, structure, and examples o"
+  }
+]

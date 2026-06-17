@@ -1,0 +1,16 @@
+{
+  "chunks": 147,
+  "max_tokens": 1014,
+  "token_dist": {
+    "p50": 855,
+    "p90": 971,
+    "max": 1014
+  },
+  "over_cap_count": 0,
+  "over_cap_values": [],
+  "anchors_total": 138,
+  "anchors_found": 138,
+  "anchors_missing": [],
+  "keywords_chunks": 147,
+  "questions_chunks": 147
+}

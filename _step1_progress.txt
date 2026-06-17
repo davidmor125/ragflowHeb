@@ -1,0 +1,338 @@
+  m = re.search("cites=[\d+,]*", object["citedby_url"])
+ERROR:root:LiteLLMBase async completion
+Traceback (most recent call last):
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/llms/ollama/chat/transformation.py", line 489, in chunk_parser
+    tool_calls = chunk["message"].get("tool_calls")
+                 ~~~~~^^^^^^^^^^^
+KeyError: 'message'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/litellm_core_utils/streaming_handler.py", line 2017, in __anext__
+    async for chunk in self.completion_stream:  # type: ignore[union-attr]
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/llms/base_llm/base_model_iterator.py", line 189, in __anext__
+    chunk = self._handle_string_chunk(str_line=str_line)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/llms/base_llm/base_model_iterator.py", line 116, in _handle_string_chunk
+    return self.chunk_parser(chunk=stripped_json_chunk)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/llms/ollama/chat/transformation.py", line 572, in chunk_parser
+    raise OllamaError(
+litellm.llms.ollama.common_utils.OllamaError: KeyError: 'message', Got unexpected response from Ollama: {'error': 'Internal Server Error (ref: 71a6d6b5-8fb8-45d5-afa6-3003384da7bc)'}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/ragflow/rag/llm/chat_model.py", line 1609, in async_chat_streamly_with_tools
+    async for resp in response:
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/litellm_core_utils/streaming_handler.py", line 2236, in __anext__
+    self._handle_stream_fallback_error(e)
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/litellm_core_utils/streaming_handler.py", line 2302, in _handle_stream_fallback_error
+    raise mapped_exception
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/litellm_core_utils/streaming_handler.py", line 2256, in _handle_stream_fallback_error
+    mapped_exception = exception_type(
+                       ^^^^^^^^^^^^^^^
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2456, in exception_type
+    raise e
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2425, in exception_type
+    raise APIConnectionError(
+litellm.exceptions.APIConnectionError: litellm.APIConnectionError: Ollama_chatException - KeyError: 'message', Got unexpected response from Ollama: {'error': 'Internal Server Error (ref: 71a6d6b5-8fb8-45d5-afa6-3003384da7bc)'}
+ERROR:root:async_chat_streamly giving up: **ERROR**: AUTH_ERROR - litellm.APIConnectionError: Ollama_chatException - KeyError: 'message', Got unexpected response from Ollama: {'error': 'Internal Server Error (ref: 71a6d6b5-8fb8-45d5-afa6-3003384da7bc)'}
+ERROR:root:LiteLLMBase async completion
+Traceback (most recent call last):
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/llms/ollama/chat/transformation.py", line 489, in chunk_parser
+    tool_calls = chunk["message"].get("tool_calls")
+                 ~~~~~^^^^^^^^^^^
+KeyError: 'message'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/litellm_core_utils/streaming_handler.py", line 2017, in __anext__
+    async for chunk in self.completion_stream:  # type: ignore[union-attr]
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/llms/base_llm/base_model_iterator.py", line 189, in __anext__
+    chunk = self._handle_string_chunk(str_line=str_line)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/llms/base_llm/base_model_iterator.py", line 116, in _handle_string_chunk
+    return self.chunk_parser(chunk=stripped_json_chunk)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/llms/ollama/chat/transformation.py", line 572, in chunk_parser
+    raise OllamaError(
+litellm.llms.ollama.common_utils.OllamaError: KeyError: 'message', Got unexpected response from Ollama: {'error': 'Internal Server Error (ref: 79dffe8c-13ed-4832-a342-df58a6eaf387)'}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/ragflow/rag/llm/chat_model.py", line 1609, in async_chat_streamly_with_tools
+    async for resp in response:
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/litellm_core_utils/streaming_handler.py", line 2236, in __anext__
+    self._handle_stream_fallback_error(e)
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/litellm_core_utils/streaming_handler.py", line 2302, in _handle_stream_fallback_error
+    raise mapped_exception
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/litellm_core_utils/streaming_handler.py", line 2256, in _handle_stream_fallback_error
+    mapped_exception = exception_type(
+                       ^^^^^^^^^^^^^^^
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2456, in exception_type
+    raise e
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2425, in exception_type
+    raise APIConnectionError(
+litellm.exceptions.APIConnectionError: litellm.APIConnectionError: Ollama_chatException - KeyError: 'message', Got unexpected response from Ollama: {'error': 'Internal Server Error (ref: 79dffe8c-13ed-4832-a342-df58a6eaf387)'}
+ERROR:root:async_chat_streamly giving up: **ERROR**: AUTH_ERROR - litellm.APIConnectionError: Ollama_chatException - KeyError: 'message', Got unexpected response from Ollama: {'error': 'Internal Server Error (ref: 79dffe8c-13ed-4832-a342-df58a6eaf387)'}
+ERROR:root:LiteLLMBase async completion
+Traceback (most recent call last):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/litellm_core_utils/logging_utils.py", line 297, in async_wrapper
+    result = await func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    raise e
+    response.raise_for_status()
+    raise HTTPStatusError(message, request=request, response=self)
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/main.py", line 620, in acompletion
+    response = await init_response
+               ^^^^^^^^^^^^^^^^^^^
+    completion_stream, _response_headers = await self.make_async_call_stream_helper(
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    response = await self._make_common_async_call(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    raise self._handle_error(e=e, provider_config=provider_config)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    raise provider_config.get_error_class(
+litellm.llms.ollama.common_utils.OllamaError: {"error":"you (davidmor125) have reached your weekly usage limit, upgrade for higher limits: https://ollama.com/upgrade (ref: 0bdfc1d1-a295-4478-9a4f-2633e726739d)"}
+
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/ragflow/rag/llm/chat_model.py", line 1600, in async_chat_streamly_with_tools
+    response = await litellm.acompletion(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/utils.py", line 2094, in wrapper_async
+    raise e
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/utils.py", line 1893, in wrapper_async
+    result = await original_function(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/main.py", line 639, in acompletion
+    raise exception_type(
+          ^^^^^^^^^^^^^^^
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2456, in exception_type
+    raise e
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2425, in exception_type
+    raise APIConnectionError(
+litellm.exceptions.APIConnectionError: litellm.APIConnectionError: Ollama_chatException - {"error":"you (davidmor125) have reached your weekly usage limit, upgrade for higher limits: https://ollama.com/upgrade (ref: 0bdfc1d1-a295-4478-9a4f-2633e726739d)"}
+ LiteLLM Retried: 3 times
+ERROR:root:async_chat_streamly giving up: **ERROR**: CONNECTION_ERROR - litellm.APIConnectionError: Ollama_chatException - {"error":"you (davidmor125) have reached your weekly usage limit, upgrade for higher limits: https://ollama.com/upgrade (ref: 0bdfc1d1-a295-4478-9a4f-2633e726739d)"}
+ LiteLLM Retried: 3 times
+ERROR:root:LiteLLMBase async completion
+Traceback (most recent call last):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/litellm_core_utils/logging_utils.py", line 297, in async_wrapper
+    result = await func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    raise e
+    response.raise_for_status()
+    raise HTTPStatusError(message, request=request, response=self)
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/main.py", line 620, in acompletion
+    response = await init_response
+               ^^^^^^^^^^^^^^^^^^^
+    completion_stream, _response_headers = await self.make_async_call_stream_helper(
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    response = await self._make_common_async_call(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    raise self._handle_error(e=e, provider_config=provider_config)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    raise provider_config.get_error_class(
+litellm.llms.ollama.common_utils.OllamaError: {"error":"you (davidmor125) have reached your weekly usage limit, upgrade for higher limits: https://ollama.com/upgrade (ref: 1c8de95c-e5cb-445f-82da-3b93c46a4306)"}
+
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/ragflow/rag/llm/chat_model.py", line 1600, in async_chat_streamly_with_tools
+    response = await litellm.acompletion(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/utils.py", line 2094, in wrapper_async
+    raise e
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/utils.py", line 1893, in wrapper_async
+    result = await original_function(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/main.py", line 639, in acompletion
+    raise exception_type(
+          ^^^^^^^^^^^^^^^
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2456, in exception_type
+    raise e
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2425, in exception_type
+    raise APIConnectionError(
+litellm.exceptions.APIConnectionError: litellm.APIConnectionError: Ollama_chatException - {"error":"you (davidmor125) have reached your weekly usage limit, upgrade for higher limits: https://ollama.com/upgrade (ref: 1c8de95c-e5cb-445f-82da-3b93c46a4306)"}
+ LiteLLM Retried: 3 times
+ERROR:root:async_chat_streamly giving up: **ERROR**: CONNECTION_ERROR - litellm.APIConnectionError: Ollama_chatException - {"error":"you (davidmor125) have reached your weekly usage limit, upgrade for higher limits: https://ollama.com/upgrade (ref: 1c8de95c-e5cb-445f-82da-3b93c46a4306)"}
+ LiteLLM Retried: 3 times
+ERROR:root:LiteLLMBase async completion
+Traceback (most recent call last):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/litellm_core_utils/logging_utils.py", line 297, in async_wrapper
+    result = await func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    raise e
+    response.raise_for_status()
+    raise HTTPStatusError(message, request=request, response=self)
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/main.py", line 620, in acompletion
+    response = await init_response
+               ^^^^^^^^^^^^^^^^^^^
+    completion_stream, _response_headers = await self.make_async_call_stream_helper(
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    response = await self._make_common_async_call(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    raise self._handle_error(e=e, provider_config=provider_config)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    raise provider_config.get_error_class(
+litellm.llms.ollama.common_utils.OllamaError: {"error":"you (davidmor125) have reached your weekly usage limit, upgrade for higher limits: https://ollama.com/upgrade (ref: 06758e05-6975-4445-984d-207d2f16addd)"}
+
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/ragflow/rag/llm/chat_model.py", line 1600, in async_chat_streamly_with_tools
+    response = await litellm.acompletion(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/utils.py", line 2094, in wrapper_async
+    raise e
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/utils.py", line 1893, in wrapper_async
+    result = await original_function(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/main.py", line 639, in acompletion
+    raise exception_type(
+          ^^^^^^^^^^^^^^^
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2456, in exception_type
+    raise e
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2425, in exception_type
+    raise APIConnectionError(
+litellm.exceptions.APIConnectionError: litellm.APIConnectionError: Ollama_chatException - {"error":"you (davidmor125) have reached your weekly usage limit, upgrade for higher limits: https://ollama.com/upgrade (ref: 06758e05-6975-4445-984d-207d2f16addd)"}
+ LiteLLM Retried: 3 times
+ERROR:root:async_chat_streamly giving up: **ERROR**: CONNECTION_ERROR - litellm.APIConnectionError: Ollama_chatException - {"error":"you (davidmor125) have reached your weekly usage limit, upgrade for higher limits: https://ollama.com/upgrade (ref: 06758e05-6975-4445-984d-207d2f16addd)"}
+ LiteLLM Retried: 3 times
+ERROR:root:LiteLLMBase async completion
+Traceback (most recent call last):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/litellm_core_utils/logging_utils.py", line 297, in async_wrapper
+    result = await func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    raise e
+    response.raise_for_status()
+    raise HTTPStatusError(message, request=request, response=self)
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/main.py", line 620, in acompletion
+    response = await init_response
+               ^^^^^^^^^^^^^^^^^^^
+    completion_stream, _response_headers = await self.make_async_call_stream_helper(
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    response = await self._make_common_async_call(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    raise self._handle_error(e=e, provider_config=provider_config)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    raise provider_config.get_error_class(
+litellm.llms.ollama.common_utils.OllamaError: {"error":"you (davidmor125) have reached your weekly usage limit, upgrade for higher limits: https://ollama.com/upgrade (ref: 5c19c655-427b-43b1-b2e8-5a2e4fb807e7)"}
+
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/ragflow/rag/llm/chat_model.py", line 1600, in async_chat_streamly_with_tools
+    response = await litellm.acompletion(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/utils.py", line 2094, in wrapper_async
+    raise e
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/utils.py", line 1893, in wrapper_async
+    result = await original_function(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/main.py", line 639, in acompletion
+    raise exception_type(
+          ^^^^^^^^^^^^^^^
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2456, in exception_type
+    raise e
+  File "/ragflow/.venv/lib/python3.12/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2425, in exception_type
+    raise APIConnectionError(
+litellm.exceptions.APIConnectionError: litellm.APIConnectionError: Ollama_chatException - {"error":"you (davidmor125) have reached your weekly usage limit, upgrade for higher limits: https://ollama.com/upgrade (ref: 5c19c655-427b-43b1-b2e8-5a2e4fb807e7)"}
+ LiteLLM Retried: 3 times
+ERROR:root:async_chat_streamly giving up: **ERROR**: CONNECTION_ERROR - litellm.APIConnectionError: Ollama_chatException - {"error":"you (davidmor125) have reached your weekly usage limit, upgrade for higher limits: https://ollama.com/upgrade (ref: 5c19c655-427b-43b1-b2e8-5a2e4fb807e7)"}
+ LiteLLM Retried: 3 times
+Re-running 15 still-failing questions with max_rounds=10
+
+[ 1/15] ❌ 1/8kw   26s  proc=20071  flipped=0/1
+[ 2/15] ❌ 0/8kw  137s  proc=90398  flipped=0/2
+[ 3/15] ❌ 0/8kw  143s  proc=36967  flipped=0/3
+[ 4/15] ❌ 1/8kw  158s  proc=21801  flipped=0/4
+[ 5/15] ❌ 1/8kw   25s  proc=32904  flipped=0/5
+[ 6/15] ✅ 3/8kw   38s  proc=32904  flipped=1/6 ★
+
+
+
+
+[ 7/15] ❌ 1/8kw    2s  proc= 7528  flipped=1/7
+[ 8/15] ❌ 0/4kw   81s  proc=32716  flipped=1/8
+
+
+
+
+[ 9/15] ❌ 0/8kw    3s  proc= 5088  flipped=1/9
+[10/15] ❌ 1/8kw   49s  proc=12119  flipped=1/10
+[11/15] ❌ 0/8kw    2s  proc=14940  flipped=1/11
+
+
+
+
+
+
+
+
+[12/15] ❌ 0/8kw  102s  proc=91018  flipped=1/12
+
+
+
+
+
+
+
+
+[13/15] ❌ 0/0kw    1s  proc=66577  flipped=1/13
+
+
+
+
+
+
+
+
+[14/15] ❌ 0/0kw    1s  proc=66577  flipped=1/14
+
+
+
+
+
+
+
+
+[15/15] ❌ 0/0kw    1s  proc=66577  flipped=1/15
+
+============================================================
+STEP 1 (max_rounds=10): 1/15 flipped to PASS
+Total time: 12.8min

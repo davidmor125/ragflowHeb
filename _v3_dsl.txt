@@ -1,0 +1,667 @@
+﻿docker : WARNING:root:SECURITY WARNING: Using auto-generated SECRET_KEY.
+At line:1 char:86
++ ... _canvas.py; docker exec docker-ragflow-cpu-1 python /ragflow/_inspect ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (WARNING:root:SE...ted SECRET_KEY.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+WARNING:root:Load term.freq FAIL!
+WARNING:root:Realtime synonym is disabled, since no redis connection.
+WARNING:root:Load term.freq FAIL!
+WARNING:root:Realtime synonym is disabled, since no redis connection.
+title: banking_agentic_rag_v3
+
+{
+  "components": {
+    "begin": {
+      "downstream": [
+        "Agent:05ae9d02495211"
+      ],
+      "obj": {
+        "component_name": "Begin",
+        "params": {
+          "prologue": "שלום! אני עוזר הבנק.",
+          "inputs": {}
+        }
+      },
+      "upstream": []
+    },
+    "Agent:05ae9d02495211": {
+      "downstream": [
+        "Retrieval:05ae9e24495211"
+      ],
+      "obj": {
+        "component_name": "Agent",
+        "params": {
+          "llm_id": "gemma4:31b-cloud@Ollama",
+          "max_rounds": 1,
+          "max_tokens": 256,
+          "maxTokensEnabled": true,
+          "temperature": 0.0,
+          "temperatureEnabled": true,
+          "sys_prompt": "אתה מסייע למערכת חיפוש בנהלי בנק. הרחב את שאלת המשתמש כדי לעזור לחיפוש.\n\nחוקים:\n1. שמור על השאלה המקורית במלואה.\n2. הוסף בסוגריים פירוש לראשי תיבות וביטויי מפתח.\n3. הוסף 1-2 מילים נרדפות אם השאלה כללית.\n4. תפלט שורה אחת בלבד, ללא הסברים.\n\nמילון: פל\"ת = פיקדון ללא תנועה | מו\"ח = מורשה חתימה | ני\"ע = ניירות ערך | מט\"ח = מטבע חוץ | ס.פ./ס\"פ = סוג פעולה | תמנון+ = איסור הלבנת הון | תנופה = ניהול בקשות משכנתא | מאיה = מערכת סניפית | ריכוז תעריפוני = נוהל 25813\n",
+          "prompts": [
+            {
+              "role": "user",
+              "content": "שאלה: {sys.query}\n\nפלט (שורה אחת):"
+            }
+          ],
+          "outputs": {
+            "content": {
+              "type": "string",
+              "value": ""
+            }
+          },
+          "tools": [],
+          "cite": false,
+          "max_retries": 2,
+          "delay_after_error": 1,
+          "exception_method": null,
+          "exception_default_value": "",
+          "exception_goto": [],
+          "exception_comment": "",
+          "frequencyPenaltyEnabled": false,
+          "frequency_penalty": 0.0,
+          "presencePenaltyEnabled": false,
+          "presence_penalty": 0.0,
+          "topPEnabled": false,
+          "top_p": 1.0,
+          "mcp": [],
+          "message_history_window_size": 0,
+          "user_prompt": "",
+          "visual_files_var": ""
+        }
+      },
+      "upstream": [
+        "begin"
+      ]
+    },
+    "Retrieval:05ae9e24495211": {
+      "downstream": [
+        "Agent:05ae9e60495211"
+      ],
+      "obj": {
+        "component_name": "Retrieval",
+        "params": {
+          "kb_ids": [
+            "dc0091ca46e211f196f633ac796a3d7a"
+          ],
+          "dataset_ids": [
+            "dc0091ca46e211f196f633ac796a3d7a"
+          ],
+          "rerank_id": "BAAI/bge-reranker-v2-m3@HuggingFace",
+          "top_n": 15,
+          "top_k": 1024,
+          "similarity_threshold": 0.1,
+          "keywords_similarity_weight": 0.3,
+          "use_kg": false,
+          "cross_languages": [],
+          "empty_response": "",
+          "memory_ids": [],
+          "kb_vars": [],
+          "meta_data_filter": {},
+          "toc_enhance": false,
+          "outputs": {
+            "formalized_content": {
+              "type": "string",
+              "value": ""
+            }
+          },
+          "query": "{sys.query}",
+          "vector_similarity_weight": 0.3
+        }
+      },
+      "upstream": [
+        "Agent:05ae9d02495211"
+      ]
+    },
+    "Agent:05ae9e60495211": {
+      "downstream": [
+        "Categorize:05ae9e7e495211"
+      ],
+      "obj": {
+        "component_name": "Agent",
+        "params": {
+          "llm_id": "gemma4:31b-cloud@Ollama",
+          "max_rounds": 1,
+          "max_tokens": 2048,
+          "maxTokensEnabled": true,
+          "temperature": 0.1,
+          "temperatureEnabled": true,
+          "sys_prompt": "אתה עוזר בנקאי. ענה בעברית בלבד על בסיס הנהלים שצורפו לך.\n\nהוראות:\n1. קרא את כל הנהלים שצורפו ומצא את המידע הרלוונטי.\n2. תשובה ישירה ומפורטת בעברית. ללא thinking באנגלית, ללא הקדמות.\n3. צטט מספרים, סכומים, מועדים, ושמות טפסים בדיוק מהנוהל.\n4. ציין בסוף את שם קובץ הנוהל.\n5. אם המידע באמת לא קיים בנהלים: \"המידע אינו קיים בנהלים שצורפו\".\n\nמילון: פל\"ת=פיקדון ללא תנועה | מו\"ח=מורשה חתימה | ני\"ע=ניירות ערך | מט\"ח=מטבע חוץ | ס.פ./ס\"פ=סוג פעולה | תמנון+=איסור הלבנת הון | תנופה=ניהול בקשות משכנתא | מאיה=מערכת סניפית | ריכוז תעריפוני=נוהל 25813\n",
+          "prompts": [
+            {
+              "role": "user",
+              "content": "שאלה: {sys.query}\n\nנהלים רלוונטיים:\n{Retrieval:05ae9e24495211@formalized_content}\n\nתשובה (בעברית בלבד):"
+            }
+          ],
+          "outputs": {
+            "content": {
+              "type": "string",
+              "value": ""
+            }
+          },
+          "tools": [],
+          "cite": false,
+          "max_retries": 2,
+          "delay_after_error": 1,
+          "exception_method": null,
+          "exception_default_value": "",
+          "exception_goto": [],
+          "exception_comment": "",
+          "frequencyPenaltyEnabled": false,
+          "frequency_penalty": 0.0,
+          "presencePenaltyEnabled": false,
+          "presence_penalty": 0.0,
+          "topPEnabled": false,
+          "top_p": 1.0,
+          "mcp": [],
+          "message_history_window_size": 0,
+          "user_prompt": "",
+          "visual_files_var": ""
+        }
+      },
+      "upstream": [
+        "Retrieval:05ae9e24495211"
+      ]
+    },
+    "Categorize:05ae9e7e495211": {
+      "downstream": [
+        "Message:05ae9ec4495211",
+        "Retrieval:05ae9e9c495211"
+      ],
+      "obj": {
+        "component_name": "Categorize",
+        "params": {
+          "llm_id": "gemma4:31b-cloud@Ollama",
+          "max_tokens": 32,
+          "maxTokensEnabled": true,
+          "temperature": 0.0,
+          "temperatureEnabled": true,
+          "category_description": {
+            "PASS": {
+              "to": [
+                "Message:05ae9ec4495211"
+              ],
+              "description": "התשובה ענתה על השאלה עם פרטים ספציפיים מנוהל (מספרים, מועדים, סעיפים, או טפסים).",
+              "examples": [
+                "התשובה כוללת מספרי סעיפים ושמות טפסים מהנוהל",
+                "התשובה מפרטת תהליך עם שלבים ברורים",
+                "התשובה כוללת סכומים ומועדים מדויקים"
+              ]
+            },
+            "RETRY": {
+              "to": [
+                "Retrieval:05ae9e9c495211"
+              ],
+              "description": "התשובה גנרית, חסרה פרטים, או אומרת שהמידע אינו קיים. צריך לחפש שוב עם ניסוח חלופי.",
+              "examples": [
+                "המידע אינו קיים בנהלים שצורפו",
+                "אין מידע על כך בנהלים",
+                "תשובה כללית בלי מספרים או טפסים ספציפיים",
+                "אני לא יכול לענות על השאלה"
+              ]
+            }
+          },
+          "query": "{Agent:05ae9e60495211@content}",
+          "message_history_window_size": 1,
+          "max_retries": 2,
+          "delay_after_error": 1,
+          "exception_method": null,
+          "exception_default_value": "",
+          "exception_goto": [],
+          "exception_comment": "",
+          "frequencyPenaltyEnabled": false,
+          "frequency_penalty": 0.0,
+          "presencePenaltyEnabled": false,
+          "presence_penalty": 0.0,
+          "topPEnabled": false,
+          "top_p": 1.0,
+          "user_prompt": "",
+          "visual_files_var": "",
+          "outputs": {
+            "category_name": {
+              "type": "string",
+              "value": ""
+            }
+          }
+        }
+      },
+      "upstream": [
+        "Agent:05ae9e60495211"
+      ]
+    },
+    "Message:05ae9ec4495211": {
+      "downstream": [],
+      "obj": {
+        "component_name": "Message",
+        "params": {
+          "content": [
+            "{Agent:05ae9e60495211@content}"
+          ]
+        }
+      },
+      "upstream": [
+        "Categorize:05ae9e7e495211"
+      ]
+    },
+    "Retrieval:05ae9e9c495211": {
+      "downstream": [
+        "Agent:05ae9eba495211"
+      ],
+      "obj": {
+        "component_name": "Retrieval",
+        "params": {
+          "kb_ids": [
+            "dc0091ca46e211f196f633ac796a3d7a"
+          ],
+          "dataset_ids": [
+            "dc0091ca46e211f196f633ac796a3d7a"
+          ],
+          "rerank_id": "BAAI/bge-reranker-v2-m3@HuggingFace",
+          "top_n": 15,
+          "top_k": 1024,
+          "similarity_threshold": 0.0,
+          "keywords_similarity_weight": 0.3,
+          "use_kg": false,
+          "cross_languages": [],
+          "empty_response": "",
+          "memory_ids": [],
+          "kb_vars": [],
+          "meta_data_filter": {},
+          "toc_enhance": false,
+          "outputs": {
+            "formalized_content": {
+              "type": "string",
+              "value": ""
+            }
+          },
+          "query": "{Agent:05ae9d02495211@content}",
+          "vector_similarity_weight": 0.3
+        }
+      },
+      "upstream": [
+        "Categorize:05ae9e7e495211"
+      ]
+    },
+    "Agent:05ae9eba495211": {
+      "downstream": [
+        "Message:05ae9ee2495211"
+      ],
+      "obj": {
+        "component_name": "Agent",
+        "params": {
+          "llm_id": "gemma4:31b-cloud@Ollama",
+          "max_rounds": 1,
+          "max_tokens": 2048,
+          "maxTokensEnabled": true,
+          "temperature": 0.1,
+          "temperatureEnabled": true,
+          "sys_prompt": "אתה עוזר בנקאי. ענה בעברית בלבד על בסיס הנהלים שצורפו לך.\n\nהוראות:\n1. קרא את כל הנהלים שצורפו ומצא את המידע הרלוונטי.\n2. תשובה ישירה ומפורטת בעברית. ללא thinking באנגלית, ללא הקדמות.\n3. צטט מספרים, סכומים, מועדים, ושמות טפסים בדיוק מהנוהל.\n4. ציין בסוף את שם קובץ הנוהל.\n5. אם המידע באמת לא קיים בנהלים: \"המידע אינו קיים בנהלים שצורפו\".\n\nמילון: פל\"ת=פיקדון ללא תנועה | מו\"ח=מורשה חתימה | ני\"ע=ניירות ערך | מט\"ח=מטבע חוץ | ס.פ./ס\"פ=סוג פעולה | תמנון+=איסור הלבנת הון | תנופה=ניהול בקשות משכנתא | מאיה=מערכת סניפית | ריכוז תעריפוני=נוהל 25813\n",
+          "prompts": [
+            {
+              "role": "user",
+              "content": "שאלה: {sys.query}\n\nנהלים רלוונטיים:\n{Retrieval:05ae9e9c495211@formalized_content}\n\nתשובה (בעברית בלבד):"
+            }
+          ],
+          "outputs": {
+            "content": {
+              "type": "string",
+              "value": ""
+            }
+          },
+          "tools": [],
+          "cite": false,
+          "max_retries": 2,
+          "delay_after_error": 1,
+          "exception_method": null,
+          "exception_default_value": "",
+          "exception_goto": [],
+          "exception_comment": "",
+          "frequencyPenaltyEnabled": false,
+          "frequency_penalty": 0.0,
+          "presencePenaltyEnabled": false,
+          "presence_penalty": 0.0,
+          "topPEnabled": false,
+          "top_p": 1.0,
+          "mcp": [],
+          "message_history_window_size": 0,
+          "user_prompt": "",
+          "visual_files_var": ""
+        }
+      },
+      "upstream": [
+        "Retrieval:05ae9e9c495211"
+      ]
+    },
+    "Message:05ae9ee2495211": {
+      "downstream": [],
+      "obj": {
+        "component_name": "Message",
+        "params": {
+          "content": [
+            "{Agent:05ae9eba495211@content}"
+          ]
+        }
+      },
+      "upstream": [
+        "Agent:05ae9eba495211"
+      ]
+    }
+  },
+  "globals": {
+    "sys.history": [],
+    "sys.query": "",
+    "sys.user_id": "",
+    "sys.conversation_turns": 0,
+    "sys.files": [],
+    "sys.date": ""
+  },
+  "graph": {
+    "nodes": [
+      {
+        "id": "begin",
+        "type": "beginNode",
+        "position": {
+          "x": 50,
+          "y": 200
+        },
+        "measured": {
+          "height": 50,
+          "width": 200
+        },
+        "sourcePosition": "right",
+        "targetPosition": "left",
+        "data": {
+          "label": "Begin",
+          "name": "Begin"
+        }
+      },
+      {
+        "id": "Agent:05ae9d02495211",
+        "type": "agentNode",
+        "position": {
+          "x": 280,
+          "y": 200
+        },
+        "measured": {
+          "height": 80,
+          "width": 200
+        },
+        "sourcePosition": "right",
+        "targetPosition": "left",
+        "data": {
+          "label": "Agent",
+          "name": "Query_Rewriter",
+          "form": {
+            "llm_id": "gemma4:31b-cloud@Ollama",
+            "sys_prompt": "אתה מסייע למערכת חיפוש בנהלי בנק. הרחב את שאלת המשתמש כדי לעזור לחיפוש.\n\nחוקים:\n1. שמור על השאלה המקורית במלואה.\n2. הוסף בסוגריים פירוש לראשי תיבות וביטויי מפתח.\n3. הוסף 1-2 מילים נרדפות אם השאלה כללית.\n4. תפלט שורה אחת בלבד, ללא הסברים.\n\nמילון: פל\"ת = פיקדון ללא תנועה | מו\"ח = מורשה חתימה | ני\"ע = ניירות ערך | מט\"ח = מטבע חוץ | ס.פ./ס\"פ = סוג פעולה | תמנון+ = איסור הלבנת הון | תנופה = ניהול בקשות משכנתא | מאיה = מערכת סניפית | ריכוז תעריפוני = נוהל 25813\n",
+            "max_tokens": 256,
+            "temperature": 0.0,
+            "tools": []
+          }
+        }
+      },
+      {
+        "id": "Retrieval:05ae9e24495211",
+        "type": "retrievalNode",
+        "position": {
+          "x": 510,
+          "y": 200
+        },
+        "measured": {
+          "height": 80,
+          "width": 200
+        },
+        "sourcePosition": "right",
+        "targetPosition": "left",
+        "data": {
+          "label": "Retrieval",
+          "name": "Retrieval_1",
+          "form": {
+            "kb_ids": [
+              "dc0091ca46e211f196f633ac796a3d7a"
+            ],
+            "rerank_id": "BAAI/bge-reranker-v2-m3@HuggingFace",
+            "top_n": 15,
+            "similarity_threshold": 0.1,
+            "query": "{sys.query}"
+          }
+        }
+      },
+      {
+        "id": "Agent:05ae9e60495211",
+        "type": "agentNode",
+        "position": {
+          "x": 740,
+          "y": 200
+        },
+        "measured": {
+          "height": 80,
+          "width": 200
+        },
+        "sourcePosition": "right",
+        "targetPosition": "left",
+        "data": {
+          "label": "Agent",
+          "name": "Answer_1",
+          "form": {
+            "llm_id": "gemma4:31b-cloud@Ollama",
+            "sys_prompt": "אתה עוזר בנקאי. ענה בעברית בלבד על בסיס הנהלים שצורפו לך.\n\nהוראות:\n1. קרא את כל הנהלים שצורפו ומצא את המידע הרלוונטי.\n2. תשובה ישירה ומפורטת בעברית. ללא thinking באנגלית, ללא הקדמות.\n3. צטט מספרים, סכומים, מועדים, ושמות טפסים בדיוק מהנוהל.\n4. ציין בסוף את שם קובץ הנוהל.\n5. אם המידע באמת לא קיים בנהלים: \"המידע אינו קיים בנהלים שצורפו\".\n\nמילון: פל\"ת=פיקדון ללא תנועה | מו\"ח=מורשה חתימה | ני\"ע=ניירות ערך | מט\"ח=מטבע חוץ | ס.פ./ס\"פ=סוג פעולה | תמנון+=איסור הלבנת הון | תנופה=ניהול בקשות משכנתא | מאיה=מערכת סניפית | ריכוז תעריפוני=נוהל 25813\n",
+            "max_tokens": 2048,
+            "temperature": 0.1,
+            "tools": []
+          }
+        }
+      },
+      {
+        "id": "Categorize:05ae9e7e495211",
+        "type": "categorizeNode",
+        "position": {
+          "x": 970,
+          "y": 200
+        },
+        "measured": {
+          "height": 80,
+          "width": 200
+        },
+        "sourcePosition": "right",
+        "targetPosition": "left",
+        "data": {
+          "label": "Categorize",
+          "name": "Self_Check",
+          "form": {
+            "llm_id": "gemma4:31b-cloud@Ollama",
+            "category_description": {
+              "PASS": {
+                "to": [
+                  "Message:05ae9ec4495211"
+                ],
+                "description": "התשובה ענתה על השאלה עם פרטים ספציפיים מנוהל (מספרים, מועדים, סעיפים, או טפסים).",
+                "examples": [
+                  "התשובה כוללת מספרי סעיפים ושמות טפסים מהנוהל",
+                  "התשובה מפרטת תהליך עם שלבים ברורים",
+                  "התשובה כוללת סכומים ומועדים מדויקים"
+                ]
+              },
+              "RETRY": {
+                "to": [
+                  "Retrieval:05ae9e9c495211"
+                ],
+                "description": "התשובה גנרית, חסרה פרטים, או אומרת שהמידע אינו קיים. צריך לחפש שוב עם ניסוח חלופי.",
+                "examples": [
+                  "המידע אינו קיים בנהלים שצורפו",
+                  "אין מידע על כך בנהלים",
+                  "תשובה כללית בלי מספרים או טפסים ספציפיים",
+                  "אני לא יכול לענות על השאלה"
+                ]
+              }
+            },
+            "query": "{Agent:05ae9e60495211@content}"
+          }
+        }
+      },
+      {
+        "id": "Message:05ae9ec4495211",
+        "type": "messageNode",
+        "position": {
+          "x": 1200,
+          "y": 130
+        },
+        "measured": {
+          "height": 50,
+          "width": 200
+        },
+        "sourcePosition": "right",
+        "targetPosition": "left",
+        "data": {
+          "label": "Message",
+          "name": "Reply_PASS",
+          "form": {
+            "content": [
+              "{Agent:05ae9e60495211@content}"
+            ]
+          }
+        }
+      },
+      {
+        "id": "Retrieval:05ae9e9c495211",
+        "type": "retrievalNode",
+        "position": {
+          "x": 1200,
+          "y": 270
+        },
+        "measured": {
+          "height": 80,
+          "width": 200
+        },
+        "sourcePosition": "right",
+        "targetPosition": "left",
+        "data": {
+          "label": "Retrieval",
+          "name": "Retrieval_2",
+          "form": {
+            "kb_ids": [
+              "dc0091ca46e211f196f633ac796a3d7a"
+            ],
+            "rerank_id": "BAAI/bge-reranker-v2-m3@HuggingFace",
+            "top_n": 15,
+            "similarity_threshold": 0.0,
+            "query": "{Agent:05ae9d02495211@content}"
+          }
+        }
+      },
+      {
+        "id": "Agent:05ae9eba495211",
+        "type": "agentNode",
+        "position": {
+          "x": 1430,
+          "y": 270
+        },
+        "measured": {
+          "height": 80,
+          "width": 200
+        },
+        "sourcePosition": "right",
+        "targetPosition": "left",
+        "data": {
+          "label": "Agent",
+          "name": "Answer_2",
+          "form": {
+            "llm_id": "gemma4:31b-cloud@Ollama",
+            "sys_prompt": "אתה עוזר בנקאי. ענה בעברית בלבד על בסיס הנהלים שצורפו לך.\n\nהוראות:\n1. קרא את כל הנהלים שצורפו ומצא את המידע הרלוונטי.\n2. תשובה ישירה ומפורטת בעברית. ללא thinking באנגלית, ללא הקדמות.\n3. צטט מספרים, סכומים, מועדים, ושמות טפסים בדיוק מהנוהל.\n4. ציין בסוף את שם קובץ הנוהל.\n5. אם המידע באמת לא קיים בנהלים: \"המידע אינו קיים בנהלים שצורפו\".\n\nמילון: פל\"ת=פיקדון ללא תנועה | מו\"ח=מורשה חתימה | ני\"ע=ניירות ערך | מט\"ח=מטבע חוץ | ס.פ./ס\"פ=סוג פעולה | תמנון+=איסור הלבנת הון | תנופה=ניהול בקשות משכנתא | מאיה=מערכת סניפית | ריכוז תעריפוני=נוהל 25813\n",
+            "max_tokens": 2048,
+            "temperature": 0.1,
+            "tools": []
+          }
+        }
+      },
+      {
+        "id": "Message:05ae9ee2495211",
+        "type": "messageNode",
+        "position": {
+          "x": 1660,
+          "y": 270
+        },
+        "measured": {
+          "height": 50,
+          "width": 200
+        },
+        "sourcePosition": "right",
+        "targetPosition": "left",
+        "data": {
+          "label": "Message",
+          "name": "Reply_RETRY",
+          "form": {
+            "content": [
+              "{Agent:05ae9eba495211@content}"
+            ]
+          }
+        }
+      }
+    ],
+    "edges": [
+      {
+        "id": "e1",
+        "source": "begin",
+        "sourceHandle": "start",
+        "target": "Agent:05ae9d02495211",
+        "targetHandle": "end"
+      },
+      {
+        "id": "e2",
+        "source": "Agent:05ae9d02495211",
+        "sourceHandle": "start",
+        "target": "Retrieval:05ae9e24495211",
+        "targetHandle": "end"
+      },
+      {
+        "id": "e3",
+        "source": "Retrieval:05ae9e24495211",
+        "sourceHandle": "start",
+        "target": "Agent:05ae9e60495211",
+        "targetHandle": "end"
+      },
+      {
+        "id": "e4",
+        "source": "Agent:05ae9e60495211",
+        "sourceHandle": "start",
+        "target": "Categorize:05ae9e7e495211",
+        "targetHandle": "end"
+      },
+      {
+        "id": "e5",
+        "source": "Categorize:05ae9e7e495211",
+        "sourceHandle": "PASS",
+        "target": "Message:05ae9ec4495211",
+        "targetHandle": "end"
+      },
+      {
+        "id": "e6",
+        "source": "Categorize:05ae9e7e495211",
+        "sourceHandle": "RETRY",
+        "target": "Retrieval:05ae9e9c495211",
+        "targetHandle": "end"
+      },
+      {
+        "id": "e7",
+        "source": "Retrieval:05ae9e9c495211",
+        "sourceHandle": "start",
+        "target": "Agent:05ae9eba495211",
+        "targetHandle": "end"
+      },
+      {
+        "id": "e8",
+        "source": "Agent:05ae9eba495211",
+        "sourceHandle": "start",
+        "target": "Message:05ae9ee2495211",
+        "targetHandle": "end"
+      }
+    ]
+  },
+  "history": [],
+  "messages": [],
+  "path": [],
+  "retrieval": [],
+  "variables": []
+}

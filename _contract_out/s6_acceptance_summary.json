@@ -1,0 +1,65 @@
+[
+  {
+    "name": "q1_paragraph",
+    "question": "מהו מודל ההטמעה של המערכת ומה מאפיין אותו?",
+    "seconds": 26.1,
+    "answer_ok": true,
+    "ref_marker_ok": true,
+    "hebrew": true,
+    "answer": "מודל ההטמעה של המערכת הוא bge‑m3 [ID:0].  \nהוא מודל רב‑לשוני, כלומר תומך בשפות שונות כגון עברית, אנגלית וערבית [ID:0].",
+    "ref_chunk_ids": [
+      "31301bb540fe5774",
+      "abae7922996fb39e",
+      "c5b9242ae73c0ef9",
+      "7e9a1db03b34b940",
+      "a5accc5acd3aa28e",
+      "d307a1328cf0c53b"
+    ]
+  },
+  {
+    "name": "q2_table",
+    "question": "מהו הקוד הסודי המופיע בטבלת המפרט הטכני?",
+    "seconds": 9.5,
+    "answer_ok": true,
+    "ref_marker_ok": true,
+    "hebrew": true,
+    "answer": "הקוד הסודי המופיע בטבלת המפרט הטכני הוא ZX9871 [ID:2][ID:4].",
+    "ref_chunk_ids": [
+      "abae7922996fb39e",
+      "d307a1328cf0c53b",
+      "7e9a1db03b34b940",
+      "dd20ecf698db32ed",
+      "a5accc5acd3aa28e"
+    ]
+  },
+  {
+    "name": "q3_mermaid",
+    "question": "איזה מפתח מופיע בתרשים הזרימה בשלב ניסוח התשובה?",
+    "seconds": 8.9,
+    "answer_ok": true,
+    "ref_marker_ok": true,
+    "hebrew": true,
+    "answer": "המפתח המופיע בתרשים הזרימה בשלב “ניסוח תשובה” הוא MERMAIDKEY42 [ID:0].",
+    "ref_chunk_ids": [
+      "d307a1328cf0c53b",
+      "c5b9242ae73c0ef9",
+      "31301bb540fe5774"
+    ]
+  },
+  {
+    "name": "q4_image",
+    "question": "לפי תרשים המכירות, באיזה רבעון נרשם השיא ומה הערך?",
+    "seconds": 12.7,
+    "answer_ok": true,
+    "ref_marker_ok": true,
+    "hebrew": true,
+    "answer": "השיא התרשם ברבעון הרביעי (Q4) עם ערך של 260 יחידות [ID:1].",
+    "ref_chunk_ids": [
+      "d307a1328cf0c53b",
+      "dd20ecf698db32ed",
+      "7e9a1db03b34b940",
+      "abae7922996fb39e",
+      "31301bb540fe5774"
+    ]
+  }
+]

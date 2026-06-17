@@ -1,0 +1,157 @@
+{
+  "code": 0,
+  "data": {
+    "chunks": [
+      {
+        "available": true,
+        "content": "\nדוח בדיקה גנרי— מערכת RAGFLOW(גרסת PDF)\n[כותרת-ראשית: מסמך-בדיקה-PDF-12345]\nרקע: המערכת מספקת שירותי אחזור מידע מבוסס הקשר ותומכת בעברית מלאה. עיבוד מסמכים: התהליך כולל זיהוי פריסה, חילוץ טבלאות ותיאור תמונות. מודל ההטמעה הוא bge-m3 והוא רב-לשוני. מסמך זה כולל תרשים מכירות רבעוני כתמונה. הקוד הסודי בקובץ זה הוא PDFKEY77.\nהתמונה לעיל מציגה נתוני מכירות לפי רבעונים Q1 עד Q4. סיכום: RAGFLOW הוא שירות RAG גנרי המתאים למגוון סוגי קבצים.",
+        "dataset_id": "2990101865ed11f19d1425719d627201",
+        "docnm_kwd": "testdoc_vision.pdf",
+        "document_id": "48f25b0e662011f1ae84bd00f07a0952",
+        "id": "abae7922996fb39e",
+        "image_id": "2990101865ed11f19d1425719d627201-abae7922996fb39e",
+        "important_keywords": [
+          "RAGFLOW",
+          " bge-m3",
+          " תמונת מכירות רבעונית"
+        ],
+        "positions": [
+          [
+            1,
+            211,
+            546,
+            46,
+            61
+          ],
+          [
+            1,
+            338,
+            546,
+            74,
+            89
+          ],
+          [
+            1,
+            143,
+            546,
+            112,
+            180
+          ],
+          [
+            1,
+            220,
+            546,
+            484,
+            517
+          ]
+        ],
+        "questions": [
+          "מהי הפונקציונליות המרכזית של מערכת RAGFLOW וכיצד היא תומכת במידע בעברית?  ",
+          "אילו שלבי עיבוד מסמכים מתבצעים במערכת, כולל זיהוי פריסה, חילוץ טבלאות ותיאור תמונות?"
+        ],
+        "tag_kwd": []
+      },
+      {
+        "available": true,
+        "content": "\nType: bar chart  \nTitle: QUARTERLY SALES CHART260  \nAxes and labels: Q1, Q2, Q3, Q4 (quarters)  \nLegend: none  \nData: Q1 = 120 units, Q2 = 200 units, Q3 = 90 units, Q4 = 260 units. Peak quarter: Q4 = 260 units.  \nNotes and source: none",
+        "dataset_id": "2990101865ed11f19d1425719d627201",
+        "docnm_kwd": "testdoc_vision.pdf",
+        "document_id": "48f25b0e662011f1ae84bd00f07a0952",
+        "id": "dd20ecf698db32ed",
+        "image_id": "2990101865ed11f19d1425719d627201-dd20ecf698db32ed",
+        "important_keywords": [
+          "Quarterly sales",
+          " Q4 peak",
+          " 260 units"
+        ],
+        "positions": [
+          [
+            1,
+            131,
+            541,
+            240,
+            475
+          ]
+        ],
+        "questions": [
+          "Which quarter recorded the highest sales and what was the exact sales figure?  ",
+          "How do the sales numbers differ between each of the four quarters?"
+        ],
+        "tag_kwd": []
+      }
+    ],
+    "doc": {
+      "chunk_count": 2,
+      "chunk_method": "naive",
+      "content_hash": "a6b2e731f71621dade835d34ead8ea98",
+      "create_date": "2026-06-12T13:33:48",
+      "create_time": 1781242428166,
+      "created_by": "2507563a42bd11f1a6bba9e87ac7a32c",
+      "dataset_id": "2990101865ed11f19d1425719d627201",
+      "id": "48f25b0e662011f1ae84bd00f07a0952",
+      "location": "testdoc_vision.pdf",
+      "name": "testdoc_vision.pdf",
+      "parser_config": {
+        "auto_keywords": 3,
+        "auto_questions": 2,
+        "children_delimiter": "",
+        "chunk_token_num": 512,
+        "delimiter": "\\n",
+        "ext": {},
+        "filename_embd_weight": 0.1,
+        "graphrag": {
+          "community": false,
+          "entity_types": [
+            "organization",
+            "person",
+            "geo",
+            "event",
+            "category"
+          ],
+          "method": "light",
+          "resolution": false,
+          "use_graphrag": false
+        },
+        "html4excel": false,
+        "image_context_size": 0,
+        "layout_recognize": "DeepDOC",
+        "llm_id": "gpt-oss:120b-cloud@Ollama",
+        "pages": null,
+        "parent_child": {
+          "children_delimiter": "\\n",
+          "use_parent_child": false
+        },
+        "raptor": {
+          "auto_disable_for_structured_data": true,
+          "ext": {},
+          "max_cluster": 64,
+          "max_token": 256,
+          "prompt": "Please summarize the following paragraphs. Be careful with the numbers, do not make things up. Paragraphs as following:\n      {cluster_content}\nThe above is the content you need to summarize.",
+          "random_seed": 0,
+          "threshold": 0.1,
+          "use_raptor": false
+        },
+        "table_context_size": 0,
+        "tag_kb_ids": [],
+        "task_page_size": null,
+        "topn_tags": 1
+      },
+      "pipeline_id": null,
+      "process_begin_at": "2026-06-12T13:33:48",
+      "process_duration": 19.5756,
+      "progress": 1.0,
+      "progress_msg": "\n13:33:48 Task has been received.\n13:33:50 Page(1~2): Start to parse.\n13:33:51 Page(1~2): OCR started\n13:33:53 Page(1~2): OCR finished (1.51s)\n13:33:54 Page(1~2): Layout analysis (1.55s)\n13:33:54 Page(1~2): Table analysis (0.00s)\n13:33:55 Page(1~2): Text merged (0.27s)\n13:33:55 Page(1~2): Visual model detected. Attempting to enhance figure extraction...\n13:33:59 Page(1~2): Finish parsing.\n13:33:59 Page(1~2): Start to generate keywords for every chunk ...\n13:34:01 Page(1~2): Keywords generation 2 chunks completed in 2.70s\n13:34:01 Page(1~2): Start to generate questions for every chunk ...\n13:34:05 Page(1~2): Question generation 2 chunks completed in 3.22s\n13:34:05 Page(1~2): Generate 2 chunks\n13:34:07 Page(1~2): Embedding chunks (1.83s)\n13:34:07 Page(1~2): Indexing done (0.37s).\n13:34:07 Page(1~2): Task done (18.79s)",
+      "run": "DONE",
+      "size": 71193,
+      "source_type": "local",
+      "status": "1",
+      "suffix": "pdf",
+      "thumbnail": "thumbnail_48f25b0e662011f1ae84bd00f07a0952.png",
+      "token_count": 384,
+      "type": "pdf",
+      "update_date": "2026-06-12T13:34:07",
+      "update_time": 1781242447575
+    },
+    "total": 2
+  }
+}

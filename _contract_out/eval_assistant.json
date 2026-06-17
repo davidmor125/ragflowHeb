@@ -1,0 +1,52 @@
+{
+  "create_date": "2026-06-13T05:22:53",
+  "create_time": 1781299373726,
+  "dataset_ids": [
+    "3db1df6c669d11f1b9e5df329cd4ee1f"
+  ],
+  "description": "A helpful Assistant",
+  "do_refer": "1",
+  "icon": "",
+  "id": "df99b2da66a411f1b9e5df329cd4ee1f",
+  "kb_names": [
+    "spec_1cbe8188-855f-46dd-8a17-593d3ee36d17"
+  ],
+  "language": "English",
+  "llm_id": "gpt-oss:20b@Ollama",
+  "llm_setting": {
+    "temperature": 0.1
+  },
+  "meta_data_filter": {},
+  "name": "client_eval_1781299373",
+  "prompt_config": {
+    "cross_languages": [
+      "Hebrew",
+      "English"
+    ],
+    "empty_response": "לא נמצא מידע במאגר",
+    "keyword": true,
+    "parameters": [
+      {
+        "key": "knowledge",
+        "optional": false
+      }
+    ],
+    "prologue": "שלום!",
+    "quote": true,
+    "refine_multiturn": false,
+    "system": "אתה עוזר שעונה על שאלות לגבי מסמך איפיון. ענה בעברית בלבד, אך ורק על סמך המידע במאגר הידע שלהלן:\n{knowledge}\nאם התשובה אינה נמצאת במאגר — אמור במפורש 'לא נמצא מידע במאגר'. אל תמציא מידע.",
+    "tts": false
+  },
+  "prompt_type": "simple",
+  "rerank_id": "",
+  "similarity_threshold": 0.1,
+  "status": "1",
+  "tenant_id": "2507563a42bd11f1a6bba9e87ac7a32c",
+  "tenant_llm_id": 1,
+  "tenant_rerank_id": null,
+  "top_k": 1024,
+  "top_n": 8,
+  "update_date": "2026-06-13T05:22:53",
+  "update_time": 1781299373726,
+  "vector_similarity_weight": 0.3
+}

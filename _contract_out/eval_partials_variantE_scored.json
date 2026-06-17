@@ -1,0 +1,62 @@
+[
+  {
+    "n": 4,
+    "verdict": "correct",
+    "reason": "The response accurately lists all the elements described in the source snippet for the scope (including management of orders, tables, menu, payments, "
+  },
+  {
+    "n": 10,
+    "verdict": "correct",
+    "reason": "The response accurately lists all user stories from the source, matching each role’s requirements and details exactly as presented in the snippet."
+  },
+  {
+    "n": 12,
+    "verdict": "correct",
+    "reason": "The answer accurately reproduces all six design goals and five personas as presented in the source text, matching each detail precisely."
+  },
+  {
+    "n": 13,
+    "verdict": "partial",
+    "reason": "The response accurately captures the initial system check and the detailed client flow as presented in the source snippet. However, it introduces addi"
+  },
+  {
+    "n": 16,
+    "verdict": "partial",
+    "reason": "The answer correctly lists the main entry point, services, and that the PostgreSQL database is connected to all services except Auth, which matches th"
+  },
+  {
+    "n": 20,
+    "verdict": "wrong",
+    "reason": "The answer contains many tables and fields that are not mentioned in the source excerpt (e.g., שולחן, הזמנה, מנה, תשלום, משתמש‑מערכת). The source only"
+  },
+  {
+    "n": 24,
+    "verdict": "wrong",
+    "reason": "The answer lists many parameters (e.g., menuItemName, price, category, allergens, userId, role, language, page, pageSize) that are not present in the "
+  },
+  {
+    "n": 29,
+    "verdict": "correct",
+    "reason": "The answer reproduces the entire workflow table exactly as presented in the source, matching all steps, players, inputs, actions, outputs, and next st"
+  },
+  {
+    "n": 39,
+    "verdict": "correct",
+    "reason": "The answer reproduces the exact contents of the source section, listing all Test IDs, requirements and statuses as specified."
+  },
+  {
+    "n": 44,
+    "verdict": "correct",
+    "reason": "The system’s response reproduces the complete table of fields as described in the source excerpt, including all entities (לקוח, מסעדה/סניף, שולחן, הזמ"
+  },
+  {
+    "n": 46,
+    "verdict": "correct",
+    "reason": "The answer reproduces the full list of notification trigger events, their activation conditions, and urgency levels exactly as presented in the source"
+  },
+  {
+    "n": 47,
+    "verdict": "correct",
+    "reason": "The answer accurately captures the key points from the source: it explains that the section provides detailed microcopy templates for each event, chan"
+  }
+]

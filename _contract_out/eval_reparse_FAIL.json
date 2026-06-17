@@ -1,0 +1,65 @@
+{
+  "chunk_count": 0,
+  "chunk_method": "naive",
+  "create_date": "2026-06-13T04:28:16",
+  "create_time": 1781296096337,
+  "created_by": "2507563a42bd11f1a6bba9e87ac7a32c",
+  "dataset_id": "3db1df6c669d11f1b9e5df329cd4ee1f",
+  "id": "3e1a2c70669d11f1b9e5df329cd4ee1f",
+  "location": "spec_1cbe8188-855f-46dd-8a17-593d3ee36d17.docx",
+  "meta_fields": {},
+  "name": "spec_1cbe8188-855f-46dd-8a17-593d3ee36d17.docx",
+  "nickname": "dav",
+  "parser_config": {
+    "auto_keywords": 0,
+    "auto_questions": 0,
+    "children_delimiter": "",
+    "chunk_token_num": 512,
+    "delimiter": "\n",
+    "graphrag": {
+      "entity_types": [
+        "organization",
+        "person",
+        "geo",
+        "event",
+        "category"
+      ],
+      "method": "light",
+      "use_graphrag": true
+    },
+    "html4excel": false,
+    "image_context_size": 0,
+    "layout_recognize": "DeepDOC",
+    "llm_id": "gpt-oss:120b-cloud@Ollama",
+    "parent_child": {
+      "children_delimiter": "\n",
+      "use_parent_child": false
+    },
+    "raptor": {
+      "max_cluster": 64,
+      "max_token": 256,
+      "prompt": "Please summarize the following paragraphs. Be careful with the numbers, do not make things up. Paragraphs as following:\n      {cluster_content}\nThe above is the content you need to summarize.",
+      "random_seed": 0,
+      "threshold": 0.1,
+      "use_raptor": true
+    },
+    "table_context_size": 0,
+    "topn_tags": 3
+  },
+  "pipeline_id": null,
+  "pipeline_name": null,
+  "process_begin_at": "2026-06-13T04:56:16",
+  "process_duration": 22.9619,
+  "progress": -1.0,
+  "progress_msg": "\n04:56:17 Task has been received.\n04:56:19 Page(1~100000001): Start to parse.\n04:56:20 Page(1~100000001): Visual model detected. Attempting to enhance figure extraction...\n04:56:20 Page(1~100000001): Finish parsing.\n04:56:21 Page(1~100000001): Generate 108 chunks\n04:56:38 Page(1~100000001): [ERROR]Generate embedding error:the input length exceeds the context length (status code: 500)\n04:56:38 [ERROR][Exception]: the input length exceeds the context length (status code: 500)",
+  "run": "FAIL",
+  "size": 115437,
+  "source_type": "local",
+  "status": "1",
+  "suffix": "docx",
+  "thumbnail": "",
+  "token_count": 0,
+  "type": "doc",
+  "update_date": "2026-06-13T04:56:38",
+  "update_time": 1781297798961
+}

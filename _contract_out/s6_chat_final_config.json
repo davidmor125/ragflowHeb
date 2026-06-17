@@ -1,0 +1,26 @@
+{
+  "request": {
+    "similarity_threshold": 0.1,
+    "top_n": 8,
+    "prompt_config": {
+      "system": "אתה עוזר ידע מדויק. ענה בעברית בלבד, אך ורק על סמך המידע במאגר הידע שלהלן:\n{knowledge}\nאם התשובה אינה נמצאת במאגר — אמור במפורש שאינך יודע. אל תמציא מידע.",
+      "parameters": [
+        {
+          "key": "knowledge",
+          "optional": false
+        }
+      ],
+      "empty_response": "",
+      "prologue": "שלום!",
+      "quote": true,
+      "refine_multiturn": false,
+      "tts": false,
+      "keyword": true,
+      "cross_languages": [
+        "Hebrew",
+        "English"
+      ]
+    }
+  },
+  "response_code": 0
+}

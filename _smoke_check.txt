@@ -1,0 +1,115 @@
+  m = re.search("cites=[\d+,]*", object["citedby_url"])
+Running agent: banking_agentic_rag
+Canvas instantiated. components: 3
+
+Question: כיצד יכול לקוח לבקש לעיין במידע השמור במאגרי הבנק אודות חשבונו?
+
+  ev #1  event=workflow_started  data: {"inputs": null}
+  ev #2  event=node_started  data: {"inputs": null, "created_at": 1778048622, "component_id": "begin", "component_name": "Begin", "component_type": "Begin", "thoughts": ""}
+  ev #3  event=node_finished  data: {"inputs": {}, "outputs": {"_created_time": 51985.804689642, "_elapsed_time": 0.0006778419992770068}, "component_id": "begin", "component_name": "Begin", "component_type": "Begin", "error": null, "elapsed_time": 0.0010676579986466095, "created_at": 51985.804689642}
+  ev #4  event=node_started  data: {"inputs": null, "created_at": 1778048622, "component_id": "Agent:54e4585648a011", "component_name": "BankingRAG_Agent", "component_type": "Agent", "thoughts": "⌛Give me a moment—starting from: \n\nכיצד יכול לקוח לבקש לעיין במידע השמור במאגרי הבנק אודות חשבונו?\n\nI’ll figure out our best next move.
+  ev #5  event=node_started  data: {"inputs": null, "created_at": 1778048622, "component_id": "Message:54e45a1848a011", "component_name": "Reply", "component_type": "Message", "thoughts": ""}
+  ev #6  event=message  data: {"content": "נ"}
+  ev #7  event=message  data: {"content": "ראה"}
+  ev #8  event=message  data: {"content": " שה"}
+  ev #9  event=message  data: {"content": "תר"}
+  ev #10  event=message  data: {"content": "ח"}
+  ev #11  event=message  data: {"content": "שה"}
+  ev #12  event=message  data: {"content": " ש"}
+  ev #13  event=message  data: {"content": "גי"}
+  ev #14  event=message  data: {"content": "אה", "audio_binary": null}
+  ev #15  event=message  data: {"content": " ט"}
+  ev #16  event=message  data: {"content": "כ"}
+  ev #17  event=message  data: {"content": "נית"}
+  ev #18  event=message  data: {"content": " במ"}
+  ev #19  event=message  data: {"content": "ער"}
+  ev #20  event=message  data: {"content": "כת"}
+  ev #21  event=message  data: {"content": " האח", "audio_binary": null}
+  ev #22  event=message  data: {"content": "זור"}
+  ev #23  event=message  data: {"content": "."}
+  ev #24  event=message  data: {"content": " א"}
+  ev #25  event=message  data: {"content": "ש"}
+  ev #26  event=message  data: {"content": "מח"}
+  ev #27  event=message  data: {"content": " ל"}
+  ev #28  event=message  data: {"content": "נס"}
+  ev #29  event=message  data: {"content": "ות"}
+  ev #30  event=message  data: {"content": " ש", "audio_binary": null}
+  ev #31  event=message  data: {"content": "וב"}
+  ev #32  event=message  data: {"content": " לע"}
+  ev #33  event=message  data: {"content": "זור"}
+  ev #34  event=message  data: {"content": " לך"}
+  ev #35  event=message  data: {"content": "."}
+  ev #36  event=message  data: {"content": "\n\n"}
+  ev #37  event=message  data: {"content": "אנ"}
+  ev #38  event=message  data: {"content": "א", "audio_binary": null}
+  ev #39  event=message  data: {"content": " ש"}
+  ev #40  event=message  data: {"content": "אל"}
+  ev #41  event=message  data: {"content": " את"}
+  ev #42  event=message  data: {"content": " הש"}
+  ev #43  event=message  data: {"content": "א"}
+  ev #44  event=message  data: {"content": "לה"}
+  ev #45  event=message  data: {"content": " ש"}
+  ev #46  event=message  data: {"content": "וב", "audio_binary": null}
+  ev #47  event=message  data: {"content": ","}
+  ev #48  event=message  data: {"content": " וא"}
+  ev #49  event=message  data: {"content": "ב"}
+  ev #50  event=message  data: {"content": "צע"}
+  ev #51  event=message  data: {"content": " חי"}
+  ev #52  event=message  data: {"content": "פ"}
+  ev #53  event=message  data: {"content": "וש"}
+  ev #54  event=message  data: {"content": " מ"}
+  ev #55  event=message  data: {"content": "חד", "audio_binary": null}
+  ev #56  event=message  data: {"content": "ש"}
+  ev #57  event=message  data: {"content": " ב"}
+  ev #58  event=message  data: {"content": "נה"}
+  ev #59  event=message  data: {"content": "לי"}
+  ev #60  event=message  data: {"content": " הב"}
+  ev #61  event=message  data: {"content": "נק"}
+  ev #62  event=message  data: {"content": " כדי"}
+  ev #63  event=message  data: {"content": " לס", "audio_binary": null}
+  ev #64  event=message  data: {"content": "פק"}
+  ev #65  event=message  data: {"content": " לך"}
+  ev #66  event=message  data: {"content": " את"}
+  ev #67  event=message  data: {"content": " הת"}
+  ev #68  event=message  data: {"content": "ש"}
+  ev #69  event=message  data: {"content": "ובה"}
+  ev #70  event=message  data: {"content": " המ", "audio_binary": null}
+  ev #71  event=message  data: {"content": "ד"}
+  ev #72  event=message  data: {"content": "וי"}
+  ev #73  event=message  data: {"content": "קת"}
+  ev #74  event=message  data: {"content": " לג"}
+  ev #75  event=message  data: {"content": "בי"}
+  ev #76  event=message  data: {"content": " א"}
+  ev #77  event=message  data: {"content": "ופן"}
+  ev #78  event=message  data: {"content": " הג", "audio_binary": null}
+  ev #79  event=message  data: {"content": "שת"}
+  ev #80  event=message  data: {"content": " בק"}
+  ev #81  event=message  data: {"content": "שה"}
+  ev #82  event=message  data: {"content": " לע"}
+  ev #83  event=message  data: {"content": "י"}
+  ev #84  event=message  data: {"content": "ון"}
+  ev #85  event=message  data: {"content": " ב"}
+  ev #86  event=message  data: {"content": "מי", "audio_binary": null}
+  ev #87  event=message  data: {"content": "דע"}
+  ev #88  event=message  data: {"content": " הש"}
+  ev #89  event=message  data: {"content": "מור"}
+  ev #90  event=message  data: {"content": " במ"}
+  ev #91  event=message  data: {"content": "א"}
+  ev #92  event=message  data: {"content": "ג"}
+  ev #93  event=message  data: {"content": "רי"}
+  ev #94  event=message  data: {"content": " הב", "audio_binary": null}
+  ev #95  event=message  data: {"content": "נק"}
+  ev #96  event=message  data: {"content": "."}
+  ev #97  event=message  data: {"content": "", "audio_binary": null}
+  ev #98  event=message_end  data: {"reference": {"chunks": {"98": {"id": "2912c0e8262c75f1", "content": "\n8.7.7. במקרה שלאחר בחינת בקשת הפונה לרבות כמפורט בסעיפים 8.7.4 ו - 8.7.5 לעיל , נמצא כי לא ניתן למסור את המידע המבוקש ( המידע לא קיים במאגרי הבנק / המידע נמחק / לא ניתן לאתר את המידע / המידע כולל מידע חסוי לגבי לקוח או חשבון אח
+  ev #99  event=node_finished  data: {"inputs": {"sys.query": "כיצד יכול לקוח לבקש לעיין במידע השמור במאגרי הבנק אודות חשבונו?"}, "outputs": {"content": "נראה שהתרחשה שגיאה טכנית במערכת האחזור. אשמח לנסות שוב לעזור לך.\n\nאנא שאל את השאלה שוב, ואבצע חיפוש מחדש בנהלי הבנק כדי לספק לך את התשובה המדויקת לגבי אופן הגשת בקשה לעיון במידע השמ
+  ev #100  event=node_finished  data: {"inputs": {"Agent:54e4585648a011@content": "נראה שהתרחשה שגיאה טכנית במערכת האחזור. אשמח לנסות שוב לעזור לך.\n\nאנא שאל את השאלה שוב, ואבצע חיפוש מחדש בנהלי הבנק כדי לספק לך את התשובה המדויקת לגבי אופן הגשת בקשה לעיון במידע השמור במאגרי הבנק."}, "outputs": {"content": "נראה שהתרחשה שגיאה טכנית במער
+  ev #101  event=workflow_finished  data: {"inputs": null, "outputs": {"content": "נראה שהתרחשה שגיאה טכנית במערכת האחזור. אשמח לנסות שוב לעזור לך.\n\nאנא שאל את השאלה שוב, ואבצע חיפוש מחדש בנהלי הבנק כדי לספק לך את התשובה המדויקת לגבי אופן הגשת בקשה לעיון במידע השמור במאגרי הבנק.", "downloads": [], "_created_time": 51985.810997379, "_elaps
+
+Total events: 101
+Total chunks captured: 0
+
+=== ANSWER ===
+נראה שהתרחשה שגיאה טכנית במערכת האחזור. אשמח לנסות שוב לעזור לך.
+
+אנא שאל את השאלה שוב, ואבצע חיפוש מחדש בנהלי הבנק כדי לספק לך את התשובה המדויקת לגבי אופן הגשת בקשה לעיון במידע השמור במאגרי הבנק.

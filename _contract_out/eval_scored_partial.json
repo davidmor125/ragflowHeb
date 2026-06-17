@@ -1,0 +1,402 @@
+[
+  {
+    "verdict": "correct",
+    "reason": "The answer lists the same four main integrations—credit card processing (PCI‑DSS compliant), SMS, Google Maps, and accounting systems—as stated in the source excerpt.",
+    "n": 1,
+    "ref_hit": true,
+    "expected_section": "S1",
+    "no_info": false
+  },
+  {
+    "verdict": "correct",
+    "reason": "The response accurately summarizes all key points from the provided source text for the \"אפיון עסקי — רקע והבעיה\" section, including the business background, customer pain points, staff and manager pain points, and the current situation with fragmented processes. It matches the content of the source without adding incorrect information.",
+    "n": 2,
+    "ref_hit": true,
+    "expected_section": "S3",
+    "no_info": false
+  },
+  {
+    "verdict": "correct",
+    "reason": "The response accurately lists all stakeholders and their corresponding interests and requirements exactly as presented in the source excerpt.",
+    "n": 3,
+    "ref_hit": true,
+    "expected_section": "S5",
+    "no_info": false
+  },
+  {
+    "verdict": "partial",
+    "reason": "The answer accurately reproduces most of the \"included\" features listed in the source snippet and provides a structured list of what is covered by the project scope. However, it also introduces an explicit \"out‑of‑scope\" list that is not present or supported by the provided source text. Because the source does not define these exclusions, the answer contains unsupported information, making it only partially correct.",
+    "n": 4,
+    "ref_hit": true,
+    "expected_section": "S7",
+    "no_info": false
+  },
+  {
+    "verdict": "correct",
+    "reason": "התגובה של המערכת מכסה את כל הנקודות העיקריות שמופיעות בקטע המקור – היא מציינת את מטרת האפיון הפונקציונלי, מגדירה את המונחים המרכזיים (לקוח, מסעדה/סניף, שולחן, הזמנה, מנה, תשלום, משתמש‑מערכת, תפקידים, אינטגרציות, KPI ודוחות ניהוליים) ומציגה אותם בצורה מדויקת. אין חוסר או שגיאה בהשוואה לטקסט המקורי.",
+    "n": 5,
+    "ref_hit": true,
+    "expected_section": "S10",
+    "no_info": false
+  },
+  {
+    "verdict": "correct",
+    "reason": "The system’s response accurately reproduces the flowchart described in the source section, including all main steps (start → choose restaurant → show details → choose table or food → check availability → create order if available → select payment method → credit card processing → confirm order → send SMS/Email and update availability). It also correctly references external components such as Google Maps, an accounting system, and managerial roles, which are consistent with the source. No inaccuracies or omissions that would downgrade it to partial or wrong are present.",
+    "n": 6,
+    "ref_hit": true,
+    "expected_section": "S12",
+    "no_info": false
+  },
+  {
+    "verdict": "correct",
+    "reason": "The system’s response accurately lists all the use‑case scenarios described in the source (client table booking, client food ordering, waiter receiving orders, branch manager adding menu items and updating table availability, network manager generating KPI reports, admin adding users, system sending SMS notifications, and processing credit card payments). It also correctly notes that each scenario includes detailed steps such as selecting a branch, date/time, checking availability, confirming the order, etc., matching the step‑by‑step descriptions in the source. No significant omissions or inaccuracies are present.",
+    "n": 7,
+    "ref_hit": true,
+    "expected_section": "S14",
+    "no_info": false
+  },
+  {
+    "verdict": "wrong",
+    "reason": "The provided answer lists a number of order status stages (ממתין לאישור, ממתין לתשלום, מאושר, דחוי, מוכן, ביצוע, הושלם) that are not mentioned in the source excerpt. The source only specifies three statuses for an order: מתוכננת → מבוצעת → בוטלה. Therefore the answer does not accurately reflect the information given in the source.",
+    "n": 8,
+    "ref_hit": false,
+    "expected_section": "S16",
+    "no_info": false
+  },
+  {
+    "verdict": "correct",
+    "reason": "The system’s response accurately reproduces the table of personas, main goals, and pain points exactly as presented in the source text for the section \"User Stories — פרסונות ותפקידים.\" All five personas are included with matching details, making the answer fully correct.",
+    "n": 9,
+    "ref_hit": true,
+    "expected_section": "S19",
+    "no_info": false
+  },
+  {
+    "verdict": "partial",
+    "reason": "The system’s response provides a high‑level summary of user stories for various roles, but it does not include the specific Gherkin‑style scenarios (Given/When/Then) that are present in the source text. Therefore the answer is partially correct but incomplete.",
+    "n": 10,
+    "ref_hit": true,
+    "expected_section": "S21",
+    "no_info": false
+  },
+  {
+    "verdict": "correct",
+    "reason": "The system’s response \"המערכת מדווחת על חוסר זמינות\" accurately reflects the source text which states that for an order with a number of diners exceeding the table’s maximum capacity, the system reports unavailability.",
+    "n": 11,
+    "ref_hit": true,
+    "expected_section": "S23",
+    "no_info": false
+  },
+  {
+    "verdict": "partial",
+    "reason": "The answer accurately reproduces all six UI/UX design goals as stated in the source and correctly lists the three personas (יעל, דני, רוני) described there. However, it also adds two additional personas (תמר, אורי) that are not present in the provided source excerpt, which introduces unsupported information.",
+    "n": 12,
+    "ref_hit": true,
+    "expected_section": "S26",
+    "no_info": false
+  },
+  {
+    "verdict": "partial",
+    "reason": "The response correctly captures the main structure of the User Flows section—starting with system initiation, role selection, and the distinct branches for client, waiter, branch manager, network manager, and admin. It also accurately describes the client flow steps (table selection, personal details, order confirmation, adding dishes, online payment, and success/failure handling). However, it adds additional details not present in the source snippet (e.g., waiter serving and upgrading orders, a final common end state R → AE) that are not specified in the provided excerpt. Therefore, while largely aligned with the source, the answer contains extra information beyond what is documented, warranting a 'partial' verdict.",
+    "n": 13,
+    "ref_hit": true,
+    "expected_section": "S28",
+    "no_info": false
+  },
+  {
+    "verdict": "correct",
+    "reason": "The answer correctly states that in the 'disabled' state the add dish button appears gray and cannot be clicked, which matches the information provided in the source text.",
+    "n": 14,
+    "ref_hit": true,
+    "expected_section": "S30",
+    "no_info": false
+  },
+  {
+    "verdict": "correct",
+    "reason": "The system’s response includes all the key details from the source text, covering WCAG 2.1 AA contrast requirements, ARIA attributes, focus handling, live regions, form validation, responsive breakpoints (with an expanded but consistent range), touch targets, image alt text, color coding for status, RTL support, design system states, and automated accessibility testing. No information is omitted or incorrect relative to the source excerpt.",
+    "n": 15,
+    "ref_hit": true,
+    "expected_section": "S32",
+    "no_info": false
+  },
+  {
+    "verdict": "partial",
+    "reason": "The answer correctly lists the core components described in the source (API Gateway, Auth, Order, Table, Menu, Payment, Notification, Reporting, Admin services, PostgreSQL database, Redis cache) and their interconnections. However, it also adds numerous details that are not present in the provided source excerpt—such as specific front‑end frameworks (React Native/React), Node.js/Express GraphQL backend, Docker/Kubernetes deployment, CI/CD pipeline, security mechanisms, and logging stack—which are unsupported by the cited text. Therefore the answer is partially correct but contains extraneous, unverified information.",
+    "n": 16,
+    "ref_hit": true,
+    "expected_section": "S35",
+    "no_info": false
+  },
+  {
+    "verdict": "correct",
+    "reason": "The answer accurately reproduces all details from the source: it lists the API הזמנות interface, specifies REST (HTTPS, JSON), describes CRUD operations and filtering options, and mentions the real‑time reminder endpoint for waiter and branch manager.",
+    "n": 17,
+    "ref_hit": true,
+    "expected_section": "S37",
+    "no_info": false
+  },
+  {
+    "verdict": "correct",
+    "reason": "The system’s response accurately lists all the items specified in the source text for the Cross‑Cutting section, including security measures (2FA, AES‑256 encryption, IP restrictions), performance optimizations (Redis cache TTL, indexes, async SMS queue), logging practices (API call logs, ELK stack, encrypted sensitive logs, retention policy, Prometheus/Grafana monitoring with Slack alerts), OWASP Top 10 checks, CDN usage for static resources, and PCI DSS‑compliant credit‑card processing documentation. No information is omitted or incorrect.",
+    "n": 18,
+    "ref_hit": true,
+    "expected_section": "S39",
+    "no_info": false
+  },
+  {
+    "verdict": "correct",
+    "reason": "The answer accurately reflects the main points from the source section, including DBMS target (PostgreSQL 15), support for JSONB, advanced indexing, ACID properties, extensions (PostGIS, pgcrypto), HA via streaming and logical replication, partitioning, 3NF normalization, UUID identifiers, ENUM and JSONB usage, PCI‑DSS tokenization, soft delete with IsDeleted/DeletedAt, and foreign key handling with ON DELETE CASCADE or SET NULL. These match the source content closely, making the answer correct.",
+    "n": 19,
+    "ref_hit": true,
+    "expected_section": "S42",
+    "no_info": false
+  },
+  {
+    "verdict": "partial",
+    "reason": "The answer accurately describes the \"לקוח\" and \"מסעדה/סניף\" tables as presented in the source, matching field names, types, and primary key status. However, it also introduces additional tables (שולחן, הזמנה, מנה, תשלום, משתמש‑מערכת) that are not mentioned in the provided source excerpt. Therefore, while some information is correct, the answer is incomplete relative to the source material.",
+    "n": 20,
+    "ref_hit": true,
+    "expected_section": "S44",
+    "no_info": false
+  },
+  {
+    "verdict": "correct",
+    "reason": "The answer accurately lists all primary keys, composite key, unique constraints, foreign key relationships, and the specified indexes (clustered PKs, non‑clustered on Order.DateTime, Table.Number + RestaurantID, MenuItem.Category, Payment.Status). It also includes a full‑text index on MenuItem.Name/Description and an additional Customer.Phone index that are not explicitly mentioned in the source snippet but do not contradict any provided information. Therefore the response is considered correct based on the source material.",
+    "n": 21,
+    "ref_hit": true,
+    "expected_section": "S46",
+    "no_info": false
+  },
+  {
+    "verdict": "correct",
+    "reason": "The answer correctly states that the system returns HTTP status code 429 (Too Many Requests) when a user exceeds the rate limit of 100 requests per minute, which matches the information in the source text.",
+    "n": 22,
+    "ref_hit": true,
+    "expected_section": "S49",
+    "no_info": false
+  },
+  {
+    "verdict": "correct",
+    "reason": "The answer correctly states that the maximum defined for the `limit` parameter on a GET page is 100 items, which matches the source text.",
+    "n": 23,
+    "ref_hit": true,
+    "expected_section": "S51",
+    "no_info": false
+  },
+  {
+    "verdict": "partial",
+    "reason": "The answer correctly lists the parameters that appear in the provided source excerpt (e.g., customerId, email, phone, restaurantId, tableNumber, capacity, orderId, orderDate, orderTime, numberOfGuests, status, totalAmount, paymentMethod, paymentStatus, menuItemId). However, it also includes additional parameters (menuItemName, price, category, allergens, userId, role, language, page, pageSize) that are not present in the given source snippet. Therefore the answer is partially correct but contains information not supported by the provided source.",
+    "n": 24,
+    "ref_hit": true,
+    "expected_section": "S53",
+    "no_info": false
+  },
+  {
+    "verdict": "correct",
+    "reason": "The system’s answer lists the exact five roles mentioned in the source (לקוח, מלצר, מנהל סניף, מנהל רשת, אדמין) and provides a set of permissions that align with the description in the source (“CRUD על ישויות, גישה לדוחות, ניהול תפריט וכו’”). The details given for each role are consistent with the general permission categories specified in the source text.",
+    "n": 25,
+    "ref_hit": true,
+    "expected_section": "S57",
+    "no_info": false
+  },
+  {
+    "verdict": "wrong",
+    "reason": "The source flowchart shows that after the step of sending an SMS/Push (H), the next actions involve confirming the order and sending order data to the system (L → M). The answer claiming that the customer selects menu items after the SMS/Push contradicts the diagram, where menu selection occurs earlier in the process. Therefore the answer is incorrect.",
+    "n": 26,
+    "ref_hit": true,
+    "expected_section": "S59",
+    "no_info": false
+  },
+  {
+    "verdict": "correct",
+    "reason": "The system’s response accurately reproduces all constraints listed in the source text, including rate limits for each service, payload size limit, SLA percentages, response time limits, and OTP attempt restrictions.",
+    "n": 27,
+    "ref_hit": true,
+    "expected_section": "S61",
+    "no_info": false
+  },
+  {
+    "verdict": "correct",
+    "reason": "The answer accurately lists all parties involved in the ordering process—customer, waiter, branch manager, network manager, and admin—and correctly describes their respective roles as outlined in the source text.",
+    "n": 28,
+    "ref_hit": true,
+    "expected_section": "S64",
+    "no_info": false
+  },
+  {
+    "verdict": "partial",
+    "reason": "The answer correctly lists and describes the initial workflow steps (1‑11) as presented in the source text, including actors, inputs, actions, outputs, and next steps. However, it adds additional steps (12‑20) that are not present in the provided source excerpt, thereby extending beyond the documented workflow. Consequently, while the core information is accurate, the answer contains extraneous content that was not supported by the source.",
+    "n": 29,
+    "ref_hit": true,
+    "expected_section": "S66",
+    "no_info": false
+  },
+  {
+    "verdict": "correct",
+    "reason": "The response accurately reflects the information in the source text: it states that the system logs the failure, attempts to resend within 5 minutes, and if the failure persists, alerts a manager.",
+    "n": 30,
+    "ref_hit": true,
+    "expected_section": "S68",
+    "no_info": false
+  },
+  {
+    "verdict": "correct",
+    "reason": "The system’s response correctly lists the authorized actions for a client on the 'תשלום' (payment) resource—create and read are allowed, while update and delete are not—exactly matching the information in the source matrix.",
+    "n": 31,
+    "ref_hit": true,
+    "expected_section": "S71",
+    "no_info": false
+  },
+  {
+    "verdict": "correct",
+    "reason": "The answer states that the secret key must be 256 bits long, which exactly matches the source text stating that each JWT token must be signed using HMAC‑SHA256 with a 256‑bit secret key.",
+    "n": 32,
+    "ref_hit": true,
+    "expected_section": "S73",
+    "no_info": false
+  },
+  {
+    "verdict": "correct",
+    "reason": "התגובה כוללת את כל המידע המרכזי מהקטע המקורי: השאלה העסקית (ייעול ניהול הזמנות והלקוחות במסעדות רב‑סניפיות תוך שמירה על אבטחת נתוני תשלום, זמינות גבוהה, תמיכה במובייל וריבוי שפות), קהל היעד (מפתחים BI וגורמים עסקיים כגון מנהלי סניפים, רשת, אדמינים, מלצרים ולקוחות) והאופן שבו המפרט יופץ (מסמכי אפיון PDF ב‑SharePoint, פגישות הדרכה, פורום Teams ושאלות ותשובות, דוחות תקופתיים). אין חוסר או שגיאה במידע שניתן.",
+    "n": 33,
+    "ref_hit": true,
+    "expected_section": "S76",
+    "no_info": false
+  },
+  {
+    "verdict": "correct",
+    "reason": "The answer reproduces the entire table from section S78 exactly, including column names, source entities, data types, and descriptions. It matches the source text word-for-word (aside from minor formatting differences such as added [ID:0] tags), so it fully satisfies the question.",
+    "n": 34,
+    "ref_hit": true,
+    "expected_section": "S78",
+    "no_info": false
+  },
+  {
+    "verdict": "correct",
+    "reason": "The system’s answer correctly states that the order closure rate is calculated as the percentage of orders with status 'שולם' (completed) out of all created orders, matching the formula provided in the source excerpt.",
+    "n": 35,
+    "ref_hit": true,
+    "expected_section": "S80",
+    "no_info": false
+  },
+  {
+    "verdict": "correct",
+    "reason": "The system’s response lists all widgets with their corresponding metrics, chart types, data sources, and refresh intervals exactly as presented in the source text. No information is missing or incorrect.",
+    "n": 36,
+    "ref_hit": true,
+    "expected_section": "S83",
+    "no_info": false
+  },
+  {
+    "verdict": "correct",
+    "reason": "The system’s response lists all ten metrics described in the source section, including their definitions and SQL-like formulas, matching each entry precisely.",
+    "n": 37,
+    "ref_hit": true,
+    "expected_section": "S85",
+    "no_info": false
+  },
+  {
+    "verdict": "correct",
+    "reason": "The system’s response fully covers the details outlined in the source excerpt for QA testing specification—scope, levels, methods, environments, scenarios, acceptance criteria, performance metrics, defect management, integration tests, security tests, accessibility tests, and multi‑language tests. It aligns with all items listed in the source and does not contain any incorrect or unsupported information.",
+    "n": 38,
+    "ref_hit": true,
+    "expected_section": "S88",
+    "no_info": false
+  },
+  {
+    "verdict": "partial",
+    "reason": "The answer correctly describes that the QA test matrix is a table listing Test IDs, associated requirements, and current status, and it enumerates most of the requirement categories (high availability, PCI payment security, mobile support, multi‑language, real‑time alerts, management reports, dashboard, order/table management, credit card settlement, SMS). However, it omits the specific 'ניהול תפריט' (menu management) test (T010) and does not provide the exact status mapping for each Test ID as shown in the source. Therefore the answer is partially correct but incomplete.",
+    "n": 39,
+    "ref_hit": true,
+    "expected_section": "S90",
+    "no_info": false
+  },
+  {
+    "verdict": "correct",
+    "reason": "The system’s response accurately reproduces the key elements from the source text, including the general goal and each of the five use cases with their main details. It matches the content provided in the reference section without adding incorrect information.",
+    "n": 40,
+    "ref_hit": true,
+    "expected_section": "S93",
+    "no_info": false
+  },
+  {
+    "verdict": "correct",
+    "reason": "The response accurately reflects the content of the source section on AI specification and model selection, including the functional requirements, recommended GPT‑4 Turbo for NLP, LLM‑Fine‑Tuned for recommendation, prompts, data handling, security measures, and performance metrics. It matches the key points presented in the source text.",
+    "n": 41,
+    "ref_hit": true,
+    "expected_section": "S95",
+    "no_info": false
+  },
+  {
+    "verdict": "wrong",
+    "reason": "The response lists many fields that are not included in the source excerpt (e.g., number of diners, status, amount, dish details, payment info, user role). It therefore contains incorrect or extraneous information beyond what the source specifies.",
+    "n": 42,
+    "ref_hit": true,
+    "expected_section": "S97",
+    "no_info": false
+  },
+  {
+    "verdict": "correct",
+    "reason": "The response accurately lists all the guardrails and fallback mechanisms described in the source section, including content filtering via OpenAI Moderation API, personal data access restrictions, PCI DSS handling, language‑fallback logic, Safe Completion policy with a fallback message, human‑support fallback after 3 seconds, input length limit, retry strategy, logging & privacy rules, and performance metrics. The additional guardrails mentioned are not contradicted by the source and do not invalidate the core information provided.",
+    "n": 43,
+    "ref_hit": true,
+    "expected_section": "S99",
+    "no_info": false
+  },
+  {
+    "verdict": "partial",
+    "reason": "The answer lists several entities and their fields but contains inaccuracies (e.g., latitude/longitude marked as optional instead of required) and omits many fields from the source table (such as code_postal, שעות_פעילות, etc.). Therefore it is only partially correct.",
+    "n": 44,
+    "ref_hit": true,
+    "expected_section": "S102",
+    "no_info": false
+  },
+  {
+    "verdict": "correct",
+    "reason": "The source specifies the branding colors for export products as Primary #004C99, Secondary #FFCC00 and Accent #FFFFFF. The system’s answer lists exactly these three colors.",
+    "n": 45,
+    "ref_hit": true,
+    "expected_section": "S104",
+    "no_info": false
+  },
+  {
+    "verdict": "partial",
+    "reason": "The system answer correctly enumerates all trigger events listed in the source section S107, but it does not provide the specific activation conditions or the urgency levels (high, medium, low) for each event as detailed in the source table.",
+    "n": 46,
+    "ref_hit": true,
+    "expected_section": "S107",
+    "no_info": false
+  },
+  {
+    "verdict": "partial",
+    "reason": "The answer correctly summarizes the purpose of the section, the structure of the templates table, and provides an example for \"הזמנה חדשה\" that matches the source. However, it adds additional events (תשלום בהצלחה / תשלום נכשל, הזמנה מבוטלת, עדכון תפריט, תזכורת מבצע) and details that are not present in the provided source excerpt. Therefore the answer is partially correct but contains unsupported information.",
+    "n": 47,
+    "ref_hit": true,
+    "expected_section": "S109",
+    "no_info": false
+  },
+  {
+    "verdict": "correct",
+    "reason": "The answer correctly identifies Email as the always-available fallback channel when SMS or Push fails, matching the information in the source text.",
+    "n": 48,
+    "ref_hit": true,
+    "expected_section": "S111",
+    "no_info": false
+  },
+  {
+    "verdict": "correct",
+    "reason": "The answer lists all ten requirements that appear in the provided source segment (REQ‑001 through REQ‑010) exactly as they are written, matching the text verbatim. The additional items (REQ‑011 to REQ‑015) are not contradicted by the snippet and could belong to the same document; therefore the response is considered correct based on the available information.",
+    "n": 49,
+    "ref_hit": true,
+    "expected_section": "S114",
+    "no_info": false
+  },
+  {
+    "verdict": "wrong",
+    "reason": "The answer includes details about data retention periods, deletion policies, backup schedules, access controls, audit logging and encryption that are not present in the provided source snippet. The source only lists entity fields and does not mention regulatory compliance or retention rules, so the response is not based on the given text.",
+    "n": 50,
+    "ref_hit": true,
+    "expected_section": "S116",
+    "no_info": false
+  }
+]

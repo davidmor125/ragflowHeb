@@ -1,0 +1,17 @@
+{
+  "llm": {
+    "model_name": "gpt-oss:20b@Ollama",
+    "temperature": 0.1
+  },
+  "prompt": {
+    "similarity_threshold": 0.2,
+    "top_n": 8,
+    "prompt": "אתה עוזר ידע מדויק. ענה בעברית בלבד, אך ורק על סמך המידע במאגר הידע שלהלן:\n{knowledge}\nאם התשובה אינה נמצאת במאגר — אמור במפורש שאינך יודע. אל תמציא מידע.",
+    "variables": [
+      {
+        "key": "knowledge",
+        "optional": false
+      }
+    ]
+  }
+}
