@@ -13,7 +13,7 @@ RAGFlow is an open-source RAG engine based on deep document understanding. The r
 
 Note: `AGENTS.md` and `.github/copilot-instructions.md` exist for other AI agents and are *partially out of date* (e.g. they describe the frontend as UmiJS — it has been migrated to Vite). Trust this file and the actual code over those.
 
-This working copy is **not a git repository** (no `.git/`). `git` commands, `pre-commit install`, and git-based tooling will not work here unless the user initializes one — ask before running `git init`.
+This working copy **is** a git repository (branch `main`, currently a single snapshot commit `8954cb7 "Initial commit: RAGFlow working tree snapshot"`). It is a local snapshot, not a clone of the upstream `infiniflow/ragflow` history — so there's no meaningful commit log or remote to compare against, and rebase/bisect-style workflows won't have history to work with. Ordinary `git` commands work; commit or push only when the user asks.
 
 ## Architecture — what isn't obvious from the tree
 
@@ -140,6 +140,12 @@ docker logs -f ragflow-server
 docker build --platform linux/amd64 -f Dockerfile -t infiniflow/ragflow:nightly ..
 ```
 
+`docker/` ships several compose variants: `docker-compose.yml` (full stack), `docker-compose-base.yml` (infra only), `docker-compose-macos.yml`, and `docker-compose-CN-oc9.yml` (CN mirror). Pick the one matching the platform/mirror rather than editing the default.
+
+### Windows note
+
+The command blocks above assume a POSIX shell. On Windows (the primary dev platform here), `source .venv/bin/activate` / `export VAR=...` don't apply — use `.venv\Scripts\Activate.ps1` and `$env:VAR = "..."`, and run the two Python processes separately (see the Python-backend block above) since `docker/launch_backend_service.sh` is a bash script.
+
 ## Key configuration files
 
 - `docker/.env` — runtime config: `DOC_ENGINE`, `RAGFLOW_IMAGE`, ports, embedding/TEI profile, etc. Created from `docker/.env.example`.
@@ -151,3 +157,5 @@ docker build --platform linux/amd64 -f Dockerfile -t infiniflow/ragflow:nightly 
 ## Repo-root scratch files
 
 The repo root contains a number of ad-hoc scripts and JSON dumps from past investigations (e.g. `test_50_questions.py`, `dump_all_chunks.py`, `req_*.json`, `resp_*.json`, `test_report*.txt`). These are **not** part of the package or test suite (`pyproject.toml`'s `testpaths = ["test"]` excludes them). Treat them as throwaway unless a specific task references one — don't lint, refactor, or "clean them up" proactively.
+
+**Exception — keep these repo-root docs:** `SERVICE_CONTRACT.md` (plus `SERVICE_CONTRACT_BRIEF.md` / `_CONTINUE.md`) and `EXTERNAL_API_GUIDE.md` are deliberate, **live-verified** references for the running v0.25.0 Docker stack, not scratch. `SERVICE_CONTRACT.md` is the authoritative API contract — trust it over the official RAGFlow docs where they conflict (e.g. `/chats` response fields, markdown `VISION`, cross-language retrieval). `EXTERNAL_API_GUIDE.md` (Hebrew) is an integration guide for calling the local stack at `http://localhost:9380/api/v1` from an external project. When working against the live API, consult these before assuming endpoint behavior.
