@@ -278,12 +278,91 @@ def is_hebrew(text):
     return False
 
 
+# Literals the tokenizer destroys: it splits on "." "," "/" "-" "%" and drops
+# them, so "1.40%" indexes as "140" and "11/03/2015" as three separate numbers.
+# In a banking corpus these ARE the answer — rates, fees, clause and procedure
+# numbers — so they are preserved verbatim into important_kwd, which rerank()
+# weights x5. Ordered longest-pattern-first; matches may not overlap.
+_EXACT_TOKEN_RES = [
+    re.compile(r"\d{1,3}(?:,\d{3})+(?:\.\d+)?"),          # 30,000  1,234.56
+    re.compile(r"\d{1,2}[/.]\d{1,2}[/.]\d{2,4}"),         # 11/03/2015
+    re.compile(r"\d+(?:[.-]\d+){2,}"),                    # 2.1.3  200-08-070
+    re.compile(r"\d+(?:\.\d+)?\s?%"),                     # 1.40%  45 %
+    re.compile(r"\d+(?:\.\d+)?"),                         # 18.5  250
+]
+
+
+def extract_exact_tokens(txt, limit=64):
+    """Pull out numerics/identifiers verbatim so they stay searchable.
+
+    Returns a de-duplicated list preserving document order. Bare integers under
+    two digits are dropped: list markers ("1.", "2.") would otherwise flood the
+    field and dilute the x5 weight.
+    """
+    if not txt:
+        return []
+    out, seen, spans = [], set(), []
+    for rx in _EXACT_TOKEN_RES:
+        for m in rx.finditer(txt):
+            s, e = m.span()
+            if any(s < pe and ps < e for ps, pe in spans):
+                continue  # already covered by a longer pattern
+            tok = m.group(0).replace(" ", "")
+            if tok.isdigit() and len(tok) < 2:
+                continue
+            spans.append((s, e))
+            if tok not in seen:
+                seen.add(tok)
+                out.append((s, tok))
+            if len(out) >= limit:
+                break
+    return [t for _, t in sorted(out)]
+
+
+# Strip ALL markup before tokenizing. The previous pattern only covered
+# table tags with attributes up to 12 chars, so <p dir="rtl">,
+# <span lang="he-IL">, <thead>, and long style="width:509.35pt;..."
+# survived and were indexed as searchable terms — measured at 58.7% of all
+# tokens in this corpus (span/lang/he/il/dir/rtl). That inflates BM25 length
+# normalisation and buries the real Hebrew content.
+# Require a tag name after "<" so prose comparisons survive: "x < 5 and
+# y > 3" must not be eaten as if it were markup. The attribute cap is generous
+# because Word/Aspose emit style="width:509.35pt;padding:...;font-family:..."
+# on every <td>; a tighter cap leaves those tags unstripped.
+#
+# Import this instead of re-writing the pattern: the narrow original was
+# duplicated across four call sites and fixing only one left the embedding
+# text (task_executor) and the flow tokenizer still polluted.
+MARKUP_RE = re.compile(r"</?[A-Za-z][A-Za-z0-9]{0,14}(\s[^<>]{0,1000})?/?>")
+
+
+def strip_markup(txt):
+    """Remove HTML tags and collapse whitespace, preserving text content."""
+    if not txt:
+        return txt
+    return re.sub(r"\s+", " ", MARKUP_RE.sub(" ", txt)).strip()
+
+
 def tokenize(d, txt, eng):
     from . import rag_tokenizer
     d["content_with_weight"] = txt
-    t = re.sub(r"</?(table|td|caption|tr|th)( [^<>]{0,12})?>", " ", txt)
+    # content_with_weight keeps the original markup for display and for the
+    # reranker; only the indexed token stream is cleaned.
+    t = strip_markup(txt)
     d["content_ltks"] = rag_tokenizer.tokenize(t)
     d["content_sm_ltks"] = rag_tokenizer.fine_grained_tokenize(d["content_ltks"])
+
+    # Keep exact numerics searchable despite the tokenizer. Appended, never
+    # replacing: auto_keywords / LLM keywords may already have populated this.
+    exact = extract_exact_tokens(t)
+    if exact:
+        cur = d.get("important_kwd") or []
+        if isinstance(cur, str):
+            cur = [cur]
+        d["important_kwd"] = list(dict.fromkeys(list(cur) + exact))
+
+
+_MIN_CHILD_CHARS = 30
 
 
 def split_with_pattern(d, pattern: str, content: str, eng) -> list:
@@ -300,16 +379,141 @@ def split_with_pattern(d, pattern: str, content: str, eng) -> list:
         return [dd]
 
     txts = [txt for txt in compiled_pattern.split(content)]
+    pieces = []
     for j in range(0, len(txts), 2):
         txt = txts[j]
         if not txt:
             continue
         if j + 1 < len(txts):
             txt += txts[j + 1]
+        pieces.append(txt)
+
+    # With "\n" as the child delimiter every heading line ("רקע", "מטרת
+    # הנוהל", "1. עקרונות") became a child of its own: 14-29% of children
+    # were under 30 chars, carried no answerable content, and crowded real
+    # hits out of top_n. Carry such a fragment into the next piece so the
+    # heading stays attached to the text it introduces.
+    merged, carry = [], ""
+    for txt in pieces:
+        txt = carry + txt
+        if len(strip_markup(txt).strip()) < _MIN_CHILD_CHARS:
+            carry = txt
+            continue
+        carry = ""
+        merged.append(txt)
+    if carry:
+        if merged:
+            merged[-1] += carry
+        elif carry.strip():
+            merged.append(carry)
+
+    for txt in merged:
         dd = copy.deepcopy(d)
         tokenize(dd, txt, eng)
         docs.append(dd)
     return docs
+
+
+_TABLE_ROW_TAG_RE = re.compile(r"<(/?)(table|tr|caption)\b[^>]*>", flags=re.IGNORECASE)
+
+
+def _top_level_table_parts(html):
+    """Return (caption, rows) for the OUTERMOST table only.
+
+    A non-greedy "<tr>.*?</tr>" regex stops at the first "</tr>" it meets,
+    which on a nested table is the INNER row's close tag. Word-exported
+    procedures wrap whole sections in layout tables, so that regex produced a
+    "row" that opened an outer <tr>/<td> and an inner <table> but closed
+    neither -- about 38% of children were unbalanced HTML fragments. Tracking
+    table depth keeps each outer row intact, inner tables included.
+    """
+    caption, rows = "", []
+    depth = 0
+    row_start = cap_start = None
+    for m in _TABLE_ROW_TAG_RE.finditer(html):
+        closing, tag = m.group(1) == "/", m.group(2).lower()
+        if tag == "table":
+            depth += -1 if closing else 1
+            continue
+        if depth != 1:
+            continue
+        if tag == "caption":
+            if not closing and cap_start is None and not caption:
+                cap_start = m.start()
+            elif closing and cap_start is not None:
+                caption = html[cap_start:m.end()]
+                cap_start = None
+        elif not closing and row_start is None:
+            row_start = m.start()
+        elif closing and row_start is not None:
+            rows.append(html[row_start:m.end()])
+            row_start = None
+    return caption, rows
+
+
+def _text_tokens(html):
+    """Tokens of the visible text: Word-exported cells wrap every word in
+    <span lang="he-IL">, so counting raw HTML inflated a 5-word header row to
+    177 tokens and every size decision below (header repetition, batching,
+    row expansion) came out wrong."""
+    return num_tokens_from_string(strip_markup(html) or "")
+
+
+def _table_spans(html):
+    """(start, end) of each outermost <table>...</table> inside an HTML fragment."""
+    spans, depth, start = [], 0, None
+    for m in re.finditer(r"<(/?)table\b[^>]*>", html, flags=re.IGNORECASE):
+        if m.group(1) != "/":
+            if depth == 0:
+                start = m.start()
+            depth += 1
+        elif depth:
+            depth -= 1
+            if depth == 0 and start is not None:
+                spans.append((start, m.end()))
+                start = None
+    return spans
+
+
+def _html_paragraphs(html):
+    """Plain-text paragraphs of an HTML fragment, split on block boundaries.
+    strip_markup() collapses "\\n" too, so tags are removed with MARKUP_RE."""
+    text = re.sub(r"</(?:p|li|tr|div|h\d)>|<br\s*/?>", "\n", html, flags=re.IGNORECASE)
+    text = re.sub(r"[^\S\n]+", " ", MARKUP_RE.sub(" ", text))
+    return [p for p in (x.strip() for x in text.split("\n")) if p]
+
+
+def _expand_oversized_rows(rows, max_tokens, _depth=0):
+    """Replace a row that is too big to embed by smaller rows, in document
+    order: its prose becomes one row per paragraph and each nested table
+    contributes its own (recursively expanded) rows.
+
+    Word-exported procedures put a whole section in one cell of a layout
+    table (one row of 76k tokens with 5 inner tables was seen), so keeping
+    outer rows intact yields 10-35k-char children whose vectors only cover
+    the first few hundred tokens.
+    """
+    def prose_rows(fragment):
+        return [f"<tr><td>{p}</td></tr>" for p in _html_paragraphs(fragment)]
+
+    out = []
+    for row in rows:
+        if _text_tokens(row) <= max_tokens:
+            out.append(row)
+            continue
+        spans = _table_spans(row) if _depth < 4 else []
+        if not spans:
+            paras = prose_rows(row)
+            out.extend(paras if len(paras) > 1 else [row])
+            continue
+        last = 0
+        for s, e in spans:
+            out.extend(prose_rows(row[last:s]))
+            _, inner = _top_level_table_parts(row[s:e])
+            out.extend(_expand_oversized_rows(inner, max_tokens, _depth + 1))
+            last = e
+        out.extend(prose_rows(row[last:]))
+    return out
 
 
 def split_table_into_children(d, html, eng, max_child_tokens=256):
@@ -321,21 +525,48 @@ def split_table_into_children(d, html, eng, max_child_tokens=256):
     Returns a list of child docs, or [] if the table cannot be split (no rows),
     so the caller can fall back to keeping the table whole.
     """
-    caption_m = re.search(r"<caption>.*?</caption>", html, flags=re.DOTALL)
-    caption = caption_m.group(0) if caption_m else ""
-    rows = re.findall(r"<tr>.*?</tr>", html, flags=re.DOTALL)
+    # Match tags WITH attributes: Aspose HTML and html4excel emit <tr style=...>
+    # and <caption class=...>. A bare "<tr>" pattern silently drops every such
+    # row, losing table content with no error.
+    caption, rows = _top_level_table_parts(html)
     if not rows:
         return []
+    # `d` was already tokenized with the WHOLE table, so its important_kwd
+    # holds every number in it (x30 boost at query time). Copying that into
+    # each child made all children of a table identical for numeric queries.
+    # Drop the parent-derived exact tokens; tokenize() re-adds each child's own.
+    parent_exact = set(extract_exact_tokens(strip_markup(html)))
+    base = copy.deepcopy(d)
+    cur = base.get("important_kwd") or []
+    if isinstance(cur, str):
+        cur = [cur]
+    kept = [k for k in cur if k not in parent_exact]
+    if kept:
+        base["important_kwd"] = kept
+    else:
+        base.pop("important_kwd", None)
+    d = base
+    # A one-row table is a layout "box", not a data table: it has no header.
+    single_row = len(rows) == 1
+    rows = _expand_oversized_rows(rows, max_child_tokens)
     # Keep the header row (first <tr>) attached to every batch so each child
     # carries the column names, like a standalone table.
-    header = rows[0] if rows else ""
-    body = rows[1:] if len(rows) > 1 else rows
+    header = rows[0]
+    # A single-row table has no body: treating rows[0] as both header and body
+    # would emit it twice in the same child.
+    body = rows[1:]
+    # A layout table's "first row" can be a whole section; repeating that in
+    # every child would make each child as big as the parent.
+    if single_row or _text_tokens(header) > max_child_tokens // 2:
+        header, body = "", rows
+    if not header and len(body) < 2:
+        return []
 
     children = []
     batch = []
-    batch_tokens = num_tokens_from_string(caption + header)
+    batch_tokens = _text_tokens(caption + header)
     for row in body:
-        rt = num_tokens_from_string(row)
+        rt = _text_tokens(row)
         if batch and batch_tokens + rt > max_child_tokens:
             child_html = "<table>" + caption + header + "".join(batch) + "</table>"
             dd = copy.deepcopy(d)
@@ -343,7 +574,7 @@ def split_table_into_children(d, html, eng, max_child_tokens=256):
             dd["doc_type_kwd"] = "table"
             children.append(dd)
             batch = []
-            batch_tokens = num_tokens_from_string(caption + header)
+            batch_tokens = _text_tokens(caption + header)
         batch.append(row)
         batch_tokens += rt
     if batch:
@@ -439,7 +670,7 @@ def tokenize_chunks_with_images(chunks, doc, eng, images, child_delimiters_patte
     return res
 
 
-def tokenize_table(tbls, doc, eng, batch_size=10):
+def tokenize_table(tbls, doc, eng, batch_size=10, child_delimiters_pattern=None):
     res = []
     # add tables
     for (img, rows), poss in tbls:
@@ -452,10 +683,24 @@ def tokenize_table(tbls, doc, eng, batch_size=10):
             d["doc_type_kwd"] = "table"
             if img:
                 d["image"] = img
-                if d["content_with_weight"].find("<tr>") < 0:
+                # Match <tr ...> with attributes too: Aspose/html4excel emit
+                # <tr style=...> / <tr dir="rtl">, and a bare "<tr>" test
+                # mislabels those tables as images.
+                if not re.search(r"<tr\b", d["content_with_weight"]):
                     d["doc_type_kwd"] = "image"
             if poss:
                 add_positions(d, poss)
+            # Parent-child retrieval: a whole table embeds to one blurred vector,
+            # so split it into row-batched children (each keeping caption+header)
+            # exactly as the .docx path does. Images have no rows to split.
+            if child_delimiters_pattern and d["doc_type_kwd"] == "table":
+                table_children = split_table_into_children(d, rows, eng)
+                if table_children:
+                    d["mom_with_weight"] = rows
+                    for child in table_children:
+                        child["mom_with_weight"] = rows
+                    res.extend(table_children)
+                    continue
             res.append(d)
             continue
         # Hebrew rows: use the same neutral "; " separator as English so the
@@ -474,7 +719,10 @@ def tokenize_table(tbls, doc, eng, batch_size=10):
             d["doc_type_kwd"] = "table"
             if img:
                 d["image"] = img
-                if d["content_with_weight"].find("<tr>") < 0:
+                # Match <tr ...> with attributes too: Aspose/html4excel emit
+                # <tr style=...> / <tr dir="rtl">, and a bare "<tr>" test
+                # mislabels those tables as images.
+                if not re.search(r"<tr\b", d["content_with_weight"]):
                     d["doc_type_kwd"] = "image"
             add_positions(d, poss)
             res.append(d)
@@ -1529,7 +1777,14 @@ def _merge_cks(cks, chunk_token_num, has_custom):
             prev_text_ck = len(merged) - 1
             continue
 
-        merged[prev_text_ck]["text"] = (merged[prev_text_ck].get("text") or "") + (cks[i].get("text") or "")
+        # _build_cks strips each paragraph, so its leading "\n" is gone:
+        # joining with "" fused the last word of one paragraph onto the first
+        # word of the next ("SNOW" + "בבינלאומי" -> "SNOWבבינלאומי"), and the
+        # fused token matches neither word at search time.
+        prev_txt = merged[prev_text_ck].get("text") or ""
+        cur_txt = cks[i].get("text") or ""
+        sep = "\n" if prev_txt and cur_txt and not prev_txt.endswith("\n") and not cur_txt.startswith("\n") else ""
+        merged[prev_text_ck]["text"] = prev_txt + sep + cur_txt
         merged[prev_text_ck]["tk_nums"] = merged[prev_text_ck].get("tk_nums", 0) + cks[i].get("tk_nums", 0)
 
     return merged, image_idxs

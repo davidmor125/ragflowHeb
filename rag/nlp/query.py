@@ -20,6 +20,7 @@ import re
 from collections import defaultdict
 
 from common.query_base import QueryBase
+from common.text_utils import hebrew_variants
 from common.doc_store.doc_store_base import MatchTextExpr
 from rag.nlp import rag_tokenizer, term_weight, synonym
 
@@ -72,8 +73,28 @@ class FulltextQueryer(QueryBase):
                 syn = ["\"{}\"^{:.4f}".format(s, w / 4.) for s in syn if s.strip()]
                 syns.append(" ".join(syn))
 
-            q = ["({}^{:.4f}".format(tk, w) + " {})".format(syn) for (tk, w), syn in zip(tks_w, syns) if
+            # A chat query with cross_languages is Hebrew + its English
+            # translation, so is_chinese() is False and Hebrew words land in
+            # this branch too: give them the same prefix variants as the
+            # Hebrew branch ("הנרכש" must also reach "נרכש").
+            def _heb(tk, w):
+                return "".join(" {}^{:.4f}".format(v, w * wt) for v, wt in hebrew_variants(tk))
+
+            q = ["({}^{:.4f}".format(tk, w) + _heb(tk, w) + " {})".format(syn) for (tk, w), syn in zip(tks_w, syns) if
                  tk and not re.match(r"[.^+\(\)-]", tk)]
+
+            # The tokenizer mangles numerics ("1.40%" -> "140"), so a query for
+            # an exact rate or clause number can never match. Ingestion stores
+            # them verbatim in important_kwd; add the same literals here so the
+            # two sides meet. Taken from the ORIGINAL query: otxt has already
+            # had "," and "%" replaced by spaces ("1,500" -> "1 500").
+            from rag.nlp import extract_exact_tokens
+            exact = extract_exact_tokens(original_query, limit=8)
+            for tok in exact:
+                esc = tok.replace('"', '')
+                if esc:
+                    q.append('"{}"^4.0000'.format(esc))
+                    keywords.append(esc)
             for i in range(1, len(tks_w)):
                 left, right = tks_w[i - 1][0].strip(), tks_w[i][0].strip()
                 if not left or not right:
@@ -129,9 +150,22 @@ class FulltextQueryer(QueryBase):
                 sm = [self.sub_special_char(m) for m in sm if len(m) > 1]
                 sm = [m for m in sm if len(m) > 1]
 
+                # Hebrew: fine-grained tokenization is the identity (it only
+                # produced a redundant `tk OR "tk" OR ("tk"~2)`), and there is
+                # no morphology, so "הנרכש" never matched "נרכש". Expand the
+                # word into lower-weighted prefix variants inside its own group
+                # so minimum_should_match still counts it as one query word.
+                heb_vars = hebrew_variants(tk)
+                if heb_vars:
+                    sm = []
+
                 if len(keywords) < 32:
                     keywords.append(re.sub(r"[ \\\"']+", "", tk))
                     keywords.extend(sm)
+                    # one variant only: every extra keyword dilutes the
+                    # token-similarity part of the rerank score
+                    if heb_vars:
+                        keywords.append(heb_vars[0][0])
 
                 tk_syns = self.syn.lookup(tk)
                 tk_syns = [self.sub_special_char(s) for s in tk_syns]
@@ -150,6 +184,8 @@ class FulltextQueryer(QueryBase):
                     tk = f"({tk} OR (%s)^0.2)" % " ".join(tk_syns)
                 if sm:
                     tk = f'{tk} OR "%s" OR ("%s"~2)^0.5' % (" ".join(sm), " ".join(sm))
+                if heb_vars:
+                    tk = "(%s OR %s)" % (tk, " OR ".join(f"{v}^{wt}" for v, wt in heb_vars))
                 if tk.strip():
                     tms.append((tk, w))
 
@@ -169,6 +205,16 @@ class FulltextQueryer(QueryBase):
                 tms = f"({tms})^5 OR ({syns})^0.7"
 
             qs.append(tms)
+
+        # Exact numerics for CJK/Hebrew queries too (this branch never had
+        # them): "1,500" arrives here as "1" and "500". One combined clause, so
+        # minimum_should_match grows by at most one.
+        from rag.nlp import extract_exact_tokens
+        exact = [t.replace('"', "").replace("\\", "") for t in extract_exact_tokens(original_query, limit=8)]
+        exact = [t for t in exact if t]
+        if qs and exact:
+            qs.append("(%s)^4" % " OR ".join(f'"{t}"' for t in exact))
+            keywords.extend(exact[: max(0, 32 - len(keywords))])
 
         if qs:
             query = " OR ".join([f"({t})" for t in qs if t])

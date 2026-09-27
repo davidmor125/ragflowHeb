@@ -25,6 +25,12 @@ from yarl import URL
 from common.log_utils import log_exception
 from common.token_utils import num_tokens_from_string, truncate, total_token_count_from_response
 
+# Ceiling for a single rerank HTTP call. These endpoints are local (TEI/Qwen on
+# CPU), where a healthy batch of 8 returns in a few seconds; anything past this
+# means the backend is wedged, and hanging the whole retrieval on it is worse
+# than returning the un-reranked order.
+RERANK_HTTP_TIMEOUT = 30
+
 class Base(ABC):
     def __init__(self, key, model_name, **kwargs):
         """
@@ -411,14 +417,21 @@ class HuggingfaceRerank(Base):
         batch_size = 8
         for i in range(0, len(texts), batch_size):
             try:
+                # Without a timeout a wedged TEI endpoint blocks the caller
+                # forever; with up to 64 candidates that is 8 sequential hangs,
+                # so break on the first failure instead of retrying the rest.
                 res = requests.post(
-                    f"http://{url}/rerank", headers={"Content-Type": "application/json"}, json={"query": query, "texts": texts[i : i + batch_size], "raw_scores": False, "truncate": True}
+                    f"http://{url}/rerank",
+                    headers={"Content-Type": "application/json"},
+                    json={"query": query, "texts": texts[i : i + batch_size], "raw_scores": False, "truncate": True},
+                    timeout=RERANK_HTTP_TIMEOUT,
                 )
 
                 for o in res.json():
                     scores[o["index"] + i] = o["score"]
             except Exception as e:
                 exc = e
+                break
 
         if exc:
             raise exc

@@ -56,6 +56,187 @@ from rag.nlp import (
 )  # noqa: F401
 
 
+_W_NS = "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
+_MC_FALLBACK = "{http://schemas.openxmlformats.org/markup-compatibility/2006}Fallback"
+
+# Subtrees whose text is not part of the current document: deleted or moved-
+# away tracked changes, and the VML Fallback copy of a textbox (the same text
+# already appears once under mc:Choice).
+_DOCX_SKIP_TEXT = {_W_NS + "del", _W_NS + "moveFrom", _MC_FALLBACK, _W_NS + "pPr", _W_NS + "rPr"}
+
+
+def _docx_para_text(p):
+    """Visible text of a <w:p>, in document order.
+
+    python-docx's Paragraph.text only reads direct <w:r>/<w:hyperlink>
+    children, so it silently drops runs wrapped in <w:ins> (tracked
+    insertions), inline <w:sdt> content controls and <w:smartTag>. On a spec
+    with unaccepted tracked changes that loses exactly the NEWEST text (1,584
+    chars in one test doc). Tabs and breaks map to "\\t" and "\\n" like
+    python-docx; a textbox paragraph nested inside this one starts a new line.
+    """
+    out = []
+
+    def walk(el):
+        for c in el:
+            tag = c.tag
+            if not isinstance(tag, str) or tag in _DOCX_SKIP_TEXT:
+                continue
+            if tag == _W_NS + "t":
+                out.append(c.text or "")
+            elif tag == _W_NS + "tab":
+                out.append("\t")
+            elif tag in (_W_NS + "br", _W_NS + "cr"):
+                out.append("\n")
+            elif tag == _W_NS + "noBreakHyphen":
+                out.append("-")
+            elif tag == _W_NS + "p":
+                out.append("\n")
+                walk(c)
+            else:
+                walk(c)
+
+    walk(p)
+    return "".join(out)
+
+
+def _is_toc_sdt(sdt):
+    gallery = sdt.find(f"{_W_NS}sdtPr/{_W_NS}docPartObj/{_W_NS}docPartGallery")
+    return gallery is not None and "table of contents" in (gallery.get(_W_NS + "val") or "").lower()
+
+
+def _iter_docx_blocks(parent):
+    """Yield the <w:p>/<w:tbl> blocks of a body or cell in document order,
+    descending into block-level containers.
+
+    Iterating ``body`` directly skipped every block wrapped in a <w:sdt>
+    content control. Circulars built from a Word template keep nearly all
+    their text inside such controls, so two test docs parsed "successfully"
+    with 0 chunks. Table-of-contents controls are skipped: their entries only
+    repeat headings with page numbers.
+    """
+    for el in parent:
+        tag = el.tag
+        if not isinstance(tag, str):
+            continue
+        if tag in (_W_NS + "p", _W_NS + "tbl"):
+            yield el
+        elif tag == _W_NS + "sdt":
+            if _is_toc_sdt(el):
+                continue
+            content = el.find(_W_NS + "sdtContent")
+            if content is not None:
+                yield from _iter_docx_blocks(content)
+        elif tag in (_W_NS + "customXml", _W_NS + "ins", _W_NS + "moveTo"):
+            yield from _iter_docx_blocks(el)
+
+
+def _docx_cell_text(tc):
+    """Text of a <w:tc>: one line per paragraph, including paragraphs inside
+    content controls, and nested tables flattened to "a | b" rows (a direct
+    ``findall("p")`` dropped both)."""
+    parts = []
+    for blk in _iter_docx_blocks(tc):
+        if blk.tag == _W_NS + "p":
+            parts.append(_docx_para_text(blk))
+        else:
+            for tr in blk.findall(_W_NS + "tr"):
+                cells = [_docx_cell_text(c) for c in tr.findall(_W_NS + "tc")]
+                parts.append(" | ".join(c.replace("\n", " ") for c in cells if c.strip()))
+    return "\n".join(x for x in parts if x.strip()).strip()
+
+
+def docx_table_to_html_rows(tb):
+    """Render a python-docx table as <tr>/<td> preserving BOTH merge kinds.
+
+    Walks the raw <w:tr>/<w:tc> grid rather than python-docx's `.rows[].cells`,
+    because that API resolves merges for the caller: for a vertically merged
+    cell it hands back the SAME cell object for every spanned row, each
+    reporting the merged text. Rendering from it duplicates one cell's text
+    into every row it spans, so a rate table like
+
+        סוג הלוואה | דירוג A | דירוג B
+        הלוואה אישית |  3.10% |  4.75%     <- vMerge restart
+        (merged)     |  5.50% |  6.20%     <- vMerge continue
+
+    was emitted with "הלוואה אישית אשראי עסקי" in BOTH rows. After tag
+    stripping the index then reads one row as "אשראי עסקי 3.10% 4.75%" --
+    binding a product to another product's rates. That is a confidently wrong
+    answer, not merely noise, which is why this walks the real grid.
+
+    OOXML semantics used here:
+      * <w:gridSpan w:val="N"/>            -> colspan=N
+      * <w:vMerge w:val="restart"/>        -> opens a vertical merge
+      * <w:vMerge/> (no val, or "continue") -> continues the one above; the
+        cell carries no text of its own and is skipped entirely
+    """
+    rows = tb._tbl.findall(_W_NS + "tr")
+
+    # First pass: how far does each vertical merge reach? Track by grid column
+    # so gridSpan-widened cells do not shift the column accounting.
+    rowspans = {}
+    for ri, tr in enumerate(rows):
+        col = 0
+        for tc in tr.findall(_W_NS + "tc"):
+            pr = tc.find(_W_NS + "tcPr")
+            gs = pr.find(_W_NS + "gridSpan") if pr is not None else None
+            vm = pr.find(_W_NS + "vMerge") if pr is not None else None
+            width = int(gs.get(_W_NS + "val")) if gs is not None else 1
+            if vm is not None:
+                if vm.get(_W_NS + "val") == "restart":
+                    rowspans[(ri, col)] = 1
+                else:
+                    # extend the nearest open merge in this column
+                    for pri in range(ri - 1, -1, -1):
+                        if (pri, col) in rowspans:
+                            rowspans[(pri, col)] += 1
+                            break
+            col += width
+
+    out = ""
+    for ri, tr in enumerate(rows):
+        out += "<tr>"
+        col = 0
+        for tc in tr.findall(_W_NS + "tc"):
+            pr = tc.find(_W_NS + "tcPr")
+            gs = pr.find(_W_NS + "gridSpan") if pr is not None else None
+            vm = pr.find(_W_NS + "vMerge") if pr is not None else None
+            width = int(gs.get(_W_NS + "val")) if gs is not None else 1
+            if vm is not None and vm.get(_W_NS + "val") != "restart":
+                col += width  # continuation cell: owned by the row above
+                continue
+            # Join per <w:p>, not per <w:t>: a cell holding several paragraphs
+            # (bullet lists are common in these tables) would otherwise fuse
+            # into one run-on token, e.g. "עדכון פרטיםשינוי בעלים". This
+            # matches python-docx's Cell.text, which separates paragraphs
+            # with newlines.
+            text = _docx_cell_text(tc)
+            attrs = ""
+            if width > 1:
+                attrs += f" colspan='{width}'"
+            rs = rowspans.get((ri, col), 1)
+            if rs > 1:
+                attrs += f" rowspan='{rs}'"
+            out += f"<td{attrs}>{text}</td>"
+            col += width
+        out += "</tr>"
+    return out
+
+
+def _apply_doc_title(doc, title):
+    """Use the document's real title instead of its file name for the title
+    fields. title_tks carries a x10 query boost, but with files named
+    "5088.html" it held "5088", so a table row such as "35. עמלות לסוכנים"
+    could never pick up "ניכוי מס" from the procedure it belongs to.
+    doc_title_kwd feeds the title embedding and the reranker; docnm_kwd stays
+    the file name for display and citations."""
+    if not title:
+        return
+    doc["title_tks"] = rag_tokenizer.tokenize(title)
+    doc["title_sm_tks"] = rag_tokenizer.fine_grained_tokenize(doc["title_tks"])
+    doc["doc_title_kwd"] = title
+
+
 def _normalize_section_text_for_rtl_presentation_forms(sections):
     if not sections:
         return sections
@@ -334,11 +515,13 @@ class Docx(DocxParser):
         # Collect all document blocks while maintaining document order
         try:
             # Iterate through all paragraphs and tables in document order
-            for i, block in enumerate(self.doc._element.body):
-                if block.tag.endswith("p"):  # Paragraph
+            # Same traversal as __call__, so table_index counts the same tables
+            # (including ones inside content controls).
+            for i, block in enumerate(_iter_docx_blocks(self.doc._element.body)):
+                if block.tag == _W_NS + "p":  # Paragraph
                     p = Paragraph(block, self.doc)
                     blocks.append(("p", i, p))
-                elif block.tag.endswith("tbl"):  # Table
+                elif block.tag == _W_NS + "tbl":  # Table
                     blocks.append(("t", i, None))  # Table object will be retrieved later
         except Exception as e:
             logging.error(f"Error collecting blocks: {e}")
@@ -436,15 +619,15 @@ class Docx(DocxParser):
                 lines.append({"text": "", "image": last_image, "table": None, "style": "Image"})
                 last_image = None
 
-        for block in self.doc._element.body:
+        for block in _iter_docx_blocks(self.doc._element.body):
             if pn > to_page:
                 break
 
-            if block.tag.endswith("p"):
+            if block.tag == _W_NS + "p":
                 p = Paragraph(block, self.doc)
 
                 if from_page <= pn < to_page:
-                    text = p.text.strip()
+                    text = _docx_para_text(block).strip()
                     style_name = p.style.name if p.style else ""
 
                     if text:
@@ -500,7 +683,7 @@ class Docx(DocxParser):
                     if "w:br" in xml and 'type="page"' in xml:
                         pn += 1
 
-            elif block.tag.endswith("tbl"):
+            elif block.tag == _W_NS + "tbl":
                 if pn < from_page or pn > to_page:
                     table_idx += 1
                     continue
@@ -511,24 +694,21 @@ class Docx(DocxParser):
                 html = "<table>"
                 if title:
                     html += f"<caption>Table Location: {title}</caption>"
-                for r in tb.rows:
-                    html += "<tr>"
-                    col_idx = 0
-                    try:
-                        while col_idx < len(r.cells):
-                            span = 1
-                            c = r.cells[col_idx]
-                            for j in range(col_idx + 1, len(r.cells)):
-                                if c.text == r.cells[j].text:
-                                    span += 1
-                                    col_idx = j
-                                else:
-                                    break
-                            col_idx += 1
-                            html += f"<td>{c.text}</td>" if span == 1 else f"<td colspan='{span}'>{c.text}</td>"
-                    except Exception as e:
-                        logging.warning(f"Error parsing table, ignore: {e}")
-                    html += "</tr>"
+                try:
+                    html += docx_table_to_html_rows(tb)
+                except Exception as e:
+                    # Never lose a table to a structural surprise: fall back to
+                    # the flat row/cell walk, which cannot express merges but
+                    # still preserves every value.
+                    logging.warning(f"Error parsing table structure, using flat fallback: {e}")
+                    for r in tb.rows:
+                        html += "<tr>"
+                        try:
+                            for c in r.cells:
+                                html += f"<td>{c.text}</td>"
+                        except Exception as e2:
+                            logging.warning(f"Error parsing table row, ignore: {e2}")
+                        html += "</tr>"
                 html += "</table>"
                 lines.append({"text": "", "image": None, "table": html})
                 table_idx += 1
@@ -910,13 +1090,15 @@ def chunk(filename, binary=None, from_page=0, to_page=MAXIMUM_PAGE_NUMBER, lang=
             return []
 
         if table_context_size or image_context_size:
-            tables = append_context2table_image4pdf(sections, tables, image_context_size)
+            # One size covers both tables and figures here; passing only
+            # image_context_size silently ignored a table-only setting.
+            tables = append_context2table_image4pdf(sections, tables, max(table_context_size, image_context_size))
 
         if name in ["tcadp", "docling", "mineru", "paddleocr", "opendataloader"]:
             if int(parser_config.get("chunk_token_num", 0)) <= 0:
                 parser_config["chunk_token_num"] = 0
 
-        res = tokenize_table(tables, doc, is_english)
+        res = tokenize_table(tables, doc, is_english, child_delimiters_pattern=child_deli)
         callback(0.8, "Finish parsing.")
 
     elif re.search(r"\.(csv|xlsx?)$", filename, re.IGNORECASE):
@@ -939,7 +1121,7 @@ def chunk(filename, binary=None, from_page=0, to_page=MAXIMUM_PAGE_NUMBER, lang=
             sections = _normalize_section_text_for_rtl_presentation_forms(sections)
             sections = reorder_bidi_sections(sections, rtl_reorder_non_pdf)
             parser_config["chunk_token_num"] = 0
-            res = tokenize_table(tables, doc, is_english)
+            res = tokenize_table(tables, doc, is_english, child_delimiters_pattern=child_deli)
             callback(0.8, "Finish parsing.")
         else:
             # Default DeepDOC parser
@@ -1012,16 +1194,27 @@ def chunk(filename, binary=None, from_page=0, to_page=MAXIMUM_PAGE_NUMBER, lang=
                 soup = markdown_parser.md_to_html(section_text)
                 hyperlink_urls = markdown_parser.get_hyperlink_urls(soup)
                 urls.update(hyperlink_urls)
-        res = tokenize_table(tables, doc, is_english)
+        res = tokenize_table(tables, doc, is_english, child_delimiters_pattern=child_deli)
         callback(0.8, "Finish parsing.")
 
     elif re.search(r"\.(htm|html)$", filename, re.IGNORECASE):
         callback(0.1, "Start to parse.")
         chunk_token_num = int(parser_config.get("chunk_token_num", 128))
-        sections = HtmlParser()(filename, binary, chunk_token_num)
-        sections = [(_, "") for _ in sections if _]
+        # Keep tables out of `sections`: flattened into prose they lose their
+        # identity and never get doc_type_kwd="table", so no HTML table is
+        # recognised as a table or split into child chunks. Routing them through
+        # tokenize_table() gives them the same treatment as the other formats.
+        # With parent-child on, pre-split only really large tables: the parent
+        # is what the LLM reads, and a table cut at chunk_token_num (256) left
+        # the answer row in a parent without the header row.
+        table_token_num = max(chunk_token_num, 2048) if child_deli else chunk_token_num
+        html_prose, html_tables = HtmlParser().parts(filename, binary, chunk_token_num, table_token_num)
+        _apply_doc_title(doc, HtmlParser.procedure_title(filename, binary))
+        sections = [(_, "") for _ in html_prose if _]
         sections = _normalize_section_text_for_rtl_presentation_forms(sections)
         sections = reorder_bidi_sections(sections, rtl_reorder_non_pdf)
+        tables = [((None, t), "") for t in html_tables if t]
+        res = tokenize_table(tables, doc, is_english, child_delimiters_pattern=child_deli)
         callback(0.8, "Finish parsing.")
 
     elif re.search(r"\.epub$", filename, re.IGNORECASE):

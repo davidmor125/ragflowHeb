@@ -91,6 +91,92 @@ def strip_niqqud(text: str | None) -> str | None:
     return HEBREW_NIQQUD_RE.sub("", text)
 
 
+_HEBREW_FINAL_LETTERS = frozenset("ךםןףץ")
+_HEBREW_WORD_RE = re.compile(r"[֐-׿]{2,}")
+
+_HEBREW_LETTERS_ONLY_RE = re.compile(r"^[א-ת]+$")
+# Proclitic chains Hebrew glues to the front of a word: optional ו, then an
+# optional ש/כש/מש/לכש, then an optional ה/ב/כ/ל/מ ("ו"+"כש"+"ה" = "וכשה").
+_HEBREW_PREFIXES = sorted(
+    {v + s + p for v in ("", "ו") for s in ("", "ש", "כש", "מש", "לכש") for p in ("", "ה", "ב", "כ", "ל", "מ")} - {""},
+    key=len,
+)
+_HEBREW_ADDED_PREFIXES = ("ה", "ב", "ל", "ו", "מ", "ש")
+
+
+def hebrew_variants(token: str, min_stem: int = 3, max_variants: int = 5) -> list[tuple[str, float]]:
+    """Prefix variants of one Hebrew word for full-text query expansion.
+
+    The index is whitespace-tokenized with no Hebrew morphology, and full-text
+    match gates vector search too, so a query word "הנרכש" never reached a
+    chunk that says "מטבע נרכש". Returns ``[(variant, weight), ...]`` without
+    the token itself:
+
+    * stripped forms (weight 0.6): each proclitic split that leaves at least
+      ``min_stem`` letters, so "בנק", "הון", "ללא" are never cut down;
+    * added forms (weight 0.4): the bare word with a common prefix, for the
+      reverse case (query "נרכש", document "הנרכש").
+
+    Only letters-only Hebrew tokens are expanded; anything with digits, Latin
+    or punctuation is returned unchanged (empty list). Wrong splits such as
+    "מסמך" -> "סמך" are possible, which is why variants weigh less than the
+    original and are capped.
+    """
+    if not token or not _HEBREW_LETTERS_ONLY_RE.match(token):
+        return []
+    out: list[tuple[str, float]] = []
+    seen = {token}
+    for p in _HEBREW_PREFIXES:
+        if token.startswith(p) and len(token) - len(p) >= min_stem:
+            v = token[len(p):]
+            if v not in seen:
+                seen.add(v)
+                out.append((v, 0.6))
+    # Add prefixes to the stem, not to an already-prefixed word: "המטבע" should
+    # yield "במטבע"/"למטבע", not "ההמטבע".
+    stem = out[0][0] if out else token
+    if len(stem) >= min_stem:
+        for p in _HEBREW_ADDED_PREFIXES:
+            v = p + stem
+            if v not in seen:
+                seen.add(v)
+                out.append((v, 0.4))
+    return out[:max_variants]
+
+
+def looks_visual_order(text: str | None) -> bool:
+    """True when Hebrew words appear to be stored in visual (reversed) order.
+
+    Hebrew final forms (ך ם ן ף ץ) are only legal at the END of a word, so a
+    reversed string puts them at the start. Comparing how many words start vs.
+    end with a final form separates the two cases without needing to know how
+    the text was produced.
+
+    This exists because ``reorder_bidi`` is NOT idempotent — running it on
+    already-logical text flips it into visual order. Callers that cannot know
+    whether their input was reordered upstream must gate on this first.
+
+    Conservative by design: returns False when there is too little evidence
+    (fewer than two multi-letter Hebrew words), so the caller leaves the text
+    alone rather than risk corrupting correct text.
+    """
+    if not text or not isinstance(text, str):
+        return False
+    words = _HEBREW_WORD_RE.findall(text)
+    if len(words) < 2:
+        return False
+    starts = sum(1 for w in words if w[0] in _HEBREW_FINAL_LETTERS)
+    ends = sum(1 for w in words if w[-1] in _HEBREW_FINAL_LETTERS)
+    return starts > ends
+
+
+def reorder_bidi_if_visual(text: str | None) -> str | None:
+    """Reorder only when the text actually looks reversed. Safe to call twice."""
+    if looks_visual_order(text):
+        return reorder_bidi(text)
+    return text
+
+
 _BIDI_IMPORT_FAILED = False
 
 
@@ -151,6 +237,11 @@ def reorder_bidi_sections(sections, enabled: bool):
     IMPORTANT: do NOT call this from the PDF branch — pdf_parser.py already
     applies reorder_bidi at extraction time (box level + plaintext level), so
     a second pass here would round-trip back to visual order.
+
+    Each item goes through ``reorder_bidi_if_visual``, not ``reorder_bidi``:
+    DOCX/XLSX/HTML/MD/TXT store Hebrew in logical order already, and an
+    unconditional reorder flips it ("הפיקוח על הבנקים" -> "םיקנבה לע חוקיפה").
+    Only text that actually looks reversed is touched.
     """
     if not enabled or not sections:
         return sections
@@ -161,12 +252,12 @@ def reorder_bidi_sections(sections, enabled: bool):
             if not section:
                 out.append(section)
                 continue
-            out.append((reorder_bidi(section[0]), *section[1:]))
+            out.append((reorder_bidi_if_visual(section[0]), *section[1:]))
         elif isinstance(section, list):
             if not section:
                 out.append(section)
                 continue
-            out.append([reorder_bidi(section[0]), *section[1:]])
+            out.append([reorder_bidi_if_visual(section[0]), *section[1:]])
         else:
-            out.append(reorder_bidi(section))
+            out.append(reorder_bidi_if_visual(section))
     return out

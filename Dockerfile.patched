@@ -1,0 +1,111 @@
+# Derived image: stock RAGFlow v0.25.0 plus this repo's local parser/retrieval
+# fixes. Rebuilding the full image from Dockerfile takes hours (model downloads,
+# deps); these fixes are pure-Python edits, so layering them on the released
+# image gives an identical runtime with a ~seconds build.
+#
+# Build:  docker build -f Dockerfile.patched -t infiniflow/ragflow:v0.25.0-patched .
+#
+# Fixes included:
+#   deepdoc/parser/html_parser.py - header detection (<strong>/<b>), keep inline
+#       style on td/th/tr until split_table() reads it, strip it before storing
+#   rag/app/naive.py             - DOCX merged cells via <w:tc> identity, not
+#       text equality (was deleting distinct repeated values), + child tables
+#   rag/nlp/__init__.py          - tokenize_table() splits tables into children
+#   rag/nlp/search.py            - reranker receives raw text, not tokenizer
+#       output (numerics were mangled); debug prints removed
+#   rag/nlp/__init__.py          - MARKUP_RE/strip_markup(): strip ALL tags
+#       before tokenizing (the old table-only pattern left <span lang="he-IL">
+#       in the index; measured at 76.4% of tokens on the pre-patch corpus)
+#   rag/svr/task_executor.py     - embed the stripped text: this path builds the
+#       dense vectors and did NOT go through tokenize(), so vectors encoded markup
+#   rag/flow/tokenizer/tokenizer.py - same strip for the flow pipeline
+#   rag/prompts/generator.py     - cross_languages() split on "###" (what the
+#       system prompt emits) instead of "===", which fused the translations and
+#       leaked literal "###" into the search query
+#   rag/llm/rerank_model.py      - timeout on TEI rerank calls + stop on first
+#       failure (a wedged endpoint hung the caller 8 times over)
+#   rag/app/naive.py             - DOCX: read blocks inside <w:sdt> content
+#       controls (template circulars parsed DONE with 0 chunks), keep tracked
+#       insertions <w:ins> (python-docx's p.text drops them), and include sdt
+#       paragraphs + nested tables in table cells
+#   rag/nlp/__init__.py          - split_table_into_children walks only the
+#       OUTER table's rows (the lazy <tr>.*?</tr> regex cut nested tables into
+#       unbalanced HTML), children no longer inherit the whole table's
+#       important_kwd, and _merge_cks joins paragraphs with "\n" (they were
+#       fused: "SNOW"+"בבינלאומי" -> "SNOWבבינלאומי"). Table children size
+#       by VISIBLE text (span markup inflated a 5-word header to 177 tokens,
+#       so it was dropped), oversized layout rows expand into paragraphs +
+#       inner-table rows, and heading-only children merge into the next one
+#   rag/svr/task_executor.py     - parent (mom) chunk id = hash(doc_id + text),
+#       not text alone: the same file in two datasets shared one parent row
+#       and the dataset parsed last took it over, orphaning the other's children
+#   rag/nlp/search.py            - retrieval_by_children: a parent over 1024
+#       tokens also carries "content_fallback" = its matched children (each
+#       with the table header); a missing parent keeps its children instead
+#       of raising
+#   rag/prompts/generator.py     - kb_prompt fills the budget greedily: a chunk
+#       that does not fit uses its fallback or is skipped, instead of stopping
+#       at the first oversized parent and dropping everything ranked after it
+#   rag/nlp/query.py + common/text_utils.py - Hebrew queries: each word is
+#       expanded with lower-weighted prefix variants (hebrew_variants:
+#       "הנרכש" also matches "נרכש"); exact numerics ("1,500") are taken from
+#       the original query in both branches (the Hebrew branch had none, the
+#       other read them after "," and "%" were stripped)
+#   deepdoc/parser/html_parser.py + rag/app/naive.py - title_tks and the new
+#       doc_title_kwd come from the procedure name in <title> instead of the
+#       file name ("5088"); task_executor/search use doc_title_kwd for the
+#       title embedding and the reranker input
+#   rag/prompts/generator.py     - kb_prompt compacts chunk HTML to table
+#       structure + text before budgeting (markup was ~60% of a table parent's
+#       tokens, so the chunk holding the answer was cut from the prompt)
+#   deepdoc/parser/html_parser.py - table pre-split counts visible text, not
+#       the kept inline style (a 233-char table was cut one row per chunk,
+#       headerless); only the outer table's rows are split; with parent-child
+#       tables up to 2048 tokens stay whole so the parent carries the header
+FROM infiniflow/ragflow:v0.25.0
+
+# python-bidi is REQUIRED for Hebrew PDFs. It is declared in pyproject.toml but
+# missing from the released v0.25.0 image, and reorder_bidi() degrades silently
+# when the import fails (warns once, returns the text unchanged).
+#
+# Why it matters: DeepDOC does not use pdfplumber's extract_text(). It rebuilds
+# each box by concatenating individual chars sorted by coordinate
+# (pdf_parser.py:744). For RTL scripts, coordinate order IS visual order, so
+# Hebrew arrives reversed -- "הפיקוח על הבנקים" becomes "םיקנבה לע חוקיפה".
+# The reorder_bidi() call at pdf_parser.py:766 exists to undo exactly that.
+# Without this package that call does nothing and every Hebrew PDF is indexed
+# reversed, which no Hebrew query can match (measured: 5/30 retrieval).
+#
+# Note reorder_bidi() is not idempotent -- running it on already-logical text
+# flips it. That is safe here only because DeepDOC always hands it visual-order
+# text. Any NEW call site must gate on common/text_utils.py::looks_visual_order.
+RUN /ragflow/.venv/bin/python3 -m pip install --no-cache-dir "python-bidi>=0.5.0,<1.0.0"
+
+COPY deepdoc/parser/html_parser.py /ragflow/deepdoc/parser/html_parser.py
+# Required alongside python-bidi above: the released v0.25.0 pdf_parser.py has
+# ZERO reorder_bidi() call sites, so installing the package alone changes
+# nothing. This working copy adds the calls at the char-concat and OCR paths.
+COPY deepdoc/parser/pdf_parser.py  /ragflow/deepdoc/parser/pdf_parser.py
+COPY rag/app/naive.py              /ragflow/rag/app/naive.py
+# Table merges: DOCX vMerge/gridSpan (naive.py::docx_table_to_html_rows) and
+# XLSX merged_cells. Without these a vertically merged row header was either
+# duplicated into every spanned row (DOCX) or dropped entirely (XLSX), binding
+# one product's label to another product's numbers.
+COPY deepdoc/parser/excel_parser.py /ragflow/deepdoc/parser/excel_parser.py
+COPY rag/nlp/__init__.py           /ragflow/rag/nlp/__init__.py
+COPY rag/nlp/search.py             /ragflow/rag/nlp/search.py
+COPY rag/nlp/query.py              /ragflow/rag/nlp/query.py
+COPY rag/svr/task_executor.py      /ragflow/rag/svr/task_executor.py
+COPY rag/flow/tokenizer/tokenizer.py /ragflow/rag/flow/tokenizer/tokenizer.py
+COPY rag/prompts/generator.py      /ragflow/rag/prompts/generator.py
+COPY rag/llm/rerank_model.py       /ragflow/rag/llm/rerank_model.py
+# Support files the patched modules depend on: this working copy is newer than
+# the released image (e.g. MAXIMUM_PAGE_NUMBER and reorder_bidi_sections do not
+# exist in v0.25.0), so naive.py fails to import without them.
+COPY common/text_utils.py          /ragflow/common/text_utils.py
+COPY common/constants.py           /ragflow/common/constants.py
+# task_executor.py reads settings.VISION_RAG_ENABLED (the Vision-RAG kill switch).
+# v0.25.0 predates that flag, so without this copy the worker dies with
+# AttributeError: module 'common.settings' has no attribute 'VISION_RAG_ENABLED'
+# at build_chunks() -- but only for docs that reach the image-handling path.
+COPY common/settings.py            /ragflow/common/settings.py

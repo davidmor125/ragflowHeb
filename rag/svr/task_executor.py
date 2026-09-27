@@ -70,7 +70,7 @@ from common.versions import get_ragflow_version
 from api.db.db_models import close_connection
 from rag.app import laws, paper, presentation, manual, qa, table, book, resume, picture, naive, one, audio, \
     email, tag
-from rag.nlp import search, rag_tokenizer, add_positions
+from rag.nlp import search, rag_tokenizer, add_positions, extract_exact_tokens, strip_markup
 from rag.raptor import RecursiveAbstractiveProcessing4TreeOrganizedRetrieval as Raptor
 from common.token_utils import num_tokens_from_string, truncate
 from rag.utils.redis_conn import REDIS_CONN, RedisDistributedLock
@@ -703,11 +703,17 @@ async def embedding(docs, mdl, parser_config=None, callback=None):
 
     tts, cnts = [], []
     for d in docs:
-        tts.append(d.get("docnm_kwd", "Title"))
+        # the real document title when the parser found one ("5088.html" as
+        # the title vector carried no meaning)
+        tts.append(d.get("doc_title_kwd") or d.get("docnm_kwd", "Title"))
         c = "\n".join(d.get("question_kwd", []))
         if not c:
             c = d["content_with_weight"]
-        c = re.sub(r"</?(table|td|caption|tr|th)( [^<>]{0,12})?>", " ", c)
+        # This text is what gets embedded (mdl.encode below), so the same wide
+        # strip tokenize() uses must apply here. The narrow table-only pattern
+        # left <span lang="he-IL">/<p dir="rtl"> in the text, meaning the dense
+        # vectors encoded markup alongside the Hebrew content.
+        c = strip_markup(c)
         if not c:
             c = "None"
         cnts.append(c)
@@ -1086,7 +1092,12 @@ async def insert_chunks(task_id, task_tenant_id, task_dataset_id, chunks, progre
         mom = ck.get("mom") or ck.get("mom_with_weight") or ""
         if not mom:
             continue
-        id = xxhash.xxh64(mom.encode("utf-8")).hexdigest()
+        # Scope the parent id to its document. A content-only hash made the same
+        # file in two datasets (or boilerplate shared by two docs) write ONE
+        # parent row: whichever parsed last took it over (kb_id/doc_id), and the
+        # other side's children pointed at a parent retrieval filters out by
+        # kb -- 12 parents of 1144.html were lost this way.
+        id = xxhash.xxh64((str(ck.get("doc_id", "")) + "\x00" + mom).encode("utf-8")).hexdigest()
         ck["mom_id"] = id
         if id in mother_ids:
             continue
@@ -1095,10 +1106,24 @@ async def insert_chunks(task_id, task_tenant_id, task_dataset_id, chunks, progre
         mom_ck["id"] = id
         mom_ck["content_with_weight"] = mom
         mom_ck["available_int"] = 0
+        # Recompute from the PARENT text: the deepcopy carries the first child's
+        # keywords, which cover only that child's slice of the table.
+        mom_exact = extract_exact_tokens(re.sub(r"</?[A-Za-z][A-Za-z0-9]{0,14}(\s[^<>]{0,300})?/?>", " ", mom))
+        if mom_exact:
+            mom_ck["important_kwd"] = mom_exact
+        elif "important_kwd" in mom_ck:
+            del mom_ck["important_kwd"]
+        # doc_type_kwd: without it a table parent is returned untyped, so
+        # retrieval cannot tell a table from prose (search.py reads the type off
+        # the PARENT, and ~88% of this corpus uses parent-child).
+        # important_kwd: holds the verbatim numerics the tokenizer would destroy
+        # ("1.40%", "2.1.3"); dropping it makes exact lookups miss the parent.
+        keep = ["id", "content_with_weight", "doc_id", "docnm_kwd", "kb_id", "available_int",
+                "position_int", "create_timestamp_flt", "page_num_int", "top_int",
+                "doc_type_kwd", "important_kwd"]
         flds = list(mom_ck.keys())
         for fld in flds:
-            if fld not in ["id", "content_with_weight", "doc_id", "docnm_kwd", "kb_id", "available_int",
-                           "position_int", "create_timestamp_flt", "page_num_int", "top_int"]:
+            if fld not in keep:
                 del mom_ck[fld]
         mothers.append(mom_ck)
 

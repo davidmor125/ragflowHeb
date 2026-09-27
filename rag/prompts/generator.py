@@ -101,25 +101,71 @@ def message_fit_in(msg, max_length=4000):
     return max_length, msg
 
 
+_KEEP_TABLE_TAG_RE = re.compile(r"<(/?)(table|thead|tbody|tr|td|th|caption)\b([^>]*)>", re.IGNORECASE)
+_SPAN_ATTR_RE = re.compile(r"\b(rowspan|colspan)\s*=\s*['\"]?(\d+)['\"]?", re.IGNORECASE)
+_BLOCK_BREAK_RE = re.compile(r"<br\s*/?>|</(?:p|div|li|h\d)>", re.IGNORECASE)
+_ANY_TAG_RE = re.compile(r"</?[A-Za-z][A-Za-z0-9]{0,14}(?:\s[^<>]{0,1000})?/?>")
+
+
+def compact_chunk_html(txt):
+    """Shrink stored chunk HTML to what the LLM needs: table structure
+    (table/tr/td/th/caption + rowspan/colspan) and the text.
+
+    Word-exported cells wrap every word in <span lang="he-IL"> inside
+    <p dir="rtl">, so about half of a table parent's characters were markup.
+    kb_prompt() counts that against the model's budget and drops the chunks
+    that no longer fit, which in the 40-question eval cut the very chunk
+    holding the answer ("10,000 $", "8,500 ₪") although retrieval had it.
+    """
+    if not txt or "<" not in txt:
+        return txt
+    kept = []
+
+    def _keep(m):
+        spans = " ".join(f'{k.lower()}="{v}"' for k, v in _SPAN_ATTR_RE.findall(m.group(3) or ""))
+        kept.append(f"<{m.group(1)}{m.group(2).lower()}{(' ' + spans) if spans else ''}>")
+        return f"\x00{len(kept) - 1}\x00"
+
+    out = _KEEP_TABLE_TAG_RE.sub(_keep, txt)
+    out = _BLOCK_BREAK_RE.sub("\n", out)
+    out = _ANY_TAG_RE.sub(" ", out)
+    out = out.replace("&nbsp;", " ").replace("\xa0", " ")
+    out = re.sub(r"\x00(\d+)\x00", lambda m: kept[int(m.group(1))], out)
+    out = re.sub(r"[^\S\n]+", " ", out)
+    out = re.sub(r" *\n[\s\n]*", "\n", out)
+    out = re.sub(r"\s*(</?(?:table|thead|tbody|tr|td|th|caption)[^>]*>)\s*", r"\1", out)
+    return out.strip()
+
+
 def kb_prompt(kbinfos, max_tokens, hash_id=False):
     from api.db.services.document_service import DocumentService
     from api.db.services.doc_metadata_service import DocMetadataService
 
-    knowledges = [get_value(ck, "content", "content_with_weight") for ck in kbinfos["chunks"]]
-    kwlg_len = len(knowledges)
+    # Fill the budget greedily in rank order. The old loop stopped at the first
+    # chunk that did not fit, so one oversized parent dropped every chunk
+    # ranked after it (the answer was often one of those). Now a chunk that
+    # does not fit falls back to its smaller "content_fallback" (the matched
+    # children of a big parent, set by retrieval_by_children) or is skipped.
+    # IDs keep the chunk's original index so [ID:n] citations still map to
+    # kbinfos["chunks"][n].
+    budget = max_tokens * 0.97
     used_token_count = 0
-    chunks_num = 0
-    for i, c in enumerate(knowledges):
-        if not c:
-            continue
-        used_token_count += num_tokens_from_string(c)
-        chunks_num += 1
-        if max_tokens * 0.97 < used_token_count:
-            knowledges = knowledges[:i]
-            logging.warning(f"Not all the retrieval into prompt: {len(knowledges)}/{kwlg_len}")
-            break
+    selected = []
+    for i, ck in enumerate(kbinfos["chunks"]):
+        options = [get_value(ck, "content", "content_with_weight"), ck.get("content_fallback")]
+        for raw in options:
+            c = compact_chunk_html(raw)
+            if not c:
+                continue
+            t = num_tokens_from_string(c)
+            if used_token_count + t <= budget:
+                used_token_count += t
+                selected.append((i, ck, c))
+                break
+    if len(selected) < len(kbinfos["chunks"]):
+        logging.warning(f"Not all the retrieval into prompt: {len(selected)}/{len(kbinfos['chunks'])}")
 
-    docs = DocumentService.get_by_ids([get_value(ck, "doc_id", "document_id") for ck in kbinfos["chunks"][:chunks_num]])
+    docs = DocumentService.get_by_ids([get_value(ck, "doc_id", "document_id") for _, ck, _ in selected])
 
     docs_with_meta = {}
     for d in docs:
@@ -135,14 +181,14 @@ def kb_prompt(kbinfos, max_tokens, hash_id=False):
         return f"\n├── {k}: " + re.sub(r"\n+", " ", line, flags=re.DOTALL)
 
     knowledges = []
-    for i, ck in enumerate(kbinfos["chunks"][:chunks_num]):
+    for i, ck, content in selected:
         cnt = "\nID: {}".format(i if not hash_id else hash_str2int(get_value(ck, "id", "chunk_id"), 500))
         cnt += draw_node("Title", get_value(ck, "docnm_kwd", "document_name"))
         cnt += draw_node("URL", ck['url']) if "url" in ck else ""
         for k, v in docs.get(get_value(ck, "doc_id", "document_id"), {}).items():
             cnt += draw_node(k, v)
         cnt += "\n└── Content:\n"
-        cnt += get_value(ck, "content", "content_with_weight")
+        cnt += content
         knowledges.append(cnt)
 
     return knowledges
@@ -287,7 +333,16 @@ async def cross_languages(tenant_id, llm_id, query, languages=[]):
     ans = re.sub(r"^.*</think>", "", ans, flags=re.DOTALL)
     if ans.find("**ERROR**") >= 0:
         return query
-    return "\n".join([a for a in re.sub(r"(^Output:|\n+)", "", ans, flags=re.DOTALL).split("===") if a.strip()])
+    # The system prompt separates translations with "###" (see
+    # cross_languages_sys_prompt.md); "===" is only the *input* delimiter
+    # between text and language list. Splitting on "===" therefore never
+    # matched, so every translation came back fused into one string with the
+    # literal "###" markers still embedded — and that string went straight into
+    # the search query. Collapsing "\n+" to "" made it worse by gluing the
+    # languages together, so keep newlines as the join boundary.
+    ans = re.sub(r"^\s*(\*\*)?Output:(\*\*)?\s*", "", ans.strip())
+    parts = [a.strip() for a in ans.split("###")]
+    return "\n".join([a for a in parts if a])
 
 
 async def content_tagging(chat_mdl, content, all_tags, examples, topn=3):
@@ -825,7 +880,15 @@ async def run_toc_from_text(chunks, chat_mdl, callback=None):
         raise
 
     for chunk in chunks_res:
-        titles.extend(chunk.get("toc", []))
+        # gen_toc_from_text normally leaves a {"toc": [...]} dict here, but when
+        # the LLM answers with a bare JSON array the entry ends up a list and
+        # `.get` raises "'list' object has no attribute 'get'", failing the whole
+        # document (observed on a 15-page Hebrew circular). Accept either shape:
+        # the per-title validation below already rejects anything malformed.
+        if isinstance(chunk, dict):
+            titles.extend(chunk.get("toc", []))
+        elif isinstance(chunk, list):
+            titles.extend(chunk)
 
     # Filter out entries with title == -1
     prune = len(titles) > 512

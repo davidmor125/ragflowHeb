@@ -20,6 +20,7 @@ import uuid
 import chardet
 from bs4 import BeautifulSoup, NavigableString, Tag, Comment
 import html
+import re
 
 def get_encoding(file):
     with open(file,'rb') as f:
@@ -38,20 +39,70 @@ TITLE_TAGS = {"h1": "#", "h2": "##", "h3": "###", "h4": "####", "h5": "#####", "
 
 class RAGFlowHtmlParser:
     def __call__(self, fnm, binary=None, chunk_token_num=512):
+        return self.parser_txt(self._read(fnm, binary), chunk_token_num)
+
+    def parts(self, fnm, binary=None, chunk_token_num=512, table_token_num=None):
+        """Like __call__, but returns (prose_sections, table_html_list).
+
+        ``table_token_num`` is the size above which a table is pre-split
+        (default: chunk_token_num). With parent-child retrieval the caller
+        passes a larger budget: the whole table then becomes the parent the
+        LLM reads, and tokenize_table() cuts it into small row children.
+        """
+        return self.parser_txt_parts(self._read(fnm, binary), chunk_token_num, table_token_num)
+
+    @classmethod
+    def procedure_title(cls, fnm, binary=None):
+        """Document title from <title> (or the first <h1>), or "" if none.
+
+        These exports name files by number ("5088.html"), so the filename gives
+        title_tks nothing to match. The bank's titles look like
+        "מיסוי - שו"ת- בנקאות ונכסים - ניכוי מס מתשלומים לחו"ל או לתושבי חוץ - 5088":
+        drop the trailing id and keep the last segment, the procedure name. The
+        leading category segments are shared by many documents and would make
+        every one of them match generic words.
+        """
+        try:
+            soup = BeautifulSoup(cls._read(fnm, binary), "html.parser")
+        except Exception:
+            return ""
+        node = soup.find("title") or soup.find("h1")
+        text = " ".join(node.get_text(" ").split()) if node else ""
+        text = re.sub(r"[‎‏‪-‮]", "", text)
+        text = re.sub(r"\s*-\s*\d+\s*$", "", text)
+        parts = [p.strip() for p in re.split(r"\s+-\s+", text) if p.strip()]
+        if len(parts) <= 1:
+            return parts[0] if parts else ""
+        # "<topic> - <area> - שו"ת- בנקאות ונכסים - <name> [- <sub>] - <id>":
+        # the name is everything after the category marker (it may itself
+        # contain " - ", e.g. 'אופציות על מדד ת"א - 35'). Without the marker,
+        # skip the two leading category segments.
+        marker = max((i for i, p in enumerate(parts) if 'שו"ת' in p or "בנקאות ונכסים" in p), default=None)
+        tail = parts[marker + 1:] if marker is not None else parts[2:]
+        return " - ".join(tail) if tail else parts[-1]
+
+    @staticmethod
+    def _read(fnm, binary=None):
         if binary:
             encoding = find_codec(binary)
-            txt = binary.decode(encoding, errors="ignore")
-        else:
-            with open(fnm, "r",encoding=get_encoding(fnm)) as f:
-                txt = f.read()
-        return self.parser_txt(txt, chunk_token_num)
+            return binary.decode(encoding, errors="ignore")
+        with open(fnm, "r", encoding=get_encoding(fnm)) as f:
+            return f.read()
 
     @classmethod
     def parser_txt(cls, txt, chunk_token_num):
         if not isinstance(txt, str):
             raise TypeError("txt type should be string!")
 
-        temp_sections = []
+        soup = cls._clean_soup(txt)
+        prose, tables = cls._parse_parts(soup, chunk_token_num)
+        # Backwards-compatible shape: prose followed by tables, all as bare
+        # strings. Callers that need tables kept separate (so they can be typed
+        # as doc_type_kwd="table" and split into children) use parser_txt_parts.
+        return prose + tables
+
+    @classmethod
+    def _clean_soup(cls, txt):
         soup = BeautifulSoup(txt, "html5lib")
         # delete <style> tag
         for style_tag in soup.find_all(["style", "script"]):
@@ -60,20 +111,66 @@ class RAGFlowHtmlParser:
         for div_tag in soup.find_all("div"):
             for script_tag in div_tag.find_all("script"):
                 script_tag.decompose()
-        # delete inline style
+        # delete inline style, except on table cells: split_table() relies on the
+        # exporter's background-color/bold styling to detect the header row, and
+        # stripping it here would run before that check ever sees it.
         for tag in soup.find_all(True):
-            if 'style' in tag.attrs:
+            if 'style' in tag.attrs and tag.name not in ("td", "th", "tr"):
                 del tag.attrs['style']
         # delete HTML comment
         for comment in soup.find_all(string=lambda text: isinstance(text, Comment)):
             comment.extract()
+        return soup
 
-        cls.read_text_recursively(soup.body, temp_sections, chunk_token_num=chunk_token_num)
+    @staticmethod
+    def _text_tokens(html_fragment):
+        """Token count of the VISIBLE text of a fragment.
+
+        Counting raw HTML was dominated by the inline style that is kept on
+        td/th/tr until split_table() reads it (width:509.35pt;padding:...): a
+        5-row, 233-char fee table counted as >256 tokens, was split one row
+        per chunk, and the rows lost their header ("שאר הסניפים 10,000,000 ₪"
+        with no column names), so retrieval could not match them.
+        """
+        text = BeautifulSoup(html_fragment, "html.parser").get_text(" ")
+        tks = rag_tokenizer.tokenize(text)
+        return len(tks.split(" ")) if tks else 0
+
+    @classmethod
+    def _parse_parts(cls, soup, chunk_token_num, table_token_num=None):
+        temp_sections = []
+        cls.read_text_recursively(soup.body, temp_sections, chunk_token_num=table_token_num or chunk_token_num)
         block_txt_list, table_list = cls.merge_block_text(temp_sections)
-        sections = cls.chunk_block(block_txt_list, chunk_token_num=chunk_token_num)
-        for table in table_list:
-            sections.append(table.get("content", ""))
-        return sections
+        prose = cls.chunk_block(block_txt_list, chunk_token_num=chunk_token_num)
+        tables = [t.get("content", "") for t in table_list if t.get("content")]
+        return prose, tables
+
+    @classmethod
+    def parser_txt_parts(cls, txt, chunk_token_num, table_token_num=None):
+        """Same parse as parser_txt, but keeps prose and tables apart.
+
+        parser_txt() flattens tables into the prose list, which loses their
+        identity: downstream they reach tokenize_chunks() and never get
+        doc_type_kwd="table", so no HTML table is ever recognised as a table or
+        split into child chunks. Returns (prose_sections, table_html_list).
+        """
+        if not isinstance(txt, str):
+            raise TypeError("txt type should be string!")
+        soup = cls._clean_soup(txt)
+        return cls._parse_parts(soup, chunk_token_num, table_token_num)
+
+    @classmethod
+    def strip_inline_style(cls, html_fragment):
+        """Remove style attributes from a table fragment.
+
+        parser_txt() deliberately keeps inline style on td/th/tr so split_table()
+        can read the exporter's header styling, but that CSS must never reach a
+        stored chunk. Both table paths funnel through here on the way out.
+        """
+        frag = BeautifulSoup(html_fragment, "html.parser")
+        for tag in frag.find_all(True):
+            tag.attrs.pop("style", None)
+        return str(frag)
 
     @classmethod
     def split_table(cls, html_table, chunk_token_num=512):
@@ -81,9 +178,13 @@ class RAGFlowHtmlParser:
 
         # Preserve <caption> (table title) and the header row(s) so every
         # produced chunk keeps its column meaning.
-        caption = soup.find("caption")
-        thead = soup.find("thead")
-        all_rows = soup.find_all("tr")
+        # Only the OUTER table's own rows: find_all("tr") also returned every
+        # row of a nested table, which then appeared twice (inside its outer
+        # row and again as a loose row with no header).
+        outer = soup.find("table")
+        caption = outer.find("caption", recursive=False) if outer else None
+        thead = outer.find("thead", recursive=False) if outer else None
+        all_rows = [r for r in soup.find_all("tr") if r.find_parent("table") is outer]
         header_rows = []
         body_rows = list(all_rows)
         if thead:
@@ -112,18 +213,37 @@ class RAGFlowHtmlParser:
                     "#bf504d", "#c00000",  # red family
                 ])
             ) or "font-weight:bold" in first_str
-            # As a softer fallback, treat the first row as header if its visible
-            # text is short and doesn't end with a sentence terminator.
+            # Bold markup is the other common way an exporter flags a header row
+            # (the bank's HTML wraps header cells in <strong>/<b> with no inline
+            # style), so treat a first row whose cells are all bold as a header.
+            if not looks_styled_header:
+                first_cells = first_row.find_all(["td", "th"])
+                if first_cells:
+                    bolded = [c for c in first_cells if c.find(["strong", "b"]) is not None]
+                    non_empty = [c for c in first_cells if c.get_text(strip=True)]
+                    looks_styled_header = bool(non_empty) and len(bolded) >= len(non_empty)
+            # NOTE: no "short text" fallback here on purpose. Tables whose first
+            # row is genuinely data (e.g. "סניף 0 | 500 | פעיל") also have short,
+            # terminator-free cells, so such a rule promotes a data row to a
+            # header and duplicates it into every chunk. Only explicit header
+            # markup (thead/th) or exporter styling (background/bold) is trusted.
             if looks_styled_header:
                 header_rows = [first_row]
                 body_rows = all_rows[1:]
 
         # Reserve token budget for the header so each chunk fits.
-        header_token_count = 0
-        if header_rows:
-            for hr in header_rows:
-                tks_str = rag_tokenizer.tokenize(str(hr))
-                header_token_count += len(tks_str.split(" ")) if tks_str else 0
+        # The NOTE above rejects promoting an unstyled first row in general.
+        # But when the table must be cut into several chunks anyway, a chunk
+        # without column names is worse than one repeated data row: in the
+        # 40-question eval every table miss was a headerless fragment such as
+        # "דחוי | מזומן" whose columns the model could not tell apart. So the
+        # first row is repeated only when a split is unavoidable.
+        if not header_rows and len(all_rows) >= 3 and len(all_rows[0].find_all(["td", "th"])) >= 2:
+            if sum(cls._text_tokens(str(r)) for r in all_rows) > chunk_token_num:
+                header_rows = [all_rows[0]]
+                body_rows = all_rows[1:]
+
+        header_token_count = sum(cls._text_tokens(str(hr)) for hr in header_rows)
 
         # Group body rows into chunks honoring chunk_token_num.
         # Each chunk's effective body budget is (chunk_token_num - header_token_count),
@@ -135,8 +255,7 @@ class RAGFlowHtmlParser:
         current = []
         current_count = 0
         for row in body_rows:
-            tks_str = rag_tokenizer.tokenize(str(row))
-            token_count = len(tks_str.split(" ")) if tks_str else 0
+            token_count = cls._text_tokens(str(row))
             if current and current_count + token_count > body_budget:
                 groups.append(current)
                 current = []
@@ -149,16 +268,26 @@ class RAGFlowHtmlParser:
             # Header-only table or empty body — emit a single chunk with what we have.
             groups = [[]]
 
+        # The header heuristics above have consumed the styling signal, so drop
+        # the attribute now: it must not reach the stored chunk, where CSS like
+        # "width:509.35pt; padding:0.75pt 5.4pt" would eat the token budget and
+        # be indexed as searchable text.
+        def _clean(node):
+            frag = BeautifulSoup(str(node), "html.parser")
+            for tag in frag.find_all(True):
+                tag.attrs.pop("style", None)
+            return frag
+
         # Reconstruct each chunk: caption + header rows + this group's body rows.
         table_str_list = []
         for group in groups:
             new_table = soup.new_tag("table")
             if caption is not None:
-                new_table.append(BeautifulSoup(str(caption), "html.parser"))
+                new_table.append(_clean(caption))
             for hr in header_rows:
-                new_table.append(BeautifulSoup(str(hr), "html.parser"))
+                new_table.append(_clean(hr))
             for row in group:
-                new_table.append(BeautifulSoup(str(row), "html.parser"))
+                new_table.append(_clean(row))
             table_str_list.append(str(new_table))
 
         return table_str_list
@@ -197,12 +326,14 @@ class RAGFlowHtmlParser:
                 # entire document body is wrapped in one table) becomes one giant chunk
                 # that exceeds the LLM context budget for retrieval-fed generation.
                 raw_html = html.unescape(str(element))
-                tks_str = rag_tokenizer.tokenize(raw_html)
-                token_count = len(tks_str.split(" ")) if tks_str else 0
+                token_count = cls._text_tokens(raw_html)
                 if token_count > chunk_token_num:
                     table_list = cls.split_table(raw_html, chunk_token_num=chunk_token_num)
                 else:
-                    table_list = [raw_html]
+                    # split_table() strips inline style on its way out; a table
+                    # small enough to skip splitting must be cleaned too, or its
+                    # CSS ends up indexed as searchable text.
+                    table_list = [cls.strip_inline_style(raw_html)]
                 for idx, t in enumerate(table_list):
                     table_info_list.append({"content": t, "tag_name": "table",
                                             "metadata": {"table_id": table_id, "index": idx}})

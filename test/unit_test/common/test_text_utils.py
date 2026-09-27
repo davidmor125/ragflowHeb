@@ -18,6 +18,8 @@ import pytest
 
 from common.text_utils import (
     contains_hebrew,
+    hebrew_variants,
+    looks_visual_order,
     reorder_bidi,
     reorder_bidi_sections,
 )
@@ -26,6 +28,9 @@ from common.text_utils import (
 HEBREW_LOGICAL = "שלום עולם"
 ENGLISH_ONLY = "Hello world"
 MIXED = "Hello שלום 123"
+HEBREW_SENTENCE = "הפיקוח על הבנקים מפרסם הנחיות לכל הבנקים בישראל"
+# The same sentence as a PDF extractor emits it: characters in x-coordinate order.
+HEBREW_SENTENCE_VISUAL = "לארשיב םיקנבה לכל תויחנה םסרפמ םיקנבה לע חוקיפה"
 
 
 class TestReorderBidiSections:
@@ -54,17 +59,26 @@ class TestReorderBidiSections:
         result = reorder_bidi_sections(sections, enabled=True)
         assert result[0][0] == ENGLISH_ONLY
 
-    def test_hebrew_section_is_reordered(self):
-        """End-to-end smoke: feeding logical-order Hebrew through
-        reorder_bidi twice must round-trip (visual -> logical -> visual or
-        equivalent reversible transform). What we really care about is that
-        the function actually fires for Hebrew strings."""
-        sections = [(HEBREW_LOGICAL, "")]
+    def test_logical_hebrew_is_not_flipped(self):
+        """DOCX/XLSX/HTML/MD already store Hebrew in logical order. With
+        lang=="Hebrew" naive.py enables this helper for all of them, so it
+        must leave correct text alone — reorder_bidi is not idempotent and
+        an unconditional call reverses every word."""
+        sections = [(HEBREW_SENTENCE, "")]
         result = reorder_bidi_sections(sections, enabled=True)
-        # The transform must produce *some* output that still contains the
-        # same Hebrew code points (no character loss).
-        assert contains_hebrew(result[0][0])
-        assert len(result[0][0]) >= len(HEBREW_LOGICAL) - 2  # whitespace tolerance
+        assert result[0][0] == HEBREW_SENTENCE
+
+    def test_visual_hebrew_is_reordered(self):
+        """Text that really arrived reversed (e.g. force_bidi_reorder on a
+        legacy export) is still repaired."""
+        sections = [(HEBREW_SENTENCE_VISUAL, "")]
+        result = reorder_bidi_sections(sections, enabled=True)
+        assert result[0][0] == HEBREW_SENTENCE
+
+    def test_running_twice_is_stable(self):
+        once = reorder_bidi_sections([(HEBREW_SENTENCE_VISUAL, "")], enabled=True)
+        twice = reorder_bidi_sections(once, enabled=True)
+        assert twice[0][0] == once[0][0] == HEBREW_SENTENCE
 
     def test_tuple_shape_preserved(self):
         """DOCX sections are tuples of (text, image, ...). The trailing
@@ -144,6 +158,21 @@ class TestContainsHebrew:
         assert contains_hebrew("שׁ") is True
 
 
+class TestLooksVisualOrder:
+    """The gate reorder_bidi_sections relies on to avoid flipping correct text."""
+
+    def test_logical_sentence(self):
+        assert looks_visual_order(HEBREW_SENTENCE) is False
+
+    def test_visual_sentence(self):
+        assert looks_visual_order(HEBREW_SENTENCE_VISUAL) is True
+
+    def test_too_little_evidence_is_left_alone(self):
+        assert looks_visual_order("םולש") is False
+        assert looks_visual_order("Hello world") is False
+        assert looks_visual_order(None) is False
+
+
 class TestReorderBidiPassthrough:
     """The fast paths inside reorder_bidi matter for the PDF safety story:
     if reorder_bidi is ever accidentally called on non-Hebrew text from the
@@ -160,3 +189,38 @@ class TestReorderBidiPassthrough:
 
     def test_non_string_unchanged(self):
         assert reorder_bidi(123) == 123
+
+
+class TestHebrewVariants:
+    def test_strips_definite_article(self):
+        v = dict(hebrew_variants("הנרכש"))
+        assert v["נרכש"] == 0.6
+
+    def test_strips_prefix_chain(self):
+        v = dict(hebrew_variants("ובהסכם"))
+        # ו -> "בהסכם", ו+ב -> "הסכם"; a chain of two article letters ("ובה")
+        # is not a Hebrew proclitic, so "סכם" must not appear
+        assert "בהסכם" in v and "הסכם" in v
+        assert "סכם" not in v
+
+    def test_adds_prefixes_to_stem_not_to_prefixed_word(self):
+        words = [w for w, _ in hebrew_variants("המטבע")]
+        assert "מטבע" in words
+        assert "במטבע" in words
+        assert "ההמטבע" not in words
+
+    def test_bare_word_gets_prefixed_forms(self):
+        v = dict(hebrew_variants("נרכש"))
+        assert v["הנרכש"] == 0.4
+
+    @pytest.mark.parametrize("word", ["בנק", "הון", "ללא"])
+    def test_short_stems_are_not_cut(self, word):
+        assert all(len(w) >= 3 for w, _ in hebrew_variants(word))
+        assert word[1:] not in dict(hebrew_variants(word))
+
+    @pytest.mark.parametrize("token", ["xx", "882", "1,500", "מט\"ח", "", "a"])
+    def test_non_hebrew_or_punctuated_untouched(self, token):
+        assert hebrew_variants(token) == []
+
+    def test_capped(self):
+        assert len(hebrew_variants("וכשהבנקים")) <= 5

@@ -92,7 +92,7 @@ class Dealer:
         src = req.get("fields",
                       ["docnm_kwd", "content_ltks", "kb_id", "img_id", "title_tks", "important_kwd", "position_int",
                        "doc_id", "chunk_order_int", "page_num_int", "top_int", "create_timestamp_flt", "knowledge_graph_kwd",
-                       "question_kwd", "question_tks", "doc_type_kwd",
+                       "question_kwd", "question_tks", "doc_type_kwd", "doc_title_kwd",
                        "available_int", "content_with_weight", "mom_id", PAGERANK_FLD, TAG_FLD, "row_id()"])
         kwds = set([])
 
@@ -343,9 +343,7 @@ class Dealer:
     def rerank_by_model(self, rerank_mdl, sres, query, tkweight=0.3,
                         vtweight=0.7, cfield="content_ltks",
                         rank_feature: dict | None = None):
-        print(f"[DEBUG rerank_by_model] query={query}, tkweight={tkweight}, vtweight={vtweight}")
         _, keywords = self.qryr.question(query)
-        print(f"[DEBUG rerank_by_model] keywords={keywords}")
 
         for i in sres.ids:
             if isinstance(sres.field[i].get("important_kwd", []), str):
@@ -357,29 +355,40 @@ class Dealer:
             important_kwd = sres.field[i].get("important_kwd", [])
             tks = content_ltks + title_tks + important_kwd
             ins_tw.append(tks)
-            print(f"[DEBUG rerank_by_model] chunk id={i}, content_ltks={len(content_ltks)}, title_tks={len(title_tks)}, important_kwd={len(important_kwd)}")
-            doc_text = remove_redundant_spaces(" ".join(tks))
-            if len(doc_text) > 100:
-                print(f"[DEBUG rerank_by_model] chunk id={i}, doc_text (first 100)={doc_text[:100]}...")
-            else:
-                print(f"[DEBUG rerank_by_model] chunk id={i}, doc_text={doc_text}")
 
-        docs = [remove_redundant_spaces(" ".join(tks)) for tks in ins_tw]
-        print(f"[DEBUG rerank_by_model] docs sent to reranker: {len(docs)} docs")
-        for idx, doc in enumerate(docs[:2]):  # Print first 2
-            print(f"[DEBUG rerank_by_model] doc[{idx}] len={len(doc)}, full={doc}")
-            if len(doc) > 100:
-                print(f"[DEBUG rerank_by_model] doc[{idx}] (first 100)={doc[:100]}...")
+        # The reranker is a cross-encoder: feed it the ORIGINAL text, not the
+        # tokenizer output. rag_tokenizer targets Chinese/English and mangles
+        # numerics that this corpus depends on — "1.40%" becomes "140", "0.10%"
+        # becomes "0 10", "2.1.3" becomes "21 3" — which measurably flips the
+        # top result on numeric queries. token_similarity below still needs the
+        # token lists, so only the reranker input changes.
+        # NOTE: remove_redundant_spaces() must NOT be applied here. Its regex
+        # strips the space after any character outside [a-z0-9.,)>], which for
+        # Hebrew means every word boundary: "עמלה 250 ש\"ח" -> "עמלה250ש\"ח".
+        # That is harmless on token strings (already space-joined ASCII-ish
+        # tokens) but destroys raw Hebrew prose.
+        docs = []
+        for i in sres.ids:
+            raw = sres.field[i].get("content_with_weight")
+            if not raw:
+                raw = remove_redundant_spaces(" ".join(sres.field[i][cfield].split()))
             else:
-                print(f"[DEBUG rerank_by_model] doc[{idx}]={doc}")
+                # Table chunks are stored as HTML; the cross-encoder has a small
+                # window (~500 tokens) and markup burns it without adding signal.
+                raw = re.sub(r"<[^>]+>", " ", raw)
+                raw = re.sub(r"\s+", " ", raw).strip()
+            # docnm_kwd is the original filename; title_tks is the TOKENIZED form
+            # and would re-introduce the very mangling ("1.40%" -> "140") this
+            # raw-text path exists to avoid.
+            # prefer the document's real title: "5088.html" told the
+            # cross-encoder nothing about which procedure the chunk is from
+            title = sres.field[i].get("doc_title_kwd") or sres.field[i].get("docnm_kwd", "")
+            docs.append((title + " " + raw) if title else raw)
 
         tksim = self.qryr.token_similarity(keywords, ins_tw)
-        print(f"[DEBUG rerank_by_model] tksim={tksim}")
         vtsim, _ = rerank_mdl.similarity(query, docs)
-        print(f"[DEBUG rerank_by_model] vtsim from reranker={vtsim}")
         ## For rank feature(tag_fea) scores.
         rank_fea = self._rank_feature_scores(rank_feature, sres)
-        print(f"[DEBUG rerank_by_model] rank_fea={rank_fea}")
 
         return tkweight * np.array(tksim) + vtweight * vtsim + rank_fea, tksim, vtsim
 
@@ -700,6 +709,8 @@ class Dealer:
 
         return sorted(chunks, key=lambda x: x["similarity"] * -1)[:topn]
 
+    MAX_PARENT_TOKENS = 1024
+
     def retrieval_by_children(self, chunks: list[dict], tenant_ids: list[str]):
         if not chunks:
             return []
@@ -720,13 +731,37 @@ class Dealer:
         if not chunks:
             chunks = []
 
+        from common.token_utils import num_tokens_from_string
+        from rag.prompts.generator import compact_chunk_html
+
         vector_size = 1024
         for id, cks in mom_chunks.items():
             chunk = self.dataStore.get(id, idx_nms[0], [ck["kb_id"] for ck in cks])
+            if not chunk:
+                # Parent missing (e.g. overwritten by another dataset before
+                # parent ids were doc-scoped): keep the children instead of
+                # raising on chunk["..."] and losing them all.
+                chunks.extend(cks)
+                continue
+            content = chunk["content_with_weight"]
+            # A big parent (a 39-row table, ~4.5k tokens even compacted) may not
+            # fit the prompt budget. Keep the whole parent -- it can hold the
+            # answer row even when that row's own child ranked low -- and offer
+            # the matched children (each carries caption + header) as a smaller
+            # fallback that kb_prompt() uses only when the parent does not fit.
+            fallback = None
+            if num_tokens_from_string(compact_chunk_html(content) or "") > self.MAX_PARENT_TOKENS:
+                seen, parts = set(), []
+                for ck in cks:
+                    c = ck.get("content_with_weight") or ""
+                    if c and c not in seen:
+                        seen.add(c)
+                        parts.append(c)
+                fallback = "\n".join(parts) or None
             d = {
                 "chunk_id": id,
                 "content_ltks": " ".join([ck["content_ltks"] for ck in cks]),
-                "content_with_weight": chunk["content_with_weight"],
+                "content_with_weight": content,
                 "doc_id": chunk["doc_id"],
                 "docnm_kwd": chunk.get("docnm_kwd", ""),
                 "kb_id": chunk["kb_id"],
@@ -739,6 +774,8 @@ class Dealer:
                 "positions": chunk.get("position_int", []),
                 "doc_type_kwd": chunk.get("doc_type_kwd", "")
             }
+            if fallback:
+                d["content_fallback"] = fallback
             for k in cks[0].keys():
                 if k[-4:] == "_vec":
                     d["vector"] = cks[0][k]

@@ -224,9 +224,41 @@ class RAGFlowExcelParser:
             if not rows:
                 continue
 
+            # Merged ranges: openpyxl stores the value only in the top-left
+            # anchor and leaves every other covered cell as None. Rendering
+            # those as <td></td> silently DROPS the label -- an "אשראי עסקי"
+            # row header merged across two rows disappears from the second
+            # row, so that row's numbers lose what they belong to. Emit
+            # colspan/rowspan on the anchor and skip the covered cells.
+            try:
+                merged = list(ws.merged_cells.ranges)
+            except Exception:
+                merged = []
+            anchors, covered = {}, set()
+            for rng in merged:
+                anchors[(rng.min_row, rng.min_col)] = (
+                    rng.max_col - rng.min_col + 1,
+                    rng.max_row - rng.min_row + 1,
+                )
+                for rr in range(rng.min_row, rng.max_row + 1):
+                    for cc in range(rng.min_col, rng.max_col + 1):
+                        if (rr, cc) != (rng.min_row, rng.min_col):
+                            covered.add((rr, cc))
+
+            def _cell_html(c, tag="td"):
+                if (c.row, c.column) in covered:
+                    return ""
+                attrs = ""
+                cs, rs = anchors.get((c.row, c.column), (1, 1))
+                if cs > 1:
+                    attrs += f" colspan='{cs}'"
+                if rs > 1:
+                    attrs += f" rowspan='{rs}'"
+                return f"<{tag}{attrs}>{escape(_fmt(c.value))}</{tag}>"
+
             tb_rows_0 = "<tr>"
             for t in list(rows[0]):
-                tb_rows_0 += f"<th>{escape(_fmt(t.value))}</th>"
+                tb_rows_0 += _cell_html(t, "th")
             tb_rows_0 += "</tr>"
 
             for chunk_i in range((len(rows) - 1) // chunk_rows + 1):
@@ -235,11 +267,8 @@ class RAGFlowExcelParser:
                 tb += tb_rows_0
                 for r in list(rows[1 + chunk_i * chunk_rows : min(1 + (chunk_i + 1) * chunk_rows, len(rows))]):
                     tb += "<tr>"
-                    for i, c in enumerate(r):
-                        if c.value is None:
-                            tb += "<td></td>"
-                        else:
-                            tb += f"<td>{escape(_fmt(c.value))}</td>"
+                    for c in r:
+                        tb += _cell_html(c)
                     tb += "</tr>"
                 tb += "</table>\n"
                 tb_chunks.append(tb)

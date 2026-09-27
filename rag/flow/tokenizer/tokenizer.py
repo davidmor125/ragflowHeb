@@ -24,6 +24,7 @@ from api.db.services.llm_service import LLMBundle
 from api.db.joint_services.tenant_model_service import get_tenant_default_model_by_type, get_model_config_by_id, get_model_config_by_type_and_name
 from common.connection_utils import timeout
 from rag.flow.base import ProcessBase, ProcessParamBase
+from rag.nlp import strip_markup
 from rag.flow.parser.pdf_chunk_metadata import finalize_pdf_chunk
 from rag.flow.tokenizer.schema import TokenizerFromUpstream
 from rag.nlp import rag_tokenizer
@@ -79,7 +80,7 @@ class Tokenizer(ProcessBase):
                     txt += f
                 elif isinstance(f, list):
                     txt += "\n".join(f)
-            cleaned_txt = re.sub(r"</?(table|td|caption|tr|th)( [^<>]{0,12})?>", " ", txt).strip()
+            cleaned_txt = strip_markup(txt)
             if not cleaned_txt:
                 continue
             texts.append(cleaned_txt)
