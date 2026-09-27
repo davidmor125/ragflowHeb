@@ -82,6 +82,11 @@ FROM infiniflow/ragflow:v0.25.0
 RUN /ragflow/.venv/bin/python3 -m pip install --no-cache-dir "python-bidi>=0.5.0,<1.0.0"
 
 COPY deepdoc/parser/html_parser.py /ragflow/deepdoc/parser/html_parser.py
+# Vision figure descriptions: bounded wait (VISION_FIGURE_TIMEOUT_SECONDS per
+# figure, default 120). @timeout is a no-op unless ENABLE_TIMEOUT_ASSERTION is
+# set, so a stuck vision call blocked the whole task queue for 27 minutes.
+# Also brings the working copy's Hebrew-aware caption replacement.
+COPY deepdoc/parser/figure_parser.py /ragflow/deepdoc/parser/figure_parser.py
 # Required alongside python-bidi above: the released v0.25.0 pdf_parser.py has
 # ZERO reorder_bidi() call sites, so installing the package alone changes
 # nothing. This working copy adds the calls at the char-concat and OCR paths.

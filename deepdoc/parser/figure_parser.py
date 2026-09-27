@@ -14,7 +14,9 @@
 #  limitations under the License.
 #
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from concurrent.futures import TimeoutError as FuturesTimeout
 import logging
+import os
 
 from PIL import Image
 
@@ -272,8 +274,25 @@ class VisionFigureParser:
         for idx, img_binary in enumerate(self.figures or []):
             futures.append(shared_executor.submit(process, idx, img_binary))
 
-        for future in as_completed(futures):
-            figure_num, txt = future.result()
+        # @timeout above only enforces its limit when ENABLE_TIMEOUT_ASSERTION
+        # is set; otherwise it waits forever. A vision call that never returned
+        # held a document at "enhance figure extraction" for 27 minutes and,
+        # with it, the whole task queue. Bound the wait here: figures still
+        # pending when time runs out keep their OCR caption and parsing goes on.
+        per_figure = float(os.environ.get("VISION_FIGURE_TIMEOUT_SECONDS", 120))
+        results = []
+        try:
+            for future in as_completed(futures, timeout=per_figure * max(1, len(futures))):
+                try:
+                    results.append(future.result())
+                except Exception as e:
+                    logging.warning(f"[VisionFigureParser] figure description failed: {e}")
+        except FuturesTimeout:
+            pending = sum(1 for f in futures if not f.done())
+            logging.warning(f"[VisionFigureParser] vision model timed out; {pending}/{len(futures)} figures left undescribed")
+            callback(0.8, f"Visual model timed out on {pending} figure(s); continuing without them.")
+
+        for figure_num, txt in results:
             if txt:
                 # Replace prior OCR captions: legacy OCR on Hebrew/RTL produces Latin gibberish.
                 # Cloud-class VLMs (Gemma 4, GPT-4o, Claude) already return Hebrew in logical order;
