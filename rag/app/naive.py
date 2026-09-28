@@ -1208,8 +1208,13 @@ def chunk(filename, binary=None, from_page=0, to_page=MAXIMUM_PAGE_NUMBER, lang=
         # is what the LLM reads, and a table cut at chunk_token_num (256) left
         # the answer row in a parent without the header row.
         table_token_num = max(chunk_token_num, 2048) if child_deli else chunk_token_num
-        html_prose, html_tables = HtmlParser().parts(filename, binary, chunk_token_num, table_token_num)
-        _apply_doc_title(doc, HtmlParser.procedure_title(filename, binary))
+        doc_title = HtmlParser.procedure_title(filename, binary)
+        # Parent-child only: the ⟦procedure | section⟧ line is what lets a
+        # 40-char child ("4.4. שיעור הריבית בהלוואה פריים + 1.7%") match a
+        # question; split_with_pattern() copies it onto every child.
+        html_prose, html_tables = HtmlParser().parts(filename, binary, chunk_token_num, table_token_num,
+                                                     doc_title=doc_title, with_context=bool(child_deli))
+        _apply_doc_title(doc, doc_title)
         sections = [(_, "") for _ in html_prose if _]
         sections = _normalize_section_text_for_rtl_presentation_forms(sections)
         sections = reorder_bidi_sections(sections, rtl_reorder_non_pdf)

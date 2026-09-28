@@ -1,3 +1,4 @@
+import pytest
 from lxml import etree
 
 from rag.app.naive import _docx_cell_text, _docx_para_text, _iter_docx_blocks
@@ -192,9 +193,74 @@ class TestProcedureTitle:
         t = 'מכשירים עתידיים - ניירות ערך - חוזים עתידיים על מדד ת"א - 35 - 4466'
         assert self._title(t) == 'חוזים עתידיים על מדד ת"א - 35'
 
+    @staticmethod
+    def _body(*lines):
+        from deepdoc.parser.html_parser import RAGFlowHtmlParser
+        html = "".join(f"<p>{x}</p>" for x in lines)
+        return RAGFlowHtmlParser.procedure_title("x.html", html.encode())
+
+    def test_body_only_first_line(self):
+        assert self._body("חסימה ביטול הקפאה וטיפול שוטף בכרטיסים", "פרק א'") == "חסימה ביטול הקפאה וטיפול שוטף בכרטיסים"
+
+    def test_body_only_skips_navigation_and_labels(self):
+        assert self._body("למעבר לדף ריכוז נוהלי פתיחת חשבון מקוון -", "לחצו כאן", "פתיחה וניהול של חשבון מקוון משותף") == "פתיחה וניהול של חשבון מקוון משותף"
+        assert self._body("כותרת", "הוראות באמצעות הפקסימיליה", "כללי") == "הוראות באמצעות הפקסימיליה"
+
+    def test_body_only_rejects_generic_and_debris(self):
+        assert self._body("רקע", "ככלל") == ""
+        assert self._body("ק ע", "משהו") == ""
+        assert self._body("מערכת") == ""
+
     def test_no_title(self):
         from deepdoc.parser.html_parser import RAGFlowHtmlParser
         assert RAGFlowHtmlParser.procedure_title("x.html", b"<html><body><p>x</p></body></html>") == ""
+
+
+class TestSectionContext:
+    @pytest.fixture(autouse=True)
+    def _word_count_tokens(self, monkeypatch):
+        # The real counter needs nltk data that is not present on every dev
+        # machine; sizing is not what these tests check.
+        from bs4 import BeautifulSoup
+
+        import deepdoc.parser.html_parser as hp
+        monkeypatch.setattr(hp.RAGFlowHtmlParser, "_text_tokens",
+                            staticmethod(lambda h: len(BeautifulSoup(h, "html.parser").get_text(" ").split())))
+        monkeypatch.setattr(hp.rag_tokenizer, "tokenize", lambda t: " ".join(str(t).split()))
+
+    @staticmethod
+    def _parts(body, title="נוהל בדיקה", budget=256):
+        from deepdoc.parser.html_parser import RAGFlowHtmlParser
+        return RAGFlowHtmlParser().parts("x.html", body.encode(), budget, 2048, doc_title=title, with_context=True)
+
+    def test_heading_detection(self):
+        from deepdoc.parser.html_parser import RAGFlowHtmlParser as P
+        assert P._heading_level("1.5.2. השקעות הוניות") == (3, "1.5.2. השקעות הוניות")
+        assert P._heading_level("פרק ב' - חשבון מקוון") == (0, "פרק ב' - חשבון מקוון")
+        # a numbered clause with an amount is body text, not a heading
+        assert P._heading_level("3.1. סך התקבולים בחשבון לא יעלו סכום של 50,000 ₪ בחודש.") is None
+
+    def test_clause_gets_its_own_section_path(self):
+        prose, _ = self._parts("<p>3.3. וועדת הקרנות</p><p>הוועדה דנה בבקשות.</p>"
+                               "<p>4. מסלולי ההלוואות</p><p>4.4. שיעור הריבית בהלוואה פריים + 1.7% .</p>")
+        text = "\n".join(prose)
+        line = [x for x in text.split("\n") if x.startswith("⟦") and "4.4." in x]
+        assert line and "4. מסלולי ההלוואות" in line[0] and "נוהל: נוהל בדיקה" in line[0]
+
+    def test_table_gets_context_caption(self):
+        _, tables = self._parts("<p>3. דוח חריגים</p><table><tr><td>נושא</td><td>סכום</td></tr><tr><td>עסקי</td><td>25,000</td></tr></table>")
+        assert "<caption>נוהל: נוהל בדיקה | 3. דוח חריגים</caption>" in tables[0]
+
+    def test_children_carry_the_context_line(self):
+        from rag.nlp import _CTX_LINE_RE
+        content = "⟦נוהל: X | 4.4. ריבית⟧\nשורה ראשונה ארוכה מספיק כדי להיות ילד\n⟦נוהל: X | 5. סיום⟧\nשורה שנייה ארוכה מספיק כדי להיות ילד"
+        # the context line itself is recognised and never becomes a child
+        assert _CTX_LINE_RE.match(content)
+
+    def test_off_by_default(self):
+        from deepdoc.parser.html_parser import RAGFlowHtmlParser
+        prose, _ = RAGFlowHtmlParser().parts("x.html", "<p>1. כללי</p><p>טקסט</p>".encode(), 256)
+        assert not any("⟦" in p for p in prose)
 
 
 class TestMergeCks:

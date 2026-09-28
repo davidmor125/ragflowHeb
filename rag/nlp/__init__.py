@@ -363,6 +363,7 @@ def tokenize(d, txt, eng):
 
 
 _MIN_CHILD_CHARS = 30
+_CTX_LINE_RE = re.compile(r"^\s*(⟦[^⟧\n]{0,300}⟧)[ \t]*\n")
 
 
 def split_with_pattern(d, pattern: str, content: str, eng) -> list:
@@ -378,38 +379,48 @@ def split_with_pattern(d, pattern: str, content: str, eng) -> list:
         tokenize(dd, content, eng)
         return [dd]
 
+    # A leading ⟦procedure | section path⟧ line (HtmlParser with_context) is
+    # the only thing telling a small child which procedure and section it is
+    # from, so it goes onto EVERY child instead of becoming a child of its own.
+    # naive_merge may join several such chunks, so a context line can also
+    # appear mid-content: it then switches the context for what follows.
     txts = [txt for txt in compiled_pattern.split(content)]
-    pieces = []
+    pieces = []  # (text, ctx)
+    ctx = ""
     for j in range(0, len(txts), 2):
         txt = txts[j]
         if not txt:
             continue
         if j + 1 < len(txts):
             txt += txts[j + 1]
-        pieces.append(txt)
+        m = _CTX_LINE_RE.match(txt if txt.endswith("\n") else txt + "\n")
+        if m and not txt[m.end():].strip():
+            ctx = m.group(1)
+            continue
+        pieces.append((txt, ctx))
 
     # With "\n" as the child delimiter every heading line ("רקע", "מטרת
     # הנוהל", "1. עקרונות") became a child of its own: 14-29% of children
     # were under 30 chars, carried no answerable content, and crowded real
     # hits out of top_n. Carry such a fragment into the next piece so the
     # heading stays attached to the text it introduces.
-    merged, carry = [], ""
-    for txt in pieces:
+    merged, carry = [], ""  # merged: [text, ctx]
+    for txt, c in pieces:
         txt = carry + txt
         if len(strip_markup(txt).strip()) < _MIN_CHILD_CHARS:
             carry = txt
             continue
         carry = ""
-        merged.append(txt)
+        merged.append([txt, c])
     if carry:
         if merged:
-            merged[-1] += carry
+            merged[-1][0] += carry
         elif carry.strip():
-            merged.append(carry)
+            merged.append([carry, ctx])
 
-    for txt in merged:
+    for txt, c in merged:
         dd = copy.deepcopy(d)
-        tokenize(dd, txt, eng)
+        tokenize(dd, f"{c}\n{txt}" if c else txt, eng)
         docs.append(dd)
     return docs
 

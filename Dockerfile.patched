@@ -54,7 +54,13 @@
 #   deepdoc/parser/html_parser.py + rag/app/naive.py - title_tks and the new
 #       doc_title_kwd come from the procedure name in <title> instead of the
 #       file name ("5088"); task_executor/search use doc_title_kwd for the
-#       title embedding and the reranker input
+#       title embedding and the reranker input. Body-only exports (630 of 646
+#       production files have no <title>) take the first text line, skipping
+#       navigation links and labels.
+#       With parent-child, HTML prose chunks carry a ⟦procedure | section
+#       path⟧ line wherever the section changes and tables get it as their
+#       <caption>; split_with_pattern puts it on every child, and a chunk never
+#       ends on a heading (9 of 18 wrong answers had a context-free child).
 #   rag/prompts/generator.py     - kb_prompt compacts chunk HTML to table
 #       structure + text before budgeting (markup was ~60% of a table parent's
 #       tokens, so the chunk holding the answer was cut from the prompt)
