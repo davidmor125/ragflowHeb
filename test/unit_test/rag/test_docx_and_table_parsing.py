@@ -174,6 +174,31 @@ class TestRetrievalByChildren:
         out = self._dealer({}).retrieval_by_children([_child("c1", "gone", "טקסט", 0.5)], ["t"])
         assert [c["chunk_id"] for c in out] == ["c1"]
 
+    def test_top_parent_gets_same_section_neighbors_only(self):
+        parents = {
+            "m1": {"content_with_weight": "⟦נוהל: X | 4. מקרים › 4.1. א⟧\n4.1. מקרה ראשון", "doc_id": "d", "kb_id": "kb", "page_num_int": [5]},
+            "p6": {"content_with_weight": "⟦נוהל: X | 4. מקרים › 4.5. ה⟧\n4.5. מקרה חמישי", "page_num_int": [6]},
+            "p7": {"content_with_weight": "⟦נוהל: X | 5. סיום⟧\n5. פרק אחר", "page_num_int": [7]},
+            "p4": {"content_with_weight": "⟦נוהל: X | 3. רקע⟧\nרקע", "page_num_int": [4]},
+        }
+
+        class Store(_FakeStore):
+            def search(self, fields, hl, cond, mx, ob, off, lim, idx, kbs):
+                return [(k, v) for k, v in self.docs.items() if k != "m1" and v["page_num_int"][0] in cond["page_num_int"]]
+
+            def get_fields(self, res, fields):
+                return {k: v for k, v in res}
+
+        from rag.nlp.search import Dealer
+        dealer = Dealer.__new__(Dealer)
+        dealer.dataStore = Store(parents)
+        out = dealer.retrieval_by_children([_child("c1", "m1", "4.1. מקרה ראשון", 0.9)], ["t"])
+        text = out[0]["content_with_weight"]
+        # the next parent of section 4 is appended; section 5 and section 3 are not
+        assert "4.5. מקרה חמישי" in text and "5. פרק אחר" not in text and "רקע" not in text
+        assert out[0]["content_fallback"] == parents["m1"]["content_with_weight"]
+        assert "_page" not in out[0]
+
 
 class TestProcedureTitle:
     @staticmethod

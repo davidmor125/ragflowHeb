@@ -15,6 +15,7 @@
 #
 import json
 import logging
+import os
 import re
 import math
 from collections import OrderedDict, defaultdict
@@ -776,6 +777,7 @@ class Dealer:
             }
             if fallback:
                 d["content_fallback"] = fallback
+            d["_page"] = chunk.get("page_num_int")
             for k in cks[0].keys():
                 if k[-4:] == "_vec":
                     d["vector"] = cks[0][k]
@@ -783,4 +785,76 @@ class Dealer:
                     break
             chunks.append(d)
 
-        return sorted(chunks, key=lambda x: x["similarity"] * -1)
+        ranked = sorted(chunks, key=lambda x: x["similarity"] * -1)
+        if os.environ.get("RAG_NEIGHBOR_EXPAND", "1") != "0":
+            try:
+                self._expand_section_neighbors(ranked, idx_nms[0])
+            except Exception as e:  # never lose the retrieval over an enrichment
+                logging.warning(f"neighbor expansion skipped: {e}")
+        for d in ranked:
+            d.pop("_page", None)
+        return ranked
+
+    NEIGHBOR_TOP = 2      # expand this many top-ranked parents
+    NEIGHBOR_AFTER = 2    # following parents of the same section
+    NEIGHBOR_BEFORE = 1   # preceding parent of the same section
+    _CTX_RE = re.compile(r"⟦([^⟧\n]{0,300})⟧")
+
+    @classmethod
+    def _section_key(cls, ctx_line):
+        """Top section of a ⟦נוהל: X | A › B⟧ line ("A"), or None."""
+        path = ctx_line.split("|", 1)[1] if "|" in ctx_line else ""
+        return path.split("›")[0].strip() or None
+
+    def _expand_section_neighbors(self, ranked, idx_nm):
+        """Append the adjacent parents of the same section to the top parents.
+
+        Lists and step sequences span several 256-token parents ("מה הפעולות
+        ...": 12 cases over 3 parents), and the model only saw the one that
+        matched. Growing every parent (1024 tokens) fixed those but pulled
+        more text from wrong procedures and lost more than it gained; here
+        only the best hits grow, and only within their own section, read off
+        the ⟦procedure | section⟧ lines. The unexpanded text stays as the
+        fallback kb_prompt() uses when the expansion does not fit.
+        """
+        present = {d.get("chunk_id") for d in ranked}
+        done = 0
+        for d in ranked:
+            if done >= self.NEIGHBOR_TOP:
+                break
+            page = d.get("_page")
+            if not page or d.get("doc_type_kwd") == "table":
+                continue
+            p = page[0] if isinstance(page, list) else page
+            content = d.get("content_with_weight") or ""
+            ctxs = self._CTX_RE.findall(content)
+            if not ctxs:
+                continue
+            first_key, last_key = self._section_key(ctxs[0]), self._section_key(ctxs[-1])
+            want = [p + i for i in range(1, self.NEIGHBOR_AFTER + 1)] + [p - i for i in range(1, self.NEIGHBOR_BEFORE + 1)]
+            res = self.dataStore.search(["content_with_weight", "page_num_int"], [], {"doc_id": d["doc_id"], "available_int": 0, "page_num_int": want},
+                                        [], OrderByExpr(), 0, len(want) + 2, idx_nm, [d["kb_id"]])
+            by_page = {}
+            for cid, f in self.dataStore.get_fields(res, ["content_with_weight", "page_num_int"]).items():
+                pg = f.get("page_num_int")
+                pg = pg[0] if isinstance(pg, list) and pg else pg
+                if cid not in present and pg is not None:
+                    by_page[int(pg)] = f.get("content_with_weight") or ""
+            after, key = [], last_key
+            for i in range(1, self.NEIGHBOR_AFTER + 1):
+                txt = by_page.get(p + i)
+                k = self._section_key((self._CTX_RE.findall(txt) or [""])[0]) if txt else None
+                if not txt or not key or k != key:
+                    break
+                after.append(txt)
+            before = []
+            for i in range(1, self.NEIGHBOR_BEFORE + 1):
+                txt = by_page.get(p - i)
+                k = self._section_key((self._CTX_RE.findall(txt) or [""])[-1]) if txt else None
+                if not txt or not first_key or k != first_key:
+                    break
+                before.insert(0, txt)
+            if before or after:
+                d.setdefault("content_fallback", content)
+                d["content_with_weight"] = "\n".join(before + [content] + after)
+                done += 1

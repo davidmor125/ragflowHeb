@@ -42,7 +42,10 @@
 #   rag/nlp/search.py            - retrieval_by_children: a parent over 1024
 #       tokens also carries "content_fallback" = its matched children (each
 #       with the table header); a missing parent keeps its children instead
-#       of raising
+#       of raising. The top 2 parents also get the adjacent parents of the
+#       SAME section (read off the ⟦procedure | section⟧ lines; set
+#       RAG_NEIGHBOR_EXPAND=0 to disable) so a list spread over several
+#       256-token parents arrives whole
 #   rag/prompts/generator.py     - kb_prompt fills the budget greedily: a chunk
 #       that does not fit uses its fallback or is skipped, instead of stopping
 #       at the first oversized parent and dropping everything ranked after it
