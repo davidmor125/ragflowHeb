@@ -39,7 +39,7 @@ from sklearn.metrics import silhouette_score
 
 from common.constants import MAXIMUM_PAGE_NUMBER
 from common.file_utils import get_project_base_directory
-from common.text_utils import contains_hebrew, reorder_bidi
+from common.text_utils import brackets_look_mirrored, contains_hebrew, reorder_bidi, swap_brackets
 from deepdoc.vision import OCR, AscendLayoutRecognizer, LayoutRecognizer, Recognizer, TableStructureRecognizer
 from rag.nlp import rag_tokenizer
 from rag.prompts.generator import vision_llm_describe_prompt
@@ -197,6 +197,73 @@ class RAGFlowPdfParser:
 
     # CID pattern regex for unmapped font characters from pdfminer
     _CID_PATTERN = re.compile(r"\(cid\s*:\s*\d+\s*\)")
+
+    _HEBREW_FINALS = frozenset("ךםןףץ")
+    _HEBREW_NONFINALS = frozenset("כמנפצ")
+
+    @staticmethod
+    def _rtl_word_end_flags(chars):
+        """For chars of one font, True where the char ends its word in RTL
+        reading, i.e. no glyph sits immediately to its left on the same line."""
+        lines = {}
+        for c in chars:
+            lines.setdefault(round(c["top"]), []).append(c)
+        flags = {}
+        for line in lines.values():
+            line.sort(key=lambda c: c["x0"])
+            for i, c in enumerate(line):
+                left = line[i - 1] if i else None
+                gap = c["x0"] - left["x1"] if left else None
+                flags[id(c)] = left is None or gap > 0.25 * max(c["width"], 1)
+        return flags
+
+    @staticmethod
+    def _decode_hebrew_cid_fonts(pages_chars):
+        """Map "(cid:N)" glyphs of fonts that encode the Hebrew alphabet as a
+        plain offset block (no ToUnicode map) back to letters, in place.
+
+        Seen in a Word/Acrobat export (David font): cid 154 + i is the i-th
+        letter of U+05D0..U+05EA, so every word in that font came out as
+        "(cid:158)(cid:154)..." and the page went to OCR, which cannot read
+        Hebrew. The offset is not assumed: each candidate base is scored by
+        whether final letters (ךםןףץ) land at word ends and their non-final
+        forms do not, and the mapping is applied only when that clearly holds.
+        """
+        by_font = {}
+        for chars in pages_chars:
+            for c in chars:
+                m = RAGFlowPdfParser._CID_PATTERN.fullmatch(c.get("text", ""))
+                if m:
+                    by_font.setdefault(c.get("fontname", ""), []).append(c)
+        finals = RAGFlowPdfParser._HEBREW_FINALS
+        nonfinals = RAGFlowPdfParser._HEBREW_NONFINALS
+        for font, cs in by_font.items():
+            ids = [int(re.search(r"\d+", c["text"]).group()) for c in cs]
+            lo, hi = min(ids), max(ids)
+            if len(cs) < 20 or hi - lo > 26:
+                continue
+            # Score on upright glyphs only: rotated chart labels have no
+            # left-to-right neighbours to tell a word end by.
+            scored = [(c, n) for c, n in zip(cs, ids) if c.get("upright", True)]
+            ends = RAGFlowPdfParser._rtl_word_end_flags([c for c, _ in scored])
+            best = None
+            for base in range(hi - 26, lo + 1):
+                good = bad = 0
+                for c, n in scored:
+                    letter = chr(0x5D0 + n - base)
+                    if letter in finals:
+                        good, bad = (good + 1, bad) if ends[id(c)] else (good, bad + 1)
+                    elif letter in nonfinals and ends[id(c)]:
+                        bad += 1
+                if good + bad >= 10 and (best is None or good - bad > best[1] - best[2]):
+                    best = (base, good, bad)
+            if not best or best[1] < 0.85 * (best[1] + best[2]):
+                logging.info(f"Font {font}: {len(cs)} unmapped CID glyphs, no Hebrew offset fits")
+                continue
+            base = best[0]
+            for c, n in zip(cs, ids):
+                c["text"] = chr(0x5D0 + n - base)
+            logging.info(f"Font {font}: decoded {len(cs)} CID glyphs as Hebrew (base {base}, final-letter fit {best[1]}/{best[1] + best[2]})")
 
     @staticmethod
     def _is_garbled_char(ch):
@@ -1570,9 +1637,18 @@ class RAGFlowPdfParser:
                     # path will be used instead. Two detection strategies:
                     # 1) PUA / unmapped CID characters (threshold=0.3)
                     # 2) Font-encoding garbling: subset fonts mapping CJK to ASCII
+                    self._decode_hebrew_cid_fonts(self.page_chars)
                     for pi, page_ch in enumerate(self.page_chars):
                         if not page_ch:
                             continue
+                        # A few leftover "(cid:N)" glyphs (here: word spaces)
+                        # on a page of real Hebrew are not a garbled page: one
+                        # placeholder in the first 200 chars used to send it
+                        # all to OCR, which reads Hebrew as Latin debris.
+                        cids = [c for c in page_ch if self._CID_PATTERN.fullmatch(c.get("text", ""))]
+                        if cids and sum(1 for c in page_ch if contains_hebrew(c.get("text", ""))) >= 0.3 * len(page_ch):
+                            for c in cids:
+                                c["text"] = " "
                         # Strategy 1: PUA / CID garbling
                         sample = page_ch if len(page_ch) <= 200 else page_ch[:200]
                         sample_text = "".join(c.get("text", "") for c in sample)
@@ -1678,6 +1754,14 @@ class RAGFlowPdfParser:
         asyncio.run(__img_ocr_launcher())
 
         logging.info(f"__images__ {len(self.page_images)} pages cost {timer() - start}s")
+
+        # Some producers (Word 2016, ABBYY) store mirrored bracket codepoints,
+        # so after reorder_bidi() every "(x)" in the document reads ")x(".
+        hebrew_boxes = [b for bxs in self.boxes for b in bxs if contains_hebrew(b.get("text"))]
+        if brackets_look_mirrored(b["text"] for b in hebrew_boxes):
+            logging.info(f"__images__ brackets look mirrored; swapping them in {len(hebrew_boxes)} Hebrew boxes")
+            for b in hebrew_boxes:
+                b["text"] = swap_brackets(b["text"])
 
         if not self.is_english and not any([c for c in self.page_chars]) and self.boxes:
             bxes = [b for bxs in self.boxes for b in bxs]
@@ -2040,6 +2124,8 @@ class PlainParser:
                         lines.append(raw_line)
         except Exception:
             logging.exception("Outlines exception")
+        if brackets_look_mirrored(lines):
+            lines = [swap_brackets(ln) if contains_hebrew(ln) else ln for ln in lines]
         self.outlines = extract_pdf_outlines(filename)
 
         return [(line, "") for line in lines], []

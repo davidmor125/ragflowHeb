@@ -17,11 +17,13 @@
 import pytest
 
 from common.text_utils import (
+    brackets_look_mirrored,
     contains_hebrew,
     hebrew_variants,
     looks_visual_order,
     reorder_bidi,
     reorder_bidi_sections,
+    swap_brackets,
 )
 
 
@@ -224,3 +226,39 @@ class TestHebrewVariants:
 
     def test_capped(self):
         assert len(hebrew_variants("וכשהבנקים")) <= 5
+
+
+class TestMirroredBrackets:
+    # Word 2016 / ABBYY exports come out of reorder_bidi() with every pair flipped.
+    FLIPPED = (
+        "לפי סעיף 80)ב()1( לחוק",
+        "איום על אמינות האשראי )creditworthiness( של התאגיד",
+        "ניהול בנקאי תקין ]4[ )09/25(",
+    )
+    BALANCED = (
+        "לפי סעיף 80(ב)(1) לחוק",
+        "הוראה 368 (להלן: ההוראה)",
+        "ניהול בנקאי תקין [4] (09/25)",
+    )
+
+    def test_flipped_document_detected(self):
+        assert brackets_look_mirrored(self.FLIPPED) is True
+
+    def test_balanced_document_left_alone(self):
+        assert brackets_look_mirrored(self.BALANCED) is False
+
+    def test_majority_decides(self):
+        # A few odd pairs in a correct document must not flip it.
+        assert brackets_look_mirrored(self.BALANCED * 3 + self.FLIPPED[:1]) is False
+
+    def test_too_few_pairs_undecided(self):
+        assert brackets_look_mirrored(self.FLIPPED[:1]) is False
+
+    def test_english_only_text_ignored(self):
+        assert brackets_look_mirrored([")x( )y( )z( )w("] * 3) is False
+
+    def test_swap_restores_pairs(self):
+        assert swap_brackets(self.FLIPPED[0]) == "לפי סעיף 80(ב)(1) לחוק"
+        assert swap_brackets(self.FLIPPED[2]) == "ניהול בנקאי תקין [4] (09/25)"
+        assert swap_brackets("") == ""
+        assert swap_brackets(None) is None

@@ -221,6 +221,36 @@ def reorder_bidi(text: str | None, base_dir: str = "R") -> str | None:
         return text
 
 
+_BRACKETS_BALANCED_RE = re.compile(r"\([^()\n]{1,60}\)|\[[^\[\]\n]{1,60}\]")
+_BRACKETS_FLIPPED_RE = re.compile(r"\)[^()\n]{1,60}\(|\][^\[\]\n]{1,60}\[")
+_BRACKET_SWAP = str.maketrans("()[]{}", ")(][}{")
+
+
+def brackets_look_mirrored(texts) -> bool:
+    """True when the Hebrew texts of one document mostly read ")x(" / "]x[".
+
+    Whether reorder_bidi() leaves brackets the right way round depends on the
+    PDF producer: Word 2016 and ABBYY FineReader store the mirrored glyph's
+    codepoint, so every pair in the document comes out flipped (measured: 7 of
+    15 test PDFs, all Bank of Israel circulars), while Skia/Ghostscript/Acrobat
+    exports come out right. The orientation is consistent within a document,
+    so decide once per document by majority, never per line.
+    """
+    balanced = flipped = 0
+    for t in texts:
+        if t and contains_hebrew(t):
+            balanced += len(_BRACKETS_BALANCED_RE.findall(t))
+            flipped += len(_BRACKETS_FLIPPED_RE.findall(t))
+    return flipped >= 3 and flipped > 2 * balanced
+
+
+def swap_brackets(text: str | None) -> str | None:
+    """Swap ( ) [ ] { } -- the fix-up when brackets_look_mirrored() is True."""
+    if not text:
+        return text
+    return text.translate(_BRACKET_SWAP)
+
+
 def reorder_bidi_sections(sections, enabled: bool):
     """Apply reorder_bidi to a sections list as produced by non-PDF parsers.
 

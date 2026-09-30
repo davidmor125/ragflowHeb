@@ -92,13 +92,23 @@ RUN /ragflow/.venv/bin/python3 -m pip install --no-cache-dir "python-bidi>=0.5.0
 
 COPY deepdoc/parser/html_parser.py /ragflow/deepdoc/parser/html_parser.py
 # Vision figure descriptions: bounded wait (VISION_FIGURE_TIMEOUT_SECONDS per
-# figure, default 120). @timeout is a no-op unless ENABLE_TIMEOUT_ASSERTION is
+# figure, default 120, capped at VISION_FIGURE_TIMEOUT_TOTAL per document,
+# default 300). @timeout is a no-op unless ENABLE_TIMEOUT_ASSERTION is
 # set, so a stuck vision call blocked the whole task queue for 27 minutes.
+# The DOCX wrapper (vision_figure_parser_docx_wrapper_naive) gets the same
+# bound; it waited forever and held the single chunk_limiter slot for hours.
 # Also brings the working copy's Hebrew-aware caption replacement.
 COPY deepdoc/parser/figure_parser.py /ragflow/deepdoc/parser/figure_parser.py
 # Required alongside python-bidi above: the released v0.25.0 pdf_parser.py has
 # ZERO reorder_bidi() call sites, so installing the package alone changes
 # nothing. This working copy adds the calls at the char-concat and OCR paths.
+# It also: (1) swaps ( ) [ ] per document when they come out mirrored
+# (Word 2016 / ABBYY store the mirrored codepoint: 7 of 15 test PDFs read
+# "סעיף 80)ב(" and ")creditworthiness("); (2) decodes fonts that encode
+# Hebrew as an offset CID block with no ToUnicode map (every word in that
+# font was "(cid:158)(cid:154)..."), and (3) no longer sends a page of real
+# Hebrew to OCR over a few "(cid:N)" placeholders -- one in the first 200
+# chars did, and the OCR model reads Hebrew as Latin debris (438.pdf p.1).
 COPY deepdoc/parser/pdf_parser.py  /ragflow/deepdoc/parser/pdf_parser.py
 COPY rag/app/naive.py              /ragflow/rag/app/naive.py
 # Table merges: DOCX vMerge/gridSpan (naive.py::docx_table_to_html_rows) and

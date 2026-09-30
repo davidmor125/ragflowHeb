@@ -39,8 +39,8 @@ _MOCK_MODULES = [
     "huggingface_hub", "PIL", "PIL.Image", "pypdf",
     "sklearn", "sklearn.cluster", "sklearn.metrics",
     "common", "common.file_utils", "common.misc_utils", "common.settings",
-    "common.token_utils",
-    "deepdoc", "deepdoc.vision", "deepdoc.parser",
+    "common.token_utils", "common.constants", "common.text_utils",
+    "deepdoc", "deepdoc.vision", "deepdoc.parser", "deepdoc.parser.utils",
     "rag", "rag.nlp", "rag.prompts", "rag.prompts.generator",
 ]
 for _m in _MOCK_MODULES:
@@ -436,3 +436,49 @@ class TestLayoutRecognizerIsGarbage:
 
     def test_cid_with_large_number(self):
         assert _is_garbage({"text": "(cid:99999)"}) is True
+
+
+class TestDecodeHebrewCidFonts:
+    """Fonts that encode the Hebrew alphabet as an offset CID block (no
+    ToUnicode map) are decoded when final letters fit at word ends."""
+
+    HEB = "אבגדהוזחטיךכלםמןנסעףפץצקרשת"
+
+    @classmethod
+    def _chars(cls, words, base=154, font="ABCDEF+David", upright=True):
+        # One line per word, glyphs in visual (x) order: RTL word -> reversed.
+        out = []
+        for li, w in enumerate(words):
+            for ci, ch in enumerate(reversed(w)):
+                out.append({"text": f"(cid:{base + cls.HEB.index(ch)})", "fontname": font,
+                            "x0": 10.0 * ci, "x1": 10.0 * ci + 8, "width": 8.0, "top": 20.0 * li, "upright": upright})
+        return out
+
+    WORDS = ("שלום", "בנקים", "חשבון", "לקוחות", "מכתב", "ארץ", "כסף", "שנים", "הלוואות", "ריבית", "עליון", "מחירים") * 2
+
+    def test_offset_block_decoded(self):
+        chars = self._chars(self.WORDS)
+        _Parser._decode_hebrew_cid_fonts([chars])
+        assert "".join(c["text"] for c in chars[:4]) == "םולש"
+
+    def test_other_base_found(self):
+        chars = self._chars(self.WORDS, base=3)
+        _Parser._decode_hebrew_cid_fonts([chars])
+        assert "".join(c["text"] for c in chars[:4]) == "םולש"
+
+    def test_rotated_glyphs_decoded_with_upright_evidence(self):
+        upright = self._chars(self.WORDS)
+        rotated = self._chars(["שלום"], upright=False)
+        _Parser._decode_hebrew_cid_fonts([upright + rotated])
+        assert "".join(c["text"] for c in rotated) == "םולש"
+
+    def test_few_glyphs_left_alone(self):
+        chars = self._chars(["שלום"])
+        _Parser._decode_hebrew_cid_fonts([chars])
+        assert chars[0]["text"].startswith("(cid:")
+
+    def test_wide_range_left_alone(self):
+        chars = self._chars(self.WORDS)
+        chars[0]["text"] = "(cid:900)"
+        _Parser._decode_hebrew_cid_fonts([chars])
+        assert all(c["text"].startswith("(cid:") for c in chars)
