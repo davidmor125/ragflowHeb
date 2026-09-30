@@ -180,15 +180,32 @@ def vision_figure_parser_docx_wrapper_naive(chunks, idx_lst, callback=None, **kw
                     except Exception:
                         pass
 
-        with ThreadPoolExecutor(max_workers=10) as executor:
-            futures = [
-                executor.submit(worker, idx, chunks[idx])
-                for idx in idx_lst
-            ]
-
-            for future in as_completed(futures):
-                idx, description = future.result()
-                chunks[idx]['text'] += description
+        # Same bounded wait as VisionFigureParser: with the vision model
+        # unreachable (cloud quota exhausted) a DOCX sat at "enhance figure
+        # extraction" for hours, holding the single chunk_limiter slot and so
+        # the whole queue. No `with` block: its shutdown(wait=True) would wait
+        # for the hung calls anyway.
+        per_figure = float(os.environ.get("VISION_FIGURE_TIMEOUT_SECONDS", 120))
+        total_cap = float(os.environ.get("VISION_FIGURE_TIMEOUT_TOTAL", 300))
+        executor = ThreadPoolExecutor(max_workers=10)
+        futures = [
+            executor.submit(worker, idx, chunks[idx])
+            for idx in idx_lst
+        ]
+        try:
+            for future in as_completed(futures, timeout=min(per_figure * max(1, len(futures)), total_cap)):
+                try:
+                    idx, description = future.result()
+                    chunks[idx]['text'] += description
+                except Exception as e:
+                    logging.warning(f"[VisionFigureParser] docx figure description failed: {e}")
+        except FuturesTimeout:
+            pending = sum(1 for f in futures if not f.done())
+            logging.warning(f"[VisionFigureParser] docx vision model timed out; {pending}/{len(futures)} figures left undescribed")
+            if callback:
+                callback(0.75, f"Visual model timed out on {pending} figure(s); continuing without them.")
+        finally:
+            executor.shutdown(wait=False, cancel_futures=True)
     
 shared_executor = ThreadPoolExecutor(max_workers=10)    
 
@@ -280,9 +297,13 @@ class VisionFigureParser:
         # with it, the whole task queue. Bound the wait here: figures still
         # pending when time runs out keep their OCR caption and parsing goes on.
         per_figure = float(os.environ.get("VISION_FIGURE_TIMEOUT_SECONDS", 120))
+        # A per-figure allowance alone scales with the figure count: with the
+        # vision model unavailable (GPU full), a DOCX with ~45 images waited
+        # 90 minutes and held the whole queue. Cap the total per document.
+        total_cap = float(os.environ.get("VISION_FIGURE_TIMEOUT_TOTAL", 300))
         results = []
         try:
-            for future in as_completed(futures, timeout=per_figure * max(1, len(futures))):
+            for future in as_completed(futures, timeout=min(per_figure * max(1, len(futures)), total_cap)):
                 try:
                     results.append(future.result())
                 except Exception as e:
