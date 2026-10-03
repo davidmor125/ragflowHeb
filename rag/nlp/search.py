@@ -450,16 +450,24 @@ class Dealer:
         sres = await self.search(req, [index_name(tid) for tid in tenant_ids], kb_ids, embd_mdl, highlight,
                            rank_feature=rank_feature)
 
+        reranked = False
         if rerank_mdl and sres.total > 0:
-            sim, tsim, vsim = self.rerank_by_model(
-                rerank_mdl,
-                sres,
-                question,
-                1 - vector_similarity_weight,
-                vector_similarity_weight,
-                rank_feature=rank_feature,
-            )
-        else:
+            # A down reranker (crashed CUDA context, container restarting) used
+            # to fail the whole question; rank by the built-in hybrid score
+            # instead and keep answering.
+            try:
+                sim, tsim, vsim = self.rerank_by_model(
+                    rerank_mdl,
+                    sres,
+                    question,
+                    1 - vector_similarity_weight,
+                    vector_similarity_weight,
+                    rank_feature=rank_feature,
+                )
+                reranked = True
+            except Exception as e:
+                logging.warning(f"rerank model failed, falling back to hybrid ranking: {e}")
+        if not reranked:
             if settings.DOC_ENGINE_INFINITY:
                 # Don't need rerank here since Infinity normalizes each way score before fusion.
                 sim = [sres.field[id].get("_score", 0.0) for id in sres.ids]

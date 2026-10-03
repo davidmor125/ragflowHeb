@@ -72,5 +72,14 @@ def rerank(req: RerankRequest):
     if not req.texts:
         return []
     with _GPU_LOCK:
-        scores = _score_batch(req.query, req.texts)
+        try:
+            scores = _score_batch(req.query, req.texts)
+        except RuntimeError as e:
+            # A CUDA error poisons the context: every later call fails while
+            # /health still answers. Exit so the restart policy brings up a
+            # clean process instead of serving errors until someone notices.
+            if "CUDA" in str(e):
+                log.error(f"CUDA error, exiting for a clean restart: {e}")
+                os._exit(1)
+            raise
     return [{"index": i, "score": float(s)} for i, s in enumerate(scores)]
