@@ -296,3 +296,131 @@ class TestMergeCks:
         ]
         merged, _ = _merge_cks(cks, 128, False)
         assert merged[0]["text"] == "בקשת שירות ב SNOW\nבבינלאומי, במקרה"
+
+
+class TestDocxSectionContext:
+    """Docx(with_context=True): ⟦procedure | section⟧ lines and table captions."""
+
+    @staticmethod
+    def _docx(build):
+        from io import BytesIO
+
+        from docx import Document
+
+        d = Document()
+        build(d)
+        buf = BytesIO()
+        d.save(buf)
+        return buf.getvalue()
+
+    @staticmethod
+    def _parse(binary, **kw):
+        from rag.app.naive import Docx
+
+        return Docx()("t.docx", binary, with_context=True, doc_title="נוהל בדיקה", **kw)
+
+    def test_outline_headings_give_the_path(self):
+        def build(d):
+            d.add_heading("דרישות", level=1)
+            d.add_heading("פעילות המנגנון", level=2)
+            d.add_paragraph("הזנת תמהיל לניגוח.")
+            d.add_paragraph("בניית תמהיל כהצעה ללקוח.")
+
+        texts = [t for t, _, _ in self._parse(self._docx(build))]
+        # The line goes where the section changes, i.e. before its heading;
+        # body paragraphs of the same section carry none of their own.
+        assert texts[1] == "⟦נוהל: נוהל בדיקה | דרישות › פעילות המנגנון⟧\nפעילות המנגנון"
+        assert texts[2:] == ["הזנת תמהיל לניגוח.", "בניית תמהיל כהצעה ללקוח."]
+
+    def test_custom_hebrew_style_with_outline_level(self):
+        from docx.enum.style import WD_STYLE_TYPE
+        from docx.oxml import parse_xml
+
+        def build(d):
+            st = d.styles.add_style("כותרת רמה 2", WD_STYLE_TYPE.PARAGRAPH)
+            st.element.get_or_add_pPr().append(parse_xml('<w:outlineLvl xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" w:val="1"/>'))
+            d.add_heading("מבוא", level=1)
+            d.add_paragraph("סימולציה מנותקת מבקשה", style="כותרת רמה 2")
+            d.add_paragraph("גוף הסעיף.")
+
+        texts = [t for t, _, _ in self._parse(self._docx(build))]
+        assert texts[1] == "⟦נוהל: נוהל בדיקה | מבוא › סימולציה מנותקת מבקשה⟧\nסימולציה מנותקת מבקשה"
+
+    def test_bold_list_items_are_headings_without_outline(self):
+        def build(d):
+            d.add_paragraph().add_run("מתווה הפתרון").bold = True
+            d.add_paragraph("התצוגה תהיה רק במשכנתאות שבהן הלקוח לווה.")
+
+        texts = [t for t, _, _ in self._parse(self._docx(build))]
+        assert texts == ["⟦נוהל: נוהל בדיקה | מתווה הפתרון⟧\nמתווה הפתרון", "התצוגה תהיה רק במשכנתאות שבהן הלקוח לווה."]
+
+    def test_table_caption_carries_the_context(self):
+        def build(d):
+            d.add_heading("עמלות", level=1)
+            t = d.add_table(rows=2, cols=2)
+            t.cell(0, 0).text, t.cell(0, 1).text = "סוג", "סכום"
+            t.cell(1, 0).text, t.cell(1, 1).text = "העברה", "5"
+
+        tables = [tb for _, _, tb in self._parse(self._docx(build)) if tb]
+        assert tables[0].startswith("<table><caption>נוהל: נוהל בדיקה | עמלות</caption>")
+
+    def test_heading_equal_to_title_is_not_a_section(self):
+        def build(d):
+            d.add_heading("נוהל בדיקה", level=1)
+            d.add_heading("ממשקים", level=2)
+            d.add_paragraph("שדה חובה.")
+
+        texts = [t for t, _, _ in self._parse(self._docx(build))]
+        assert texts[0] == "⟦נוהל: נוהל בדיקה⟧\nנוהל בדיקה"
+        assert texts[1] == "⟦נוהל: נוהל בדיקה | ממשקים⟧\nממשקים"
+
+    def test_off_by_default(self):
+        from rag.app.naive import Docx
+
+        def build(d):
+            d.add_heading("דרישות", level=1)
+            d.add_paragraph("גוף.")
+
+        assert all("⟦" not in (t or "") for t, _, _ in Docx()("t.docx", self._docx(build)))
+
+
+class TestCarryDocxContext:
+    def test_mid_section_chunk_gets_the_line_in_effect(self):
+        from rag.app.naive import _carry_docx_context
+
+        chunks = [
+            {"text": "טופס בראש המסמך", "ck_type": "image"},
+            {"text": "⟦נוהל: X⟧\nפתיחה", "ck_type": "text"},
+            {"text": "⟦נוהל: X | כללי⟧\nסעיף", "ck_type": "text"},
+            {"text": "המשך הסעיף", "ck_type": "text"},
+            {"text": "<table></table>", "ck_type": "table"},
+        ]
+        out = [c["text"] for c in _carry_docx_context(chunks)]
+        assert out[0] == "⟦נוהל: X⟧\nטופס בראש המסמך"
+        assert out[3] == "⟦נוהל: X | כללי⟧\nהמשך הסעיף"
+        assert out[4] == "<table></table>"
+
+
+class TestDocxTitle:
+    @staticmethod
+    def _doc(first_heading=None, core_title=""):
+        from docx import Document
+
+        d = Document()
+        d.core_properties.title = core_title
+        if first_heading:
+            d.add_heading(first_heading, level=1)
+        return d
+
+    def test_version_and_date_noise_dropped(self):
+        from rag.app.naive import _docx_title
+
+        assert _docx_title("ניגוח וסימולציה - גרסה 0.2 - 20260604-01 - ללא מעקב שינויים.docx", self._doc()) == "ניגוח וסימולציה"
+        assert _docx_title("סבסוד קבלן גרסה 0.4 20260604 הערות.docx", self._doc()) == "סבסוד קבלן"
+        assert _docx_title("אפיון רשות התאגידים - שליפת נסח חברה - 1.1 -  מאושר.docx", self._doc()) == "אפיון רשות התאגידים - שליפת נסח חברה"
+
+    def test_meaningless_file_name_uses_first_heading(self):
+        from rag.app.naive import _docx_title
+
+        assert _docx_title("9999999999.docx", self._doc("אשראי מובטח 55")) == "אשראי מובטח 55"
+        assert _docx_title("client.docx", self._doc("x", core_title="אפיון עסקי")) == "אפיון עסקי"

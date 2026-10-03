@@ -15,6 +15,7 @@
 #
 
 import logging
+from html import escape as html_escape
 import re
 import os
 from functools import reduce
@@ -491,6 +492,99 @@ PARSERS = {
 }
 
 
+_DOCX_HEADING_STYLE_RE = re.compile(r"(?:heading|כותרת)\s*(?:רמה\s*)?(\d)", re.I)
+
+
+def _docx_outline_level(p):
+    """1-based heading level of a paragraph, or None for body text.
+
+    Read from Word's outline level (the paragraph's own, else its style
+    chain's), which is what the navigation pane uses: the bank's specs mix
+    built-in "Heading N" with Hebrew custom styles ("כותרת רמה 2") that the
+    "Heading N" name match used for table captions never saw."""
+    el = p._p.find(f"{_W_NS}pPr/{_W_NS}outlineLvl")
+    style = p.style
+    while el is None and style is not None:
+        el = style.element.find(f"{_W_NS}pPr/{_W_NS}outlineLvl")
+        style = style.base_style
+    if el is not None:
+        try:
+            v = int(el.get(f"{_W_NS}val"))
+        except (TypeError, ValueError):
+            return None
+        return v + 1 if v < 9 else None
+    m = _DOCX_HEADING_STYLE_RE.search(p.style.name if p.style and p.style.name else "")
+    return int(m.group(1)) if m else None
+
+
+def _docx_bold_heading_level(p, text):
+    """Heading level of a short, entirely bold paragraph, for documents with
+    no outline levels at all: their sections are bold numbered list items
+    ("כללי", "מתווה הפתרון"), the list depth giving the level."""
+    if len(text) > 70 or text.endswith((".", ",", ";")):
+        return None
+    runs = [r for r in p.runs if r.text.strip()]
+    if not runs:
+        return None
+    for r in runs:
+        bold = r.bold
+        if bold is None:
+            bold = (r.style is not None and r.style.font.bold) or (p.style is not None and p.style.font.bold)
+        if not bold:
+            return None
+    num = p._p.pPr.numPr if p._p.pPr is not None else None
+    ilvl = num.ilvl.val if num is not None and num.ilvl is not None else 0
+    return int(ilvl) + 1
+
+
+_DOCX_TITLE_NOISE_RE = re.compile(r"\s+(?:-\s*)?(?:גרסה\b|[Vv]\d|\d+(?:\.\d+)+\s*-|\d{6,}).*$")
+
+
+def _docx_title(filename, document):
+    """Procedure name for title_tks / doc_title_kwd: the file name when it
+    says something ("אפיון פירוט משכנתאות בדיגיטל - 9.8.26"), else the core
+    title, else the first heading ("9999999999.docx" -> "אשראי מובטח 55")."""
+    stem = re.sub(r"\.docx$", "", os.path.basename(filename), flags=re.I).strip()
+    # Drop version/date noise: "סבסוד קבלן גרסה 0.4 20260604 הערות" -> "סבסוד קבלן"
+    short = _DOCX_TITLE_NOISE_RE.sub("", stem).strip(" -_")
+    if len(re.findall(r"[א-ת]{2,}", short)) >= 2:
+        return short
+    if len(re.findall(r"[א-ת]{2,}", stem)) >= 2:
+        return stem
+    core = (document.core_properties.title or "").strip()
+    if re.search(r"[א-ת]{2,}", core):
+        return core[:120]
+    for p in document.paragraphs:
+        t = p.text.strip()
+        if t and _docx_outline_level(p):
+            return t[:120]
+    return stem
+
+
+def _carry_docx_context(chunks):
+    """Open every merged text chunk with the ⟦procedure | section⟧ line in
+    effect where it starts. Docx(with_context=True) writes that line only
+    where the section changes, and _merge_cks cuts chunks by size, so a chunk
+    starting mid-section would otherwise carry none, and neither would the
+    children cut from it."""
+    open_, close = HtmlParser.CTX_OPEN, HtmlParser.CTX_CLOSE
+    ctx_re = re.compile(re.escape(open_) + r"[^" + close + r"\n]{0,300}" + re.escape(close))
+    # Chunks before the first context line (a form at the top of a template)
+    # take the document's first one, which names the procedure.
+    last = next((m.group(0) for ck in chunks for m in [ctx_re.search(ck.get("text") or "")] if m), None)
+    for ck in chunks:
+        text = ck.get("text") or ""
+        # Image chunks too: a form or text box comes through as an image chunk
+        # with text, and its children otherwise had no context at all.
+        if ck.get("ck_type") in ("text", "image") and text.strip():
+            if last and not text.lstrip().startswith(open_):
+                ck["text"] = f"{last}\n{text}"
+            found = ctx_re.findall(text)
+            if found:
+                last = found[-1]
+    return chunks
+
+
 class Docx(DocxParser):
     def __init__(self):
         pass
@@ -606,12 +700,56 @@ class Docx(DocxParser):
 
         return ""
 
-    def __call__(self, filename, binary=None, from_page=0, to_page=MAXIMUM_PAGE_NUMBER):
+    def __call__(self, filename, binary=None, from_page=0, to_page=MAXIMUM_PAGE_NUMBER, with_context=False, doc_title=None):
+        """``with_context`` (parent-child datasets) writes a ⟦procedure |
+        section path⟧ line before a paragraph wherever the section changes and
+        captions each table with it, the same format HtmlParser.parts() uses;
+        chunk() then opens every merged chunk with the line in effect."""
         self.doc = Document(filename) if not binary else Document(BytesIO(binary))
         pn = 0
         lines = []
         last_image = None
         table_idx = 0
+        # Section path. Outline levels when the document has any; otherwise
+        # numbered headings ("3.1 סטטוסים") and clauses, as in HtmlParser.
+        has_outline = with_context and any(p.text.strip() and _docx_outline_level(p) for p in self.doc.paragraphs)
+        stack = []  # [(level, label)]
+        last_ctx = None
+
+        def ctx():
+            # A top heading that repeats the title ("אשראי מובטח 55") is no section.
+            path = " › ".join(label for _, label in [x for x in stack if x[1] != doc_title][-2:])
+            parts = [x for x in (f"נוהל: {doc_title}" if doc_title else "", path) if x]
+            return " | ".join(parts)[:160]
+
+        def move(p, text):
+            if has_outline:
+                level = _docx_outline_level(p)
+                label = " ".join(text.split())[:60] if level else None
+            else:
+                h = HtmlParser._heading_level(text)
+                bold_level = None if h else _docx_bold_heading_level(p, text)
+                if bold_level:
+                    level, label = bold_level, " ".join(text.rstrip(":–- ").split())[:60]
+                elif h:
+                    level, label = h
+                else:
+                    m = HtmlParser._CLAUSE_NUM_RE.match(text)
+                    level = m.group(1).count(".") + 1 if m else None
+                    label = " ".join(text.split()[:6]) if m else None
+            if level is None:
+                return
+            while stack and stack[-1][0] >= level:
+                stack.pop()
+            stack.append((level, label))
+
+        def with_ctx(text):
+            nonlocal last_ctx
+            c = ctx()
+            if not c or c == last_ctx:
+                return text
+            last_ctx = c
+            return f"{HtmlParser.CTX_OPEN}{c}{HtmlParser.CTX_CLOSE}\n{text}"
 
         def flush_last_image():
             nonlocal last_image, lines
@@ -629,6 +767,8 @@ class Docx(DocxParser):
                 if from_page <= pn < to_page:
                     text = _docx_para_text(block).strip()
                     style_name = p.style.name if p.style else ""
+                    if with_context and text:
+                        move(p, text)
 
                     if text:
                         if style_name == "Caption":
@@ -654,7 +794,7 @@ class Docx(DocxParser):
                             flush_last_image()
                             lines.append(
                                 {
-                                    "text": self.__clean(text),
+                                    "text": with_ctx(self.__clean(text)) if with_context else self.__clean(text),
                                     "image": None,
                                     "table": None,
                                 }
@@ -690,9 +830,12 @@ class Docx(DocxParser):
 
                 flush_last_image()
                 tb = DocxTable(block, self.doc)
-                title = self.__get_nearest_title(table_idx, filename)
+                title = ctx() if with_context else self.__get_nearest_title(table_idx, filename)
                 html = "<table>"
-                if title:
+                if title and with_context:
+                    # quote=False: '"' in abbreviations (חו"ל) must not become &quot;
+                    html += f"<caption>{html_escape(title, quote=False)}</caption>"
+                elif title:
                     html += f"<caption>Table Location: {title}</caption>"
                 try:
                     html += docx_table_to_html_rows(tb)
@@ -1040,13 +1183,19 @@ def chunk(filename, binary=None, from_page=0, to_page=MAXIMUM_PAGE_NUMBER, lang=
         _SerializedRelationships.load_from_xml = load_from_xml_v2
 
         # sections = (text, image, tables)
-        sections = Docx()(filename, binary)
+        doc_title = None
+        if child_deli:
+            doc_title = _docx_title(filename, Document(filename) if not binary else Document(BytesIO(binary)))
+            _apply_doc_title(doc, doc_title)
+        sections = Docx()(filename, binary, with_context=bool(child_deli), doc_title=doc_title)
         sections = _normalize_section_text_for_rtl_presentation_forms(sections)
         sections = reorder_bidi_sections(sections, rtl_reorder_non_pdf)
 
         # chunks list[dict]
         # images list - index of image chunk in chunks
         chunks, images = naive_merge_docx(sections, int(parser_config.get("chunk_token_num", 128)), parser_config.get("delimiter", "\n!?。；！？"), table_context_size, image_context_size)
+        if child_deli:
+            _carry_docx_context(chunks)
 
         vision_figure_parser_docx_wrapper_naive(chunks=chunks, idx_lst=images, callback=callback, **kwargs)
 
