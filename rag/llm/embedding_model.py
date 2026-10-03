@@ -315,6 +315,12 @@ class OllamaEmbed(Base):
         # remove special tokens if they exist
         for token in OllamaEmbed._special_tokens:
             text = text.replace(token, "")
+        # Instruction-tuned embedders (Qwen3-Embedding) expect queries, and only
+        # queries, as "Instruct: <task>\nQuery: <q>"; documents stay raw, so
+        # this needs no re-index. Off unless RAG_QUERY_INSTRUCT is set.
+        instruct = os.environ.get("RAG_QUERY_INSTRUCT", "").strip()
+        if instruct:
+            text = f"Instruct: {instruct}\nQuery: {text}"
         res = self.client.embeddings(prompt=text, model=self.model_name, options={"use_mmap": True}, keep_alive=self.keep_alive)
         try:
             return np.array(res["embedding"]), 128

@@ -12,6 +12,9 @@ RUN pip install --no-cache-dir \
     "accelerate>=0.30"
 
 COPY server.py /app/server.py
+# Same image also serves BAAI/bge-reranker-v2-m3 on GPU (bge_server.py), the
+# reranker RAGFlow uses in production; see docker/docker-compose-rerank.yml.
+COPY bge_server.py /app/bge_server.py
 
 # HF cache persists via a mounted volume so the model is downloaded only once.
 ENV HF_HOME=/models

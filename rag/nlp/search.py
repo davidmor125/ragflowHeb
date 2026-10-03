@@ -422,10 +422,13 @@ class Dealer:
 
         # Keep the historical windowing strategy by default, but when an external
         # reranker is enabled cap candidate count by both top_k and provider-safe 64.
-        RERANK_LIMIT = math.ceil(64 / page_size) * page_size if page_size > 1 else 1
+        # RAG_RERANK_LIMIT widens the candidate pool the reranker sees (default
+        # 64): a chunk ranked past it by the hybrid score is never reranked.
+        pool = int(os.environ.get("RAG_RERANK_LIMIT", "64"))
+        RERANK_LIMIT = math.ceil(pool / page_size) * page_size if page_size > 1 else 1
         RERANK_LIMIT = max(30, RERANK_LIMIT)
         if rerank_mdl and top > 0:
-            RERANK_LIMIT = min(RERANK_LIMIT, top, 64)
+            RERANK_LIMIT = min(RERANK_LIMIT, top, pool)
         page = max(page, 1)
         global_offset = (page - 1) * page_size
         req = {
@@ -736,6 +739,11 @@ class Dealer:
         from rag.prompts.generator import compact_chunk_html
 
         vector_size = 1024
+        # A parent is ranked by its children's scores. The mean (default)
+        # punishes a parent whose one child answers exactly (reranker ~0.99)
+        # for also having weaker children, and flattens the reranker's signal;
+        # RAG_PARENT_SCORE=max ranks it by its best child.
+        agg = np.max if os.environ.get("RAG_PARENT_SCORE", "mean") == "max" else np.mean
         for id, cks in mom_chunks.items():
             chunk = self.dataStore.get(id, idx_nms[0], [ck["kb_id"] for ck in cks])
             if not chunk:
@@ -768,9 +776,9 @@ class Dealer:
                 "kb_id": chunk["kb_id"],
                 "important_kwd": [kwd for ck in cks for kwd in ck.get("important_kwd", [])],
                 "image_id": chunk.get("img_id", ""),
-                "similarity": np.mean([ck["similarity"] for ck in cks]),
-                "vector_similarity": np.mean([ck["similarity"] for ck in cks]),
-                "term_similarity": np.mean([ck["similarity"] for ck in cks]),
+                "similarity": agg([ck["similarity"] for ck in cks]),
+                "vector_similarity": agg([ck["similarity"] for ck in cks]),
+                "term_similarity": agg([ck["similarity"] for ck in cks]),
                 "vector": [0.0] * vector_size,
                 "positions": chunk.get("position_int", []),
                 "doc_type_kwd": chunk.get("doc_type_kwd", "")

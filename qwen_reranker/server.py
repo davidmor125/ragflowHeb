@@ -13,6 +13,7 @@ for bge-reranker — RAGFlow treats it as a native rerank model in the UI dropdo
 import os
 import math
 import logging
+import threading
 from typing import List
 
 import torch
@@ -36,7 +37,14 @@ PREFIX = (
     '"yes" or "no".<|im_end|>\n<|im_start|>user\n'
 )
 SUFFIX = "<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n"
-INSTRUCT = "Given a web search query, retrieve relevant passages that answer the query"
+# Qwen3-Reranker is instruction-aware; a task-specific instruction is
+# recommended over the generic default. Override with RERANK_INSTRUCT.
+INSTRUCT = os.environ.get("RERANK_INSTRUCT", "Given a web search query, retrieve relevant passages that answer the query")
+# FastAPI runs sync endpoints in a thread pool, so concurrent /rerank calls ran
+# forward passes on the one CUDA model in parallel; the container then died
+# with "CUDA error: an illegal memory access" and failed every later call.
+# Serialize GPU work.
+_GPU_LOCK = threading.Lock()
 
 log.info(f"Loading {MODEL_NAME} on {DEVICE} ...")
 tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, padding_side="left")
@@ -99,5 +107,6 @@ def health():
 def rerank(req: RerankRequest):
     if not req.texts:
         return []
-    scores = _score_batch(req.query, req.texts)
+    with _GPU_LOCK:
+        scores = _score_batch(req.query, req.texts)
     return [{"index": i, "score": float(s)} for i, s in enumerate(scores)]

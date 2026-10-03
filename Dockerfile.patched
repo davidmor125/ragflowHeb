@@ -64,6 +64,10 @@
 #       path⟧ line wherever the section changes and tables get it as their
 #       <caption>; split_with_pattern puts it on every child, and a chunk never
 #       ends on a heading (9 of 18 wrong answers had a context-free child).
+#       DOCX gets the same ⟦procedure | section⟧ lines and table captions:
+#       sections come from Word outline levels (incl. Hebrew custom styles
+#       such as "כותרת רמה 2"), else bold list-item headings, else numbered
+#       ones; the procedure name is the file name without version/date noise.
 #   rag/prompts/generator.py     - kb_prompt compacts chunk HTML to table
 #       structure + text before budgeting (markup was ~60% of a table parent's
 #       tokens, so the chunk holding the answer was cut from the prompt)
@@ -123,6 +127,13 @@ COPY rag/svr/task_executor.py      /ragflow/rag/svr/task_executor.py
 COPY rag/flow/tokenizer/tokenizer.py /ragflow/rag/flow/tokenizer/tokenizer.py
 COPY rag/prompts/generator.py      /ragflow/rag/prompts/generator.py
 COPY rag/llm/rerank_model.py       /ragflow/rag/llm/rerank_model.py
+# Retrieval experiment switches, all off by default: RAG_KNN_TEXT_FILTER=0 lets
+# kNN candidates in without the full-text minimum_should_match gate,
+# RAG_QUERY_INSTRUCT adds the Qwen3-Embedding query instruction,
+# RAG_RERANK_LIMIT (search.py) widens the reranker's pool beyond 64. The
+# working-copy embedding_model.py also retries transient Ollama failures.
+COPY rag/utils/es_conn.py          /ragflow/rag/utils/es_conn.py
+COPY rag/llm/embedding_model.py    /ragflow/rag/llm/embedding_model.py
 # Support files the patched modules depend on: this working copy is newer than
 # the released image (e.g. MAXIMUM_PAGE_NUMBER and reorder_bidi_sections do not
 # exist in v0.25.0), so naive.py fails to import without them.

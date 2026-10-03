@@ -1,0 +1,41 @@
+# GPU reranker for RAGFlow: BAAI/bge-reranker-v2-m3 behind a TEI-compatible
+# /rerank endpoint (qwen_reranker/bge_server.py). RAGFlow's rerank model
+# "BAAI/bge-reranker-v2-m3@HuggingFace" points at http://bge-reranker:80.
+#
+# Measured on the 345-question set (with RAG_PARENT_SCORE=max,
+# RAG_KNN_TEXT_FILTER=0, RAG_RERANK_LIMIT=128 in .env): answer chunk ranked
+# first 55.2% -> 77.3%, ~10-20x faster than Qwen3-Reranker-4B, ~1GB of VRAM.
+#
+#   docker compose -f docker-compose-rerank.yml up -d --build
+#
+# The model is read from a host folder (no download at start, works offline):
+# set BGE_RERANKER_MODEL_DIR in .env.
+services:
+  bge-reranker:
+    build: ../qwen_reranker
+    image: ragflow-rerank-gpu:local
+    container_name: bge-reranker
+    command: ["uvicorn", "bge_server:app", "--host", "0.0.0.0", "--port", "80"]
+    volumes:
+      - ${BGE_RERANKER_MODEL_DIR:-../../tei_models/bge-reranker-v2-m3}:/model:ro
+    networks:
+      - ragflow
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request;urllib.request.urlopen('http://localhost:80/health',timeout=5)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 120s
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+networks:
+  ragflow:
+    name: docker_ragflow
+    external: true

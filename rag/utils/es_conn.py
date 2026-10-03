@@ -14,6 +14,7 @@
 #  limitations under the License.
 #
 
+import os
 import re
 import json
 import time
@@ -216,11 +217,20 @@ class ESConnection(ESConnectionBase):
                 similarity = 0.0
                 if "similarity" in m.extra_options:
                     similarity = m.extra_options["similarity"]
+                # By default the kNN filter carries the full-text `must` too, so
+                # a chunk enters the candidates only if it ALSO matches
+                # minimum_should_match of the query words: the vector score can
+                # re-rank lexical hits but never add a paraphrase.
+                # RAG_KNN_TEXT_FILTER=0 filters kNN by the conditions only
+                # (kb, availability, doc ids), making it a real union.
+                knn_filter = bool_query.to_dict()
+                if os.environ.get("RAG_KNN_TEXT_FILTER", "1") == "0":
+                    knn_filter = Q("bool", filter=list(bool_query.filter)).to_dict()
                 s = s.knn(m.vector_column_name,
                           m.topn,
                           m.topn * 2,
                           query_vector=list(m.embedding_data),
-                          filter=bool_query.to_dict(),
+                          filter=knn_filter,
                           similarity=similarity,
                           )
 
