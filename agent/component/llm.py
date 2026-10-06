@@ -69,6 +69,10 @@ class LLMParam(ComponentParamBase):
 
         if int(self.max_tokens) > 0 and get_attr("maxTokensEnabled"):
             conf["max_tokens"] = int(self.max_tokens)
+            # The LiteLLM chat path drops "max_tokens" before the request; only
+            # max_completion_tokens reaches Ollama (as num_predict), so without
+            # it a looping local model ran for over an hour.
+            conf["max_completion_tokens"] = int(self.max_tokens)
         if float(self.temperature) > 0 and get_attr("temperatureEnabled"):
             conf["temperature"] = float(self.temperature)
         if float(self.top_p) > 0 and get_attr("topPEnabled"):

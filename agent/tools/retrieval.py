@@ -255,10 +255,11 @@ class Retrieval(ToolBase, ABC):
         json_output = kbinfos["chunks"].copy()
 
         self._canvas.add_reference(kbinfos["chunks"], kbinfos["doc_aggs"])
-        # Cap as per upstream default. gemma4:31b-cloud has 262K context
-        # so this fits comfortably; smaller local models would need this
-        # tuned down via num_ctx in a Modelfile.
-        form_cnt = "\n".join(kb_prompt(kbinfos, 200000, True))
+        # The chat path budgets the excerpts by the model's max_tokens; here the
+        # upstream cap of 200,000 is effectively none, and with a 16K-32K local
+        # context the overflow cut off the start of the prompt (the system
+        # instructions). RAG_AGENT_KB_BUDGET sets the cap (cl100k tokens).
+        form_cnt = "\n".join(kb_prompt(kbinfos, int(os.environ.get("RAG_AGENT_KB_BUDGET", "200000")), True))
 
         # Set both formalized content and JSON output
         self.set_output("formalized_content", form_cnt)

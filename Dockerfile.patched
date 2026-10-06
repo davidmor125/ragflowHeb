@@ -71,6 +71,14 @@
 #   rag/prompts/generator.py     - kb_prompt compacts chunk HTML to table
 #       structure + text before budgeting (markup was ~60% of a table parent's
 #       tokens, so the chunk holding the answer was cut from the prompt)
+#   deepdoc/parser/html_parser.py + rag/nlp/__init__.py + rag/prompts/generator.py
+#       - inline runs (<span>s) join with no added space, as a browser shows
+#       them: the old strip-and-join-with-" " broke 77% of abbreviations
+#       (ע " י) and split numbers ("1 5 0,000", "090-2012-00 6"); procedure
+#       titles read block lines, not span pieces (80 names were cut at a
+#       gershayim, an <h1> "שם הנוהל" was taken as the name); inline base64
+#       <img> tags are dropped and tag regexes no longer stop at 1,000 chars
+#       (base64 was indexed and sent to the LLM in 27 procedures)
 #   deepdoc/parser/html_parser.py - table pre-split counts visible text, not
 #       the kept inline style (a 233-char table was cut one row per chunk,
 #       headerless); only the outer table's rows are split; with parent-child
@@ -133,6 +141,21 @@ COPY rag/llm/rerank_model.py       /ragflow/rag/llm/rerank_model.py
 # RAG_RERANK_LIMIT (search.py) widens the reranker's pool beyond 64. The
 # working-copy embedding_model.py also retries transient Ollama failures.
 COPY rag/utils/es_conn.py          /ragflow/rag/utils/es_conn.py
+# Answer grounding check: every number in a chat answer must appear in the
+# retrieved chunks (or the question), and the answer must cite a chunk. The
+# result is returned as reference["verification"]; RAG_ANSWER_CHECK=warn also
+# appends a Hebrew warning line, =off disables it. The hook is patched into the
+# image's own dialog_service.py (the repo copy differs from v0.25.0's).
+COPY rag/answer_check.py           /ragflow/rag/answer_check.py
+# Agents: the Retrieval node budgets its excerpts by RAG_AGENT_KB_BUDGET (the
+# upstream 200,000 is no cap at all), and an LLM node's max_tokens also goes out
+# as max_completion_tokens, the only length cap LiteLLM passes to Ollama.
+COPY docker/patch_agent_think.py   /tmp/patch_agent_think.py
+RUN /ragflow/.venv/bin/python3 /tmp/patch_agent_think.py /ragflow/api/apps/sdk/session.py
+COPY agent/tools/retrieval.py      /ragflow/agent/tools/retrieval.py
+COPY agent/component/llm.py        /ragflow/agent/component/llm.py
+COPY docker/patch_answer_check.py  /tmp/patch_answer_check.py
+RUN /ragflow/.venv/bin/python3 /tmp/patch_answer_check.py /ragflow/api/db/services/dialog_service.py
 COPY rag/llm/embedding_model.py    /ragflow/rag/llm/embedding_model.py
 # Support files the patched modules depend on: this working copy is newer than
 # the released image (e.g. MAXIMUM_PAGE_NUMBER and reorder_bidi_sections do not
