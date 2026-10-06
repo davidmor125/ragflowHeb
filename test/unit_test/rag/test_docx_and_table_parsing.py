@@ -424,3 +424,84 @@ class TestDocxTitle:
 
         assert _docx_title("9999999999.docx", self._doc("אשראי מובטח 55")) == "אשראי מובטח 55"
         assert _docx_title("client.docx", self._doc("x", core_title="אפיון עסקי")) == "אפיון עסקי"
+
+
+class TestHtmlRunJoining:
+    """Word exports split words and numbers across <span>s; they must be
+    joined the way a browser shows them, with no added spaces."""
+
+    @pytest.fixture(autouse=True)
+    def _word_count_tokens(self, monkeypatch):
+        from bs4 import BeautifulSoup
+
+        import deepdoc.parser.html_parser as hp
+        monkeypatch.setattr(hp.RAGFlowHtmlParser, "_text_tokens",
+                            staticmethod(lambda h: len(BeautifulSoup(h, "html.parser").get_text(" ").split())))
+        monkeypatch.setattr(hp.rag_tokenizer, "tokenize", lambda t: " ".join(str(t).split()))
+
+    @staticmethod
+    def _prose(body, with_context=False):
+        from deepdoc.parser.html_parser import RAGFlowHtmlParser
+        prose, tables = RAGFlowHtmlParser().parts("x.html", f"<html><body>{body}</body></html>".encode(), 256, 2048,
+                                                  doc_title="נוהל", with_context=with_context)
+        return "\n".join(prose), tables
+
+    def test_runs_join_without_spaces(self):
+        body = '<p><span lang="he">עד </span><span lang="ar-SA">1</span><span>50,000</span><span> ש</span><span>"</span><span>ח ע</span><span>"</span><span>י המנהל</span></p>'
+        for ctx in (False, True):
+            text, _ = self._prose(body, ctx)
+            assert 'עד 150,000 ש"ח ע"י המנהל' in text
+
+    def test_whitespace_between_runs_is_kept(self):
+        text, _ = self._prose("<p><span>סכום</span> <span>ההלוואה</span>\n<span>המבוקש</span></p>")
+        assert "סכום ההלוואה המבוקש" in text
+
+    def test_br_separates_words(self):
+        text, _ = self._prose('<p><span style="font-weight:bold">כללי</span><br/><span>הבנק מציע</span></p>')
+        assert "כללי הבנק מציע" in text and "כלליהבנק" not in text
+
+    def test_blocks_stay_separate_lines(self):
+        text, _ = self._prose("<p><span>1</span><span>1. מעקב</span></p><p>שורה שנייה</p>", with_context=True)
+        lines = [x for x in text.split("\n") if not x.startswith("⟦")]
+        assert "11. מעקב" in lines and "שורה שנייה" in lines
+
+    def test_base64_images_are_dropped(self):
+        img = '<img alt="x" src="data:image/png;base64,' + "iVBORw0KGgo" * 200 + '">'
+        text, tables = self._prose(f"<p>פרק 1 {img}</p><table><tr><td>תא {img}</td></tr></table>")
+        assert "base64" not in text and all("base64" not in t for t in tables)
+        assert "פרק 1" in text
+
+
+class TestHtmlTitleRuns:
+    @staticmethod
+    def _title(html):
+        from deepdoc.parser.html_parser import RAGFlowHtmlParser
+        return RAGFlowHtmlParser.procedure_title("x.html", html.encode())
+
+    def test_name_split_across_runs_is_whole(self):
+        html = '<p><span>העברת הוראות לני</span><span>"</span><span>ע הנסחרים בבורסות</span></p><p>כללי</p>'
+        assert self._title(html) == 'העברת הוראות לני"ע הנסחרים בבורסות'
+
+    def test_h1_label_falls_back_to_first_line(self):
+        assert self._title("<h1>שם הנוהל</h1><p>נושא</p><p>ממסרים דחויים</p>") == "ממסרים דחויים"
+
+    def test_numbered_clause_is_not_a_title(self):
+        assert self._title("<p>1. כללי</p><p>הבנק מאפשר ללקוחות להפקיד שיקים.</p>") == ""
+        assert self._title("<p>נושאי הנוהל</p><p>פרק א</p>") == ""
+
+
+class TestInlineMarkupStripping:
+    def test_strip_markup_joins_inline_runs(self):
+        from rag.nlp import strip_markup
+        html = '<table><tr><td><p><span>1</span><span>50,000</span> <span>ש</span><span>"ח</span></p></td><td>ב</td></tr></table>'
+        assert strip_markup(html) == '150,000 ש"ח ב'
+
+    def test_compact_keeps_table_and_joins_runs(self):
+        from rag.prompts.generator import compact_chunk_html
+        out = compact_chunk_html('<table><tr><td><span lang="he">1</span><span>50,000</span></td></tr></table>')
+        assert out == "<table><tr><td>150,000</td></tr></table>"
+
+    def test_long_tags_are_stripped(self):
+        from rag.nlp import strip_markup
+        img = '<img src="data:image/png;base64,' + "A" * 5000 + '">'
+        assert strip_markup(f"טקסט {img} נוסף") == "טקסט נוסף"

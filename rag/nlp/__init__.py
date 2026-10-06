@@ -333,14 +333,20 @@ def extract_exact_tokens(txt, limit=64):
 # Import this instead of re-writing the pattern: the narrow original was
 # duplicated across four call sites and fixing only one left the embedding
 # text (task_executor) and the flow tokenizer still polluted.
-MARKUP_RE = re.compile(r"</?[A-Za-z][A-Za-z0-9]{0,14}(\s[^<>]{0,1000})?/?>")
+MARKUP_RE = re.compile(r"</?[A-Za-z][A-Za-z0-9]{0,14}(\s[^<>]*)?/?>")
+# Inline tags join their text with nothing between (as a browser renders it):
+# Word puts every few characters of a cell in its own <span>, and replacing
+# those with " " split numbers and words in the index ("1 5 0,000").
+INLINE_MARKUP_RE = re.compile(
+    r"</?(?:span|font|b|strong|i|em|u|s|strike|sup|sub|small|big|mark|ins|del|abbr|bdi|bdo|nobr|wbr|o:p)(\s[^<>]*)?/?>",
+    re.IGNORECASE)
 
 
 def strip_markup(txt):
     """Remove HTML tags and collapse whitespace, preserving text content."""
     if not txt:
         return txt
-    return re.sub(r"\s+", " ", MARKUP_RE.sub(" ", txt)).strip()
+    return re.sub(r"\s+", " ", MARKUP_RE.sub(" ", INLINE_MARKUP_RE.sub("", txt))).strip()
 
 
 def tokenize(d, txt, eng):

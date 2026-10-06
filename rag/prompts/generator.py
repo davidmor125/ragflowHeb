@@ -104,7 +104,12 @@ def message_fit_in(msg, max_length=4000):
 _KEEP_TABLE_TAG_RE = re.compile(r"<(/?)(table|thead|tbody|tr|td|th|caption)\b([^>]*)>", re.IGNORECASE)
 _SPAN_ATTR_RE = re.compile(r"\b(rowspan|colspan)\s*=\s*['\"]?(\d+)['\"]?", re.IGNORECASE)
 _BLOCK_BREAK_RE = re.compile(r"<br\s*/?>|</(?:p|div|li|h\d)>", re.IGNORECASE)
-_ANY_TAG_RE = re.compile(r"</?[A-Za-z][A-Za-z0-9]{0,14}(?:\s[^<>]{0,1000})?/?>")
+_ANY_TAG_RE = re.compile(r"</?[A-Za-z][A-Za-z0-9]{0,14}(?:\s[^<>]*)?/?>")
+# Inline tags vanish without a space (a browser shows adjacent runs joined);
+# replacing a cell's per-character <span>s with " " split its numbers and words.
+_INLINE_TAG_RE = re.compile(
+    r"</?(?:span|font|b|strong|i|em|u|s|strike|sup|sub|small|big|mark|ins|del|abbr|bdi|bdo|nobr|wbr|o:p)(?:\s[^<>]*)?/?>",
+    re.IGNORECASE)
 
 
 def compact_chunk_html(txt):
@@ -126,7 +131,7 @@ def compact_chunk_html(txt):
         kept.append(f"<{m.group(1)}{m.group(2).lower()}{(' ' + spans) if spans else ''}>")
         return f"\x00{len(kept) - 1}\x00"
 
-    out = _KEEP_TABLE_TAG_RE.sub(_keep, txt)
+    out = _KEEP_TABLE_TAG_RE.sub(_keep, _INLINE_TAG_RE.sub("", txt))
     out = _BLOCK_BREAK_RE.sub("\n", out)
     out = _ANY_TAG_RE.sub(" ", out)
     out = out.replace("&nbsp;", " ").replace("\xa0", " ")

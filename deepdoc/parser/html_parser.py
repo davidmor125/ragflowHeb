@@ -78,34 +78,63 @@ class RAGFlowHtmlParser:
             # Body-only exports (630 of the 646 production files) have no
             # <title>/<h1>; the procedure name is their first text line.
             return cls._first_line_title(soup)
-        text = " ".join(node.get_text(" ").split())
+        # get_text("") joins runs like a browser; get_text(" ") split names.
+        text = " ".join(node.get_text("").split())
         text = re.sub(r"[\u200e\u200f\u202a-\u202e]", "", text)
         text = re.sub(r"\s*-\s*\d+\s*$", "", text)
         parts = [p.strip() for p in re.split(r"\s+-\s+", text) if p.strip()]
         if len(parts) <= 1:
-            return parts[0] if parts else ""
-        # "<topic> - <area> - שו"ת- בנקאות ונכסים - <name> [- <sub>] - <id>":
-        # the name is everything after the category marker (it may itself
-        # contain " - ", e.g. 'אופציות על מדד ת"א - 35'). Without the marker,
-        # skip the two leading category segments.
-        marker = max((i for i, p in enumerate(parts) if 'שו"ת' in p or "בנקאות ונכסים" in p), default=None)
-        tail = parts[marker + 1:] if marker is not None else parts[2:]
-        return " - ".join(tail) if tail else parts[-1]
+            name = parts[0] if parts else ""
+        else:
+            # "<topic> - <area> - שו"ת- בנקאות ונכסים - <name> [- <sub>] - <id>":
+            # the name is everything after the category marker (it may itself
+            # contain " - ", e.g. 'אופציות על מדד ת"א - 35'). Without the marker,
+            # skip the two leading category segments.
+            marker = max((i for i, p in enumerate(parts) if 'שו"ת' in p or "בנקאות ונכסים" in p), default=None)
+            tail = parts[marker + 1:] if marker is not None else parts[2:]
+            name = " - ".join(tail) if tail else parts[-1]
+        # An <h1> holding a label ("שם הנוהל") or a clause is not the name.
+        return name if name and not cls._not_a_title(name) else cls._first_line_title(soup)
+
+    @classmethod
+    def _not_a_title(cls, cand):
+        words = cand.split()
+        return (
+            cand in cls._GENERIC_FIRST_LINES
+            or cand in cls._TITLE_LABELS
+            or len(cand) > 150
+            or len(words) < 2  # "מערכת", "EDI": too generic for a x10 title boost
+            or sum(1 for w in words if len(w) == 1) * 2 > len(words)  # letter-spaced debris ("ק ע")
+            or bool(re.fullmatch(r"[\d\s.\-/]+", cand))
+            or bool(re.match(r"^(פרק|סעיף)\s", cand))
+            or bool(re.match(r"^\d+(\.\d+)*\.?\s", cand))  # a numbered clause ("1. כללי")
+        )
 
     # First lines that are section headings or labels, not a procedure name.
     _GENERIC_FIRST_LINES = frozenset({
         "רקע", "כללי", "מטרה", "מטרת הנוהל", "עיקרי הנוהל", "הגדרות", "תוכן", "תוכן עניינים",
-        "תוכן הנוהל", "מבוא", "הקדמה", "תוכן כללי", "מזהה פריט",
+        "תוכן הנוהל", "מבוא", "הקדמה", "תוכן כללי", "מזהה פריט", "נושאי הנוהל", "נושאי הפרק",
     })
     # Labels whose VALUE is on the next line ("שם הנוהל" / "<name>").
     _TITLE_LABELS = frozenset({"נושא", "שם הנוהל", "כותרת", "שם"})
+    _LINE_BREAK_TAGS = ("p", "div", "h1", "h2", "h3", "h4", "h5", "h6", "li", "tr", "td", "th", "table",
+                        "ul", "ol", "dd", "dt", "blockquote", "pre", "section", "article", "header", "title")
 
     @classmethod
     def _first_line_title(cls, soup):
         for t in soup(["script", "style"]):
             t.decompose()
+        # Lines break at block elements and <br> only. get_text("\n") broke at
+        # every <span>, so a name split across runs came back cut at the first
+        # one: "העברת הוראות לני" (at the gershayim of ני"ע) or a single word
+        # that was then rejected, leaving 45% of procedures with no title.
+        for br in soup.find_all("br"):
+            br.replace_with("\n")
+        for tag in soup.find_all(cls._LINE_BREAK_TAGS):
+            tag.insert_before("\n")
+            tag.append("\n")
         lines = []
-        for x in soup.get_text("\n").split("\n"):
+        for x in soup.get_text("").split("\n"):
             x = re.sub(r"[\u200e\u200f\u202a-\u202e\xa0]", " ", x)
             x = re.sub(r"\s+", " ", x).strip(" :-–")
             if len(x) >= 2:
@@ -121,17 +150,7 @@ class RAGFlowHtmlParser:
         if i >= len(lines):
             return ""
         cand = lines[i]
-        words = cand.split()
-        if (
-            cand in cls._GENERIC_FIRST_LINES
-            or len(cand) > 90
-            or len(words) < 2  # "מערכת", "EDI": too generic for a x10 title boost
-            or sum(1 for w in words if len(w) == 1) * 2 > len(words)  # letter-spaced debris ("ק ע")
-            or re.fullmatch(r"[\d\s.\-/]+", cand)
-            or re.match(r"^(פרק|סעיף)\s", cand)
-        ):
-            return ""
-        return cand
+        return "" if cls._not_a_title(cand) else cand
 
     @staticmethod
     def _read(fnm, binary=None):
@@ -172,6 +191,12 @@ class RAGFlowHtmlParser:
         # delete HTML comment
         for comment in soup.find_all(string=lambda text: isinstance(text, Comment)):
             comment.extract()
+        # Inline base64 images (proxy-rewritten <img src="data:...">) carry no
+        # text, but their 10-100k-char tags slipped past the markup regexes and
+        # were indexed and sent to the LLM (105 children, 27 procedures).
+        for img in soup.find_all("img"):
+            if (img.get("src") or "").lstrip().lower().startswith("data:"):
+                img.decompose()
         return soup
 
     @staticmethod
@@ -229,25 +254,30 @@ class RAGFlowHtmlParser:
         # 1. ordered stream of prose blocks and tables (merge_block_text keeps
         #    the same block grouping but loses where the tables were)
         stream, cur, last_block = [], "", None
+
+        def flush_text(t):
+            # Text nodes keep their own whitespace (read_text_recursively), so
+            # they are concatenated as-is and only normalized here.
+            t = " ".join(t.split())
+            if t:
+                stream.append(("text", t))
+
         for item in temp_sections:
             content, tag = item.get("content"), item.get("tag_name")
             block_id = item.get("metadata", {}).get("block_id")
             if tag == "table" and not block_id:
-                if cur:
-                    stream.append(("text", cur))
-                    cur, last_block = "", None
+                flush_text(cur)
+                cur, last_block = "", None
                 stream.append(("table", content))
                 continue
             if tag in TITLE_TAGS:
                 content = f"{TITLE_TAGS[tag]} {content}"
             if block_id and block_id != last_block:
-                if cur:
-                    stream.append(("text", cur))
+                flush_text(cur)
                 cur, last_block = content, block_id
             else:
-                cur += (" " if cur else "") + content
-        if cur:
-            stream.append(("text", cur))
+                cur += content
+        flush_text(cur)
 
         # 2. section path at every position
         stack = []  # [(level, label)]
@@ -487,7 +517,17 @@ class RAGFlowHtmlParser:
     @classmethod
     def read_text_recursively(cls, element, parser_result, chunk_token_num=512, parent_name=None, block_id=None):
         if isinstance(element, NavigableString):
-            content = element.strip()
+            # Keep the node's own whitespace (collapsed) instead of stripping it
+            # and joining nodes with " ": Word exports put every few characters
+            # in their own <span>, and a browser joins adjacent spans with
+            # nothing between them. The old join split words and numbers
+            # ("150,000" -> "1 5 0,000", ע"י -> ע " י, 77% of abbreviations).
+            raw = re.sub(r"\s+", " ", str(element))
+            content = raw.strip()
+            if not content:
+                # A whitespace-only node between inline elements is the word
+                # separator; dropping it would now fuse the two words.
+                return [{"content": " ", "tag_name": "inner_text", "metadata": {"block_id": block_id}}] if raw else []
 
             def is_valid_html(content):
                 try:
@@ -503,12 +543,18 @@ class RAGFlowHtmlParser:
                     child_info = cls.read_text_recursively(soup, parser_result, chunk_token_num, element.name, block_id)
                     parser_result.extend(child_info)
                 else:
-                    info = {"content": element.strip(), "tag_name": "inner_text", "metadata": {"block_id": block_id}}
+                    info = {"content": raw, "tag_name": "inner_text", "metadata": {"block_id": block_id}}
                     if parent_name:
                         info["tag_name"] = parent_name
                     return_info.append(info)
             return return_info
         elif isinstance(element, Tag):
+
+            if str.lower(element.name) in ("br", "hr"):
+                # A line break separates words. Word exports end a bold heading
+                # with <br/> and continue in the same <p> ("כללי<br/>הבנק ..."),
+                # which fused into "כלליהבנק" once runs stopped getting spaces.
+                return [{"content": " ", "tag_name": "inner_text", "metadata": {"block_id": block_id}}]
 
             if str.lower(element.name) == "table":
                 table_info_list = []
@@ -554,19 +600,20 @@ class RAGFlowHtmlParser:
                 if title_flag:
                     content = f"{TITLE_TAGS[tag_name]} {content}"
                 if last_block_id != block_id:
-                    if last_block_id is not None:
-                        block_content.append(current_content)
+                    if last_block_id is not None and current_content.strip():
+                        block_content.append(" ".join(current_content.split()))
                     current_content = content
                     last_block_id = block_id
                 else:
-                    current_content += (" " if current_content else "") + content
+                    # Nodes keep their own whitespace; see read_text_recursively.
+                    current_content += content
             else:
                 if tag_name == "table":
                     table_info_list.append(item)
                 else:
-                    current_content += (" " if current_content else "") + content
-        if current_content:
-            block_content.append(current_content)
+                    current_content += content
+        if current_content.strip():
+            block_content.append(" ".join(current_content.split()))
         return block_content, table_info_list
 
     @classmethod
