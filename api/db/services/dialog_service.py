@@ -757,6 +757,17 @@ async def async_chat(dialog, messages, stream=True, **kwargs):
             for c in refs["chunks"]:
                 if c.get("vector"):
                     del c["vector"]
+            # Grounding check (rag/answer_check.py): numbers in the answer must
+            # appear in the retrieved chunks, and the answer should cite one.
+            try:
+                from rag.answer_check import ANSWER_CHECK_MODE, check_answer, warning_line
+                if ANSWER_CHECK_MODE != "off":
+                    _verification = check_answer(answer, kbinfos.get("chunks", []), " ".join(questions))
+                    refs["verification"] = _verification
+                    if ANSWER_CHECK_MODE == "warn":
+                        answer += warning_line(_verification)
+            except Exception:
+                logging.exception("answer check failed; answer returned unchecked")
 
         if answer.lower().find("invalid key") >= 0 or answer.lower().find("invalid api") >= 0:
             answer += " Please set LLM API-Key in 'User Setting -> Model providers -> API-Key'"
